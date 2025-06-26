@@ -1,3 +1,4 @@
+import * as Popper from "@popperjs/core";
 var buttons = document.querySelectorAll("[data-target='tooltip_trigger']");
 
 buttons.forEach((button) => {

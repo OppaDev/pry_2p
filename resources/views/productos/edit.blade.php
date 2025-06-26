@@ -32,7 +32,7 @@
                     </div>
 
                     <div class="flex-auto p-6">
-                        <form action="{{ route('producto.update', $producto->id) }}" method="POST" class="space-y-6">
+                        <form action="{{ route('productos.update', $producto->id) }}" method="POST" class="space-y-6">
                             @csrf
                             @method('PUT')
 
