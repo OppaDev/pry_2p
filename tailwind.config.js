@@ -3,9 +3,7 @@ import forms from '@tailwindcss/forms';
 
 /** @type {import('tailwindcss').Config} */
 export default {
-    // AÑADE ESTA LÍNEA
-    //refix: 'tw-',
-
+    
     content: [
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
@@ -19,11 +17,6 @@ export default {
             },
         },
     },
-
-    // AÑADE ESTE BLOQUE
-    // corePlugins: {
-    //     preflight: false,
-    // },
 
     plugins: [forms],
 };
