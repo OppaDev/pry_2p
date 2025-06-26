@@ -11,17 +11,20 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <!-- Scripts y Estilos de Vite (Ahora controla TODO) -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
   </head>
 
-  <body class="m-0 font-sans antialiased font-normal text-base leading-default bg-gray-50 text-slate-500">
+  <body class="m-0 font-sans antialiased font-normal text-lg leading-relaxed bg-gray-50 text-slate-500">
     <!-- 🧭 SIDENAV -->
     <aside class="max-w-62.5 ease-nav-brand z-990 absolute inset-y-0 my-4 ml-4 block w-full -translate-x-full flex-wrap items-center justify-between overflow-y-auto rounded-2xl border-0 bg-white p-0 antialiased shadow-none transition-transform duration-200 xl:left-0 xl:translate-x-0 xl:bg-transparent">
       <div class="h-19.5">
         <i class="absolute top-0 right-0 hidden p-4 opacity-50 cursor-pointer fas fa-times text-slate-400 xl:hidden" sidenav-close></i>
-        <a class="block px-8 py-6 m-0 text-sm whitespace-nowrap text-slate-700" href="{{url('/')}}">
+        <a class="block px-8 py-6 m-0 text-lg whitespace-nowrap text-slate-700" href="{{url('/')}}">
           <img src="{{ asset('assets/img/logo-ct.png')}}" class="inline h-full max-w-full transition-all duration-200 ease-nav-brand max-h-8" alt="main_logo" />
           <span class="ml-1 font-semibold transition-all duration-200 ease-nav-brand">{{ config('app.name', 'Laravel') }}</span>
         </a>
@@ -32,7 +35,7 @@
       <div class="items-center block w-auto max-h-screen overflow-auto h-sidenav grow basis-full">
         <ul class="flex flex-col pl-0 mb-0">
           <li class="mt-0.5 w-full">
-            <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('dashboard') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-700' }}" href="{{ route('dashboard') }}">
+            <a class="py-2.7 text-lg ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('dashboard') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-700' }}" href="{{ route('dashboard') }}">
               <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
                 <i class="fas fa-tv text-slate-700"></i>
               </div>
@@ -41,7 +44,7 @@
           </li>
 
           <li class="mt-0.5 w-full">
-            <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('productos.*') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-700' }}" href="{{ route('productos.index') }}">
+            <a class="py-2.7 text-lg ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('productos.*') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-700' }}" href="{{ route('productos.index') }}">
               <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
                 <i class="fas fa-box text-slate-700"></i>
               </div>
@@ -50,7 +53,7 @@
           </li>
 
           <li class="mt-0.5 w-full">
-            <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('users.*') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-700' }}" href="{{ route('users.index') }}">
+            <a class="py-2.7 text-lg ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('users.*') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-700' }}" href="{{ route('users.index') }}">
               <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
                 <i class="fas fa-users text-slate-700"></i>
               </div>
@@ -63,7 +66,7 @@
           </li>
 
           <li class="mt-0.5 w-full">
-            <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('profile.*') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-700' }}" href="{{ route('profile.edit') }}">
+            <a class="py-2.7 text-lg ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('profile.*') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-700' }}" href="{{ route('profile.edit') }}">
               <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
                 <i class="fas fa-user text-slate-700"></i>
               </div>
@@ -77,8 +80,8 @@
         <!-- Información del usuario -->
         <div class="p-4 rounded-lg bg-gradient-to-tl from-blue-600 to-cyan-400">
           <div class="text-white">
-            <div class="text-sm font-semibold">{{ Auth::user()->name }}</div>
-            <div class="text-xs opacity-70">{{ Auth::user()->email }}</div>
+            <div class="text-lg font-semibold">{{ Auth::user()->name }}</div>
+            <div class="text-base opacity-70">{{ Auth::user()->email }}</div>
           </div>
         </div>
       </div>
@@ -92,12 +95,12 @@
           <nav>
             <!-- breadcrumb -->
             <ol class="flex flex-wrap pt-1 mr-12 bg-transparent rounded-lg sm:mr-16">
-              <li class="leading-normal text-sm">
+              <li class="leading-normal text-lg">
                 <a class="opacity-50 text-slate-700" href="javascript:;">Páginas</a>
               </li>
-              <li class="text-sm pl-2 capitalize leading-normal text-slate-700 before:float-left before:pr-2 before:text-gray-600 before:content-['/']" aria-current="page">{{ ucfirst(request()->segment(1)) ?? 'Dashboard' }}</li>
+              <li class="text-lg pl-2 capitalize leading-normal text-slate-700 before:float-left before:pr-2 before:text-gray-600 before:content-['/']" aria-current="page">{{ ucfirst(request()->segment(1)) ?? 'Dashboard' }}</li>
             </ol>
-            <h6 class="mb-0 font-bold capitalize">{{ ucfirst(request()->segment(1)) ?? 'Dashboard' }}</h6>
+            <h6 class="mb-0 font-bold capitalize text-xl">{{ ucfirst(request()->segment(1)) ?? 'Dashboard' }}</h6>
           </nav>
 
           <div class="flex items-center mt-2 grow sm:mt-0 sm:mr-6 md:mr-0 lg:flex lg:basis-auto">
@@ -106,18 +109,18 @@
                 <span class="text-sm leading-5.6 absolute z-50 -ml-px flex h-full items-center whitespace-nowrap rounded-lg rounded-tr-none rounded-br-none border border-r-0 border-transparent bg-transparent py-2 px-2.5 text-center font-normal text-slate-500 transition-all">
                   <i class="fas fa-search"></i>
                 </span>
-                <input type="text" class="pl-8.75 text-sm focus:shadow-soft-primary-outline ease-soft w-1/100 leading-5.6 relative -ml-px block min-w-0 flex-auto rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 pr-3 text-gray-700 transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none focus:transition-shadow" placeholder="Buscar aquí..." />
+                <input type="text" class="pl-8.75 text-lg focus:shadow-soft-primary-outline ease-soft w-1/100 leading-5.6 relative -ml-px block min-w-0 flex-auto rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 pr-3 text-gray-700 transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none focus:transition-shadow" placeholder="Buscar aquí..." />
               </div>
             </div>
             <ul class="flex flex-row justify-end pl-0 mb-0 list-none md-max:w-full">
               <!-- Usuario dropdown -->
               <li class="flex items-center">
                 <div class="relative" dropdown-trigger>
-                  <a href="#" class="ease-nav-brand p-0 transition-all text-sm" aria-expanded="false">
+                  <a href="#" class="ease-nav-brand p-0 transition-all text-lg" aria-expanded="false">
                     <i class="cursor-pointer fas fa-user sm:mr-1"></i>
                     <span class="hidden sm:inline">{{ Auth::user()->name }}</span>
                   </a>
-                  <ul dropdown-menu class="text-sm duration-250 min-w-44 pointer-events-none absolute right-0 top-0 z-50 origin-top list-none rounded-lg border-0 border-solid border-transparent bg-white bg-clip-padding px-2 py-4 text-left text-slate-500 opacity-0 transition-all lg:absolute lg:right-0 lg:left-auto lg:mt-2 lg:block lg:cursor-pointer lg:shadow-soft-3xl">
+                  <ul dropdown-menu class="text-lg duration-250 min-w-44 pointer-events-none absolute right-0 top-0 z-50 origin-top list-none rounded-lg border-0 border-solid border-transparent bg-white bg-clip-padding px-2 py-4 text-left text-slate-500 opacity-0 transition-all lg:absolute lg:right-0 lg:left-auto lg:mt-2 lg:block lg:cursor-pointer lg:shadow-soft-3xl">
                     <li class="relative mb-2">
                       <a class="ease-soft py-1.2 lg:ease-soft clear-both block w-full whitespace-nowrap rounded-lg bg-transparent px-4 duration-300 hover:bg-gray-200 hover:text-slate-700 lg:transition-colors" href="{{ route('profile.edit') }}">
                         <div class="flex py-1">
@@ -125,10 +128,10 @@
                             <img src="{{ asset('assets/img/team-2.jpg')}}" class="inline-flex items-center justify-center mr-4 text-white text-sm h-9 w-9 max-w-none rounded-xl" />
                           </div>
                           <div class="flex flex-col justify-center">
-                            <h6 class="mb-1 leading-normal text-sm">
+                            <h6 class="mb-1 leading-normal text-lg">
                               <span class="font-semibold">{{ Auth::user()->name }}</span>
                             </h6>
-                            <p class="mb-0 leading-tight text-xs text-slate-400">
+                            <p class="mb-0 leading-tight text-base text-slate-400">
                               {{ Auth::user()->email }}
                             </p>
                           </div>
@@ -146,10 +149,10 @@
                               <i class="fas fa-sign-out-alt text-sm"></i>
                             </div>
                             <div class="flex flex-col justify-center">
-                              <h6 class="mb-1 leading-normal text-sm font-semibold">
+                              <h6 class="mb-1 leading-normal text-lg font-semibold">
                                 Cerrar Sesión
                               </h6>
-                              <p class="mb-0 leading-tight text-xs text-slate-400">
+                              <p class="mb-0 leading-tight text-base text-slate-400">
                                 Salir de la aplicación
                               </p>
                             </div>

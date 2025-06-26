@@ -1,13 +1,20 @@
-/* 1. Importar los estilos base de la plantilla Soft UI */
-/*    Estos ahora actuarán como nuestro "base" o "preflight". */
+/* 1. Importar los estilos base de la plantilla Soft UI (Siguen siendo la base global) */
 @import "./soft-ui/nucleo-icons.css";
 @import "./soft-ui/nucleo-svg.css";
 @import "./soft-ui/soft-ui-dashboard-tailwind.css";
 
-/* 2. Cargar los componentes y utilidades de TU Tailwind. */
-/*    @tailwind base; ESTÁ COMENTADO PORQUE LO DESACTIVAMOS EN EL PASO 1 */
+/* 2. PREFLIGHT SELECTIVO DE TAILWIND */
+/*    Esto aplica los estilos base de Tailwind solo a los elementos DENTRO de un contenedor
+      que tenga la clase ".tailwind-rules". No afectará al resto de la página.
+*/
+@layer base {
+  .tailwind-rules {
+    @tailwind base;
+  }
+}
+
+/* 3. Cargar los componentes y utilidades de Tailwind (estos son globales) */
 @tailwind components;
 @tailwind utilities;
 
-/* 3. (Opcional) Aquí puedes añadir tus propios estilos personalizados */
-/*    que necesiten sobreescribir algo de la plantilla o de Tailwind. */
+/* 4. (Opcional) Estilos personalizados */

@@ -2,7 +2,7 @@
 @section('content')
     <div class="w-full px-6 py-6 mx-auto">
         <div class="container-fluid py-4">
-            <h1 class="mb-0 text-lg font-semibold text-slate-700">LISTA DE USUARIOS</h1>
+            <h1 class="mb-0 text-2xl font-semibold text-slate-700">LISTA DE USUARIOS</h1>
         </div>
         <div class="flex flex-wrap -mx-3">
             <div class="flex-none w-full max-w-full px-3">
@@ -10,7 +10,7 @@
                     class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-soft-xl rounded-2xl bg-clip-border">
                     <div class="p-6 pb-0 mb-0 bg-white border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
                         <div class="flex justify-between items-center">
-                            <h6 class="mb-0 text-lg font-semibold text-slate-700">
+                            <h6 class="mb-0 text-xl font-semibold text-slate-700">
                                 <i class="fas fa-users mr-2 text-slate-700"></i>
                                 USUARIOS
                             </h6>
@@ -22,20 +22,20 @@
 
                                     <div
                                         class="flex items-center space-x-2 bg-gradient-to-r from-blue-50 to-blue-100 px-4 py-2 rounded-xl border border-blue-200/60 shadow-sm">
-                                        <label for="search" class="text-sm font-medium text-blue-600 flex items-center">
+                                        <label for="search" class="text-lg font-medium text-blue-600 flex items-center">
                                             <i class="fas fa-search mr-2 text-blue-500"></i>
                                             <span>Buscar:</span>
                                         </label>
                                         <input type="text" id="search" name="search" value="{{ $search }}"
                                             placeholder="Nombre o email..."
-                                            class="px-3 py-1.5 text-sm bg-white/80 backdrop-blur-sm border border-blue-200/60 rounded-lg shadow-soft-xs hover:shadow-soft-sm focus:shadow-soft-md focus:outline-none focus:ring-2 focus:ring-blue-200/50 focus:border-blue-300 transition-all duration-300 ease-soft-in-out text-slate-700 min-w-[200px]">
+                                            class="px-3 py-1.5 text-lg bg-white/80 backdrop-blur-sm border border-blue-200/60 rounded-lg shadow-soft-xs hover:shadow-soft-sm focus:shadow-soft-md focus:outline-none focus:ring-2 focus:ring-blue-200/50 focus:border-blue-300 transition-all duration-300 ease-soft-in-out text-slate-700 min-w-[200px]">
                                         <button type="submit"
-                                            class="px-3 py-1.5 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-soft-xs hover:shadow-soft-sm focus:shadow-soft-md focus:outline-none focus:ring-2 focus:ring-blue-200/50 transition-all duration-300 ease-soft-in-out">
+                                            class="px-3 py-1.5 text-lg bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-soft-xs hover:shadow-soft-sm focus:shadow-soft-md focus:outline-none focus:ring-2 focus:ring-blue-200/50 transition-all duration-300 ease-soft-in-out">
                                             <i class="fas fa-search"></i>
                                         </button>
                                         @if ($search)
                                             <a href="{{ route('users.index', ['per_page' => $perPage]) }}"
-                                                class="px-3 py-1.5 text-sm bg-gray-500 hover:bg-gray-600 text-white rounded-lg shadow-soft-xs hover:shadow-soft-sm focus:shadow-soft-md focus:outline-none focus:ring-2 focus:ring-gray-200/50 transition-all duration-300 ease-soft-in-out"
+                                                class="px-3 py-1.5 text-lg bg-gray-500 hover:bg-gray-600 text-white rounded-lg shadow-soft-xs hover:shadow-soft-sm focus:shadow-soft-md focus:outline-none focus:ring-2 focus:ring-gray-200/50 transition-all duration-300 ease-soft-in-out"
                                                 title="Limpiar búsqueda">
                                                 <i class="fas fa-times"></i>
                                             </a>
@@ -46,19 +46,19 @@
                                 <!-- Selector de per_page -->
                                 <div
                                     class="flex items-center space-x-2 bg-gradient-to-r from-slate-50 to-slate-100 px-4 py-2 rounded-xl border border-slate-200/60 shadow-sm">
-                                    <label for="per_page" class="text-sm font-medium text-slate-600 flex items-center">
+                                    <label for="per_page" class="text-lg font-medium text-slate-600 flex items-center">
                                         <i class="fas fa-eye mr-2 text-slate-500"></i>
                                         <span>Mostrar:</span>
                                     </label>
                                     <select id="per_page" name="per_page" onchange="changePerPage(this.value)"
-                                        class="px-3 py-1.5 text-sm bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-lg shadow-soft-xs hover:shadow-soft-sm focus:shadow-soft-md focus:outline-none focus:ring-2 focus:ring-slate-200/50 focus:border-slate-300 transition-all duration-300 ease-soft-in-out text-slate-700 cursor-pointer">
+                                        class="px-3 py-1.5 text-lg bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-lg shadow-soft-xs hover:shadow-soft-sm focus:shadow-soft-md focus:outline-none focus:ring-2 focus:ring-slate-200/50 focus:border-slate-300 transition-all duration-300 ease-soft-in-out text-slate-700 cursor-pointer">
                                         <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
                                         <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
                                         <option value="15" {{ $perPage == 15 ? 'selected' : '' }}>15</option>
                                         <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
                                         <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
                                     </select>
-                                    <span class="text-sm font-medium text-slate-600">por página</span>
+                                    <span class="text-lg font-medium text-slate-600">por página</span>
                                 </div>
                             </div>
                         </div>
@@ -90,19 +90,19 @@
                                 <thead class="align-bottom">
                                     <tr>
                                         <th
-                                            class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                            class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-base border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                             USERNAME</th>
                                         <th
-                                            class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                            class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-base border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                             EMAIL</th>
                                         <th
-                                            class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                            class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-base border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                             CREADO</th>
                                         <th
-                                            class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                            class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-base border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                             VERIFICADO</th>
                                         <th
-                                            class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                            class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-base border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                             ACTUALIZADO</th>
                                         <th
                                             class="px-6 py-3 font-semibold capitalize align-middle bg-transparent border-b border-gray-200 border-solid shadow-none tracking-none whitespace-nowrap text-slate-400 opacity-70">
@@ -121,39 +121,39 @@
                                                             alt="user" />
                                                     </div>
                                                     <div class="flex flex-col justify-center">
-                                                        <h6 class="mb-0 text-sm leading-normal">{{ $user->name }}</h6>
-                                                        <p class="mb-0 text-xs leading-tight text-slate-400">
+                                                        <h6 class="mb-0 text-lg leading-normal">{{ $user->name }}</h6>
+                                                        <p class="mb-0 text-base leading-tight text-slate-400">
                                                             {{ $user->email }}</p>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td
                                                 class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                                <p class="mb-0 text-xs font-semibold leading-tight">{{ $user->email }}</p>
+                                                <p class="mb-0 text-lg font-semibold leading-tight">{{ $user->email }}</p>
                                             </td>
                                             <td
                                                 class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                                 <span
-                                                    class="text-xs font-semibold leading-tight text-slate-400">{{ $user->created_at->format('d/m/y') }}</span>
+                                                    class="text-lg font-semibold leading-tight text-slate-400">{{ $user->created_at->format('d/m/y') }}</span>
                                             </td>
                                             <td
-                                                class="p-2 text-sm leading-normal text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                                class="p-2 text-lg leading-normal text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                                 <span
-                                                    class="bg-gradient-to-tl {{ $user->email_verified_at ? 'from-green-600 to-lime-400' : 'from-slate-600 to-slate-300' }} px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
+                                                    class="bg-gradient-to-tl {{ $user->email_verified_at ? 'from-green-600 to-lime-400' : 'from-slate-600 to-slate-300' }} px-2.5 text-base rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
                                                     {{ $user->email_verified_at ? 'Verificado' : 'No Verificado' }}
                                                 </span>
                                             </td>
                                             <td
                                                 class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                                 <span
-                                                    class="text-xs font-semibold leading-tight text-slate-400">{{ $user->updated_at->format('d/m/y') }}</span>
+                                                    class="text-lg font-semibold leading-tight text-slate-400">{{ $user->updated_at->format('d/m/y') }}</span>
                                             </td>
                                             <td
                                                 class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                                 {{-- <a href="{{ route('user.show', $user->id) }}"
-                                                    class="text-xs font-semibold leading-tight text-blue-500 hover:text-blue-700 mr-3">Ver</a> --}}
+                                                    class="text-lg font-semibold leading-tight text-blue-500 hover:text-blue-700 mr-3">Ver</a> --}}
                                                 <a href="{{ route('users.edit', $user->id) }}"
-                                                    class="text-xs font-semibold leading-tight text-slate-400 hover:text-slate-600">Editar</a>
+                                                    class="text-lg font-semibold leading-tight text-slate-400 hover:text-slate-600">Editar</a>
                                             </td>
                                         </tr>
                                     @empty
@@ -162,7 +162,7 @@
                                                 class="p-4 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                                 <div class="flex flex-col items-center py-8">
                                                     <i class="fas fa-user-slash text-4xl text-slate-300 mb-4"></i>
-                                                    <p class="text-slate-500 text-sm">
+                                                    <p class="text-slate-500 text-lg">
                                                         @if ($search)
                                                             No se encontraron usuarios que coincidan con
                                                             "<strong>{{ $search }}</strong>"
