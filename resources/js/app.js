@@ -1,32 +1,91 @@
+// resources/js/app.js
+
 // 1. Importar librerías de terceros
 import './bootstrap';
 import Alpine from 'alpinejs';
-import PerfectScrollbar from 'perfect-scrollbar'; // Importar la librería
-import Chart from 'chart.js/auto'; // Importar Chart.js
+import PerfectScrollbar from 'perfect-scrollbar';
+import Chart from 'chart.js/auto';
 
-// 2. Hacer las librerías globales para que los scripts de la plantilla las encuentren
-//    (La plantilla Soft UI espera que estas existan en el objeto `window`)
+// 2. Hacer las librerías globales
 window.Alpine = Alpine;
 window.PerfectScrollbar = PerfectScrollbar;
 window.Chart = Chart;
 
-// 3. Importar los scripts de la plantilla en un orden lógico
-//    (Plugins y utilidades primero, luego los que inicializan cosas)
+// 3. Definir variables globales dummy para compatibilidad
+window.page = window.page || window.location.pathname.split("/").pop().split(".")[0] || 'dashboard';
+var page = window.page;
+window.aux = window.location.pathname.split("/");
+window.to_build = (window.aux.includes('pages') ? '../' : './');
+window.root = window.location.pathname.split("/");
+
+// 4. Importar scripts de la plantilla (excepto el del burger)
 import './soft-ui/nav-pills.js';
 import './soft-ui/dropdown.js';
-import './soft-ui/navbar-collapse.js';
-import './soft-ui/sidenav-burger.js';
-import './soft-ui/fixed-plugin.js';
-import './soft-ui/navbar-sticky.js';
+// Comentados para evitar conflictos con Soft UI legacy
+// import './soft-ui/navbar-collapse.js';
+// import './soft-ui/fixed-plugin.js';
+// import './soft-ui/navbar-sticky.js';
 import './soft-ui/tooltips.js';
-
-// Scripts que dibujan los gráficos (pueden ir aquí o al final)
 import './soft-ui/chart-1.js';
 import './soft-ui/chart-2.js';
 
-// 4. Iniciar Alpine.js
-Alpine.start();
+// 5. Lógica del Sidenav integrada y robusta
+function initializeSidenavBurger() {
+    const sidenav = document.querySelector("aside");
+    const sidenav_trigger = document.querySelector("[sidenav-trigger]");
+    const sidenav_close_button = document.querySelector("[sidenav-close]");
+    if (!sidenav_trigger || !sidenav) return; // Salida segura
 
-// Mensaje de confirmación en la consola
-console.log('✅ App.js inicializado correctamente con dependencias y scripts de Soft UI.');
+    // Estado inicial: oculto en móvil
+    if (window.innerWidth < 1280) {
+        sidenav.classList.remove('translate-x-0');
+        sidenav.classList.add('-translate-x-full');
+    }
 
+    sidenav_trigger.addEventListener("click", function () {
+        sidenav.classList.toggle('translate-x-0');
+        sidenav.classList.toggle('-translate-x-full');
+        // Mostrar/ocultar botón de cerrar solo en móvil
+        if (sidenav_close_button) {
+            sidenav_close_button.classList.toggle('hidden');
+        }
+    });
+
+    if (sidenav_close_button) {
+        sidenav_close_button.addEventListener("click", function () {
+            sidenav.classList.remove('translate-x-0');
+            sidenav.classList.add('-translate-x-full');
+            sidenav_close_button.classList.add('hidden');
+        });
+    }
+
+    // Cerrar sidenav al hacer click fuera (solo móvil)
+    window.addEventListener("click", function (e) {
+        if (window.innerWidth < 1280 && !sidenav.contains(e.target) && !sidenav_trigger.contains(e.target)) {
+            if (sidenav.classList.contains("translate-x-0")) {
+                sidenav.classList.remove('translate-x-0');
+                sidenav.classList.add('-translate-x-full');
+                if (sidenav_close_button) sidenav_close_button.classList.add('hidden');
+            }
+        }
+    });
+
+    // Ajustar al cambiar tamaño de pantalla
+    window.addEventListener('resize', function () {
+        if (window.innerWidth >= 1280) {
+            sidenav.classList.add('translate-x-0');
+            sidenav.classList.remove('-translate-x-full');
+            if (sidenav_close_button) sidenav_close_button.classList.add('hidden');
+        } else {
+            sidenav.classList.remove('translate-x-0');
+            sidenav.classList.add('-translate-x-full');
+        }
+    });
+}
+
+// 6. Inicialización centralizada
+document.addEventListener("DOMContentLoaded", function(event) {
+    initializeSidenavBurger();
+    Alpine.start();
+    console.log('✅ App.js y Soft UI inicializados correctamente.');
+});

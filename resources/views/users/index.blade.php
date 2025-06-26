@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-    <div class="w-full px-6 py-6 mx-auto">
+    <div class="w-full px-6 py-6 mx-auto text-lg">
         <div class="container-fluid py-4">
             <h1 class="mb-0 text-2xl font-semibold text-slate-700">LISTA DE USUARIOS</h1>
         </div>
@@ -176,8 +176,11 @@
                                     @endforelse
                                 </tbody>
                             </table>
-                            <div class="mt-4">
-                                {{ $usuarios->links() }}
+                            <!-- Paginación -->
+                            <div class="flex justify-center items-center mt-6 px-6">
+                                <div class="w-full max-w-4xl">
+                                    {{ $usuarios->appends(request()->input())->links('pagination::tailwind') }}
+                                </div>
                             </div>
                         </div>
                     </div>

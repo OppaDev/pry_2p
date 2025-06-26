@@ -1,5 +1,6 @@
-var pageName = page;
-var sidenav_target = to_build + "pages/" + pageName + ".html";
+// Guardar variable global 'page' y 'to_build' para compatibilidad
+var pageName = (typeof page !== 'undefined' ? page : (window.page || window.location.pathname.split("/").pop().split(".")[0] || 'dashboard'));
+var sidenav_target = ((typeof to_build !== 'undefined' ? to_build : window.to_build) + "pages/" + pageName + ".html");
 
 var fixedPlugin = document.querySelector("[fixed-plugin]");
 var fixedPluginButton = document.querySelector("[fixed-plugin-button]");
@@ -32,52 +33,54 @@ var white_sidenav_icons = ["bg-gray-200"];
 var sidenav_highlight = document.querySelector("a[href=" + CSS.escape(sidenav_target) + "]");
 
 // fixed plugin toggle
-if (pageName != "rtl") {
-  fixedPluginButton.addEventListener("click", function () {
-    fixedPluginCard.classList.toggle("-right-90");
-    fixedPluginCard.classList.toggle("right-0");
-  });
+if (fixedPlugin && fixedPluginButton && fixedPluginButtonNav && fixedPluginCard && fixedPluginCloseButton) {
+  if (pageName != "rtl") {
+    fixedPluginButton.addEventListener("click", function () {
+      fixedPluginCard.classList.toggle("-right-90");
+      fixedPluginCard.classList.toggle("right-0");
+    });
 
-  fixedPluginButtonNav.addEventListener("click", function () {
-    fixedPluginCard.classList.toggle("-right-90");
-    fixedPluginCard.classList.toggle("right-0");
-  });
+    fixedPluginButtonNav.addEventListener("click", function () {
+      fixedPluginCard.classList.toggle("-right-90");
+      fixedPluginCard.classList.toggle("right-0");
+    });
 
-  fixedPluginCloseButton.addEventListener("click", function () {
-    fixedPluginCard.classList.toggle("-right-90");
-    fixedPluginCard.classList.toggle("right-0");
-  });
+    fixedPluginCloseButton.addEventListener("click", function () {
+      fixedPluginCard.classList.toggle("-right-90");
+      fixedPluginCard.classList.toggle("right-0");
+    });
 
-  window.addEventListener("click", function (e) {
-    if (!fixedPlugin.contains(e.target) && !fixedPluginButton.contains(e.target) && !fixedPluginButtonNav.contains(e.target)) {
-      if (fixedPluginCard.classList.contains("right-0")) {
-        fixedPluginCloseButton.click();
+    window.addEventListener("click", function (e) {
+      if (!fixedPlugin.contains(e.target) && !fixedPluginButton.contains(e.target) && !fixedPluginButtonNav.contains(e.target)) {
+        if (fixedPluginCard.classList.contains("right-0")) {
+          fixedPluginCloseButton.click();
+        }
       }
-    }
-  });
-} else {
-  fixedPluginButton.addEventListener("click", function () {
-    fixedPluginCard.classList.toggle("-left-90");
-    fixedPluginCard.classList.toggle("left-0");
-  });
+    });
+  } else {
+    fixedPluginButton.addEventListener("click", function () {
+      fixedPluginCard.classList.toggle("-left-90");
+      fixedPluginCard.classList.toggle("left-0");
+    });
 
-  fixedPluginButtonNav.addEventListener("click", function () {
-    fixedPluginCard.classList.toggle("-left-90");
-    fixedPluginCard.classList.toggle("left-0");
-  });
+    fixedPluginButtonNav.addEventListener("click", function () {
+      fixedPluginCard.classList.toggle("-left-90");
+      fixedPluginCard.classList.toggle("left-0");
+    });
 
-  fixedPluginCloseButton.addEventListener("click", function () {
-    fixedPluginCard.classList.toggle("-left-90");
-    fixedPluginCard.classList.toggle("left-0");
-  });
+    fixedPluginCloseButton.addEventListener("click", function () {
+      fixedPluginCard.classList.toggle("-left-90");
+      fixedPluginCard.classList.toggle("left-0");
+    });
 
-  window.addEventListener("click", function (e) {
-    if (!fixedPlugin.contains(e.target) && !fixedPluginButton.contains(e.target) && !fixedPluginButtonNav.contains(e.target)) {
-      if (fixedPluginCard.classList.contains("left-0")) {
-        fixedPluginCloseButton.click();
+    window.addEventListener("click", function (e) {
+      if (!fixedPlugin.contains(e.target) && !fixedPluginButton.contains(e.target) && !fixedPluginButtonNav.contains(e.target)) {
+        if (fixedPluginCard.classList.contains("left-0")) {
+          fixedPluginCloseButton.click();
+        }
       }
-    }
-  });
+    });
+  }
 }
 
 // color sidenav

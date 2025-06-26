@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, ini                  <ul dropdown-menu class="text-lg duration-250 min-w-44 pointer-events-none absolute right-0 top-0 z-50 origin-top list-none rounded-lg border-0 border-solid border-transparent bg-white bg-clip-padding px-2 py-4 text-left text-slate-500 opacity-0 transition-all lg:absolute lg:right-0 lg:left-auto lg:mt-2 lg:block lg:cursor-pointer lg:shadow-soft-3xl transform-dropdown";ial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
@@ -88,7 +88,7 @@
     </aside>
 
     <!-- 📱 MAIN CONTENT -->
-    <main class="ease-soft-in-out xl:ml-68.5 relative h-full max-h-screen rounded-xl transition-all duration-200">
+    <main class="ease-soft-in-out xl:ml-68.5 relative h-full max-h-screen rounded-xl transition-all duration-200 text-lg">
       <!-- 🔝 NAVBAR -->
       <nav class="relative flex flex-wrap items-center justify-between px-0 py-2 mx-6 transition-all shadow-none duration-250 ease-soft-in rounded-2xl lg:flex-nowrap lg:justify-start" navbar-main navbar-scroll="true">
         <div class="flex items-center justify-between w-full px-4 py-1 mx-auto flex-wrap-inherit">
@@ -158,7 +158,7 @@
                   </ul>
                 </div>  
               </li>
-              <li class="flex items-center px-4">
+              <li class="flex items-center px-4 xl:hidden">
                 <a href="javascript:;" class="ease-nav-brand p-0 transition-colors text-sm" sidenav-trigger>
                   <div class="w-4.5 overflow-hidden">
                     <i class="ease-soft mb-0.75 relative block h-0.5 rounded-sm bg-slate-500 transition-all"></i>

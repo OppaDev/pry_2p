@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-    <div class="w-full px-6 py-6 mx-auto">
+    <div class="w-full px-6 py-6 mx-auto text-lg">
         <div class="container-fluid py-4">
             <h1 class="mb-0 text-2xl font-semibold text-slate-700">LISTA DE PRODUCTOS</h1>
         </div>
@@ -188,16 +188,18 @@
                                     @endforelse
                                 </tbody>
                             </table>
-                            <div class="mt-4">
-                                {{ $productos->links() }}
+                            <div class="flex justify-between items-center mt-6 p-6 pt-0 bg-gray-50/50 rounded-b-2xl border-t border-gray-100">
+                                <div class="flex-1">
+                                    {{ $productos->links() }}
+                                </div>
+                                <div class="ml-4">
+                                    <a href="{{ route('productos.create') }}" 
+                                        class="inline-block px-8 py-2 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-none cursor-pointer leading-pro text-lg ease-soft-in tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 bg-150 bg-x-25 border-purple-700 text-white hover:scale-102 hover:shadow-soft-xs active:opacity-85">
+                                        <i class="fas fa-plus mr-2"></i>
+                                        Nuevo Producto
+                                    </a>
+                                </div>
                             </div>
-                        </div>                        <div class="p-6 pt-0">
-                            <a href="{{ route('productos.create') }}" 
-                                class="inline-block px-8 py-2 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-none cursor-pointer leading-pro text-lg ease-soft-in tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 bg-150 bg-x-25 border-purple-700 text-white hover:scale-102 hover:shadow-soft-xs active:opacity-85">
-                                <i class="fas fa-plus mr-2"></i>
-                                Nuevo Producto
-                            </a>
-                        </div>
                     </div>
                 </div>
             </div>
