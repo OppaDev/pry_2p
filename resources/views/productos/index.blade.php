@@ -18,6 +18,20 @@
                     </div>
                 </div>
             @endif
+            
+            <!-- Mostrar mensajes de error -->
+            @if(session('error'))
+                <div class="w-full max-w-full px-3 mb-4">
+                    <div class="relative w-full p-4 text-white bg-red-500 rounded-lg shadow-soft-xl">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-circle mr-3"></i>
+                            <div>
+                                <strong>Error:</strong> {{ session('error') }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
             <div class="flex-none w-full max-w-full px-3">
                 <div
                     class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-soft-xl rounded-2xl bg-clip-border">
@@ -127,7 +141,7 @@
                                 </thead>
                                 <tbody>
                                     @forelse ($productos as $producto)
-                                        <tr>
+                                        <tr class="table-row-hover transition-all duration-200">
                                             <td
                                                 class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                                 <div class="flex px-2 py-1">
@@ -162,10 +176,18 @@
                                             </td>
                                             <td
                                                 class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                                {{-- <a href="{{ route('producto.show', $producto->id) }}"
-                                                    class="text-lg font-semibold leading-tight text-blue-500 hover:text-blue-700 mr-3">Ver</a> --}}
-                                                <a href="{{ route('productos.edit', $producto->id) }}"
-                                                    class="text-lg font-semibold leading-tight text-slate-400 hover:text-slate-600">Editar</a>
+                                                <div class="flex items-center space-x-2 action-buttons">
+                                                    <a href="{{ route('productos.edit', $producto->id) }}"
+                                                        class="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm hover:shadow-md btn-soft-transition">
+                                                        <i class="fas fa-edit mr-1"></i>
+                                                        Editar
+                                                    </a>
+                                                    <button type="button" onclick="openModal('delete-producto-{{ $producto->id }}-modal')"
+                                                        class="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-red-500 to-red-600 rounded-lg hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-red-200 transition-all duration-200 shadow-sm hover:shadow-md btn-soft-transition">
+                                                        <i class="fas fa-trash mr-1"></i>
+                                                        Eliminar
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     @empty
@@ -205,6 +227,20 @@
             </div>
         </div>
     </div>
+    
+    <!-- Modales de Confirmación de Eliminación -->
+    @foreach($productos as $producto)
+        @include('components.delete-modal', [
+            'modalId' => 'delete-producto-' . $producto->id . '-modal',
+            'title' => 'Confirmar Eliminación de Producto',
+            'message' => '¿Estás seguro de que deseas eliminar este producto? Esta acción eliminará permanentemente toda la información del producto.',
+            'itemName' => $producto->nombre,
+            'itemDetails' => 'Código: ' . $producto->codigo . ' | Precio: $' . number_format($producto->precio, 2),
+            'deleteRoute' => route('productos.destroy', $producto->id),
+            'confirmText' => 'Eliminar Producto'
+        ])
+    @endforeach
+    
     <script>
         function changePerPage(value) {
             const url = new URL(window.location);

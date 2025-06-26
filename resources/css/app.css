@@ -3,6 +3,8 @@
 @import "./soft-ui/nucleo-svg.css";
 @import "./soft-ui/soft-ui-dashboard-tailwind.css";
 
+/* 2. Importar estilos de modales personalizados */
+@import "./modal-styles.css";
 
 /* 3. Cargar los componentes y utilidades de Tailwind (estos son globales) */
 @tailwind base;

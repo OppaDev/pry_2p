@@ -6,6 +6,9 @@ import Alpine from 'alpinejs';
 import PerfectScrollbar from 'perfect-scrollbar';
 import Chart from 'chart.js/auto';
 
+// Importar mejoras de modal
+import './modal-enhancements';
+
 // 2. Hacer las librerías globales
 window.Alpine = Alpine;
 window.PerfectScrollbar = PerfectScrollbar;

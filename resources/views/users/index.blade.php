@@ -5,6 +5,33 @@
             <h1 class="mb-0 text-2xl font-semibold text-slate-700">LISTA DE USUARIOS</h1>
         </div>
         <div class="flex flex-wrap -mx-3">
+            <!-- Mostrar mensajes de éxito -->
+            @if(session('success'))
+                <div class="w-full max-w-full px-3 mb-4">
+                    <div class="relative w-full p-4 text-white bg-green-500 rounded-lg shadow-soft-xl">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle mr-3"></i>
+                            <div>
+                                <strong>Éxito:</strong> {{ session('success') }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+            
+            <!-- Mostrar mensajes de error -->
+            @if(session('error'))
+                <div class="w-full max-w-full px-3 mb-4">
+                    <div class="relative w-full p-4 text-white bg-red-500 rounded-lg shadow-soft-xl">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-circle mr-3"></i>
+                            <div>
+                                <strong>Error:</strong> {{ session('error') }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
             <div class="flex-none w-full max-w-full px-3">
                 <div
                     class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-soft-xl rounded-2xl bg-clip-border">
@@ -111,7 +138,7 @@
                                 </thead>
                                 <tbody>
                                     @forelse ($usuarios as $user)
-                                        <tr>
+                                        <tr class="table-row-hover transition-all duration-200">
                                             <td
                                                 class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                                 <div class="flex px-2 py-1">
@@ -147,14 +174,28 @@
                                                 class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                                 <span
                                                     class="text-lg font-semibold leading-tight text-slate-400">{{ $user->updated_at->format('d/m/y') }}</span>
-                                            </td>
-                                            <td
-                                                class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                                {{-- <a href="{{ route('user.show', $user->id) }}"
-                                                    class="text-lg font-semibold leading-tight text-blue-500 hover:text-blue-700 mr-3">Ver</a> --}}
-                                                <a href="{{ route('users.edit', $user->id) }}"
-                                                    class="text-lg font-semibold leading-tight text-slate-400 hover:text-slate-600">Editar</a>
-                                            </td>
+                                            </td>                            <td
+                                class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                <div class="flex items-center space-x-2 action-buttons">
+                                    <a href="{{ route('users.edit', $user->id) }}"
+                                        class="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm hover:shadow-md btn-soft-transition">
+                                        <i class="fas fa-edit mr-1"></i>
+                                        Editar
+                                    </a>
+                                    @if(auth()->id() !== $user->id)
+                                        <button type="button" onclick="openModal('delete-user-{{ $user->id }}-modal')"
+                                            class="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-red-500 to-red-600 rounded-lg hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-red-200 transition-all duration-200 shadow-sm hover:shadow-md btn-soft-transition">
+                                            <i class="fas fa-trash mr-1"></i>
+                                            Eliminar
+                                        </button>
+                                    @else
+                                        <span class="px-3 py-1.5 text-sm font-semibold text-slate-400 bg-gradient-to-r from-slate-200 to-slate-300 rounded-lg cursor-not-allowed">
+                                            <i class="fas fa-lock mr-1"></i>
+                                            Tu cuenta
+                                        </span>
+                                    @endif
+                                </div>
+                            </td>
                                         </tr>
                                     @empty
                                         <tr>
@@ -177,7 +218,7 @@
                                 </tbody>
                             </table>
                             <!-- Paginación -->
-                            <div class="flex justify-center items-center mt-6 px-6">
+                            <div class="flex items-center mt-6 px-6">
                                 <div class="w-full max-w-4xl">
                                     {{ $usuarios->appends(request()->input())->links('pagination::tailwind') }}
                                 </div>
@@ -188,6 +229,22 @@
             </div>
         </div>
     </div>
+    
+    <!-- Modales de Confirmación de Eliminación -->
+    @foreach($usuarios as $user)
+        @if(auth()->id() !== $user->id)
+            @include('components.delete-modal', [
+                'modalId' => 'delete-user-' . $user->id . '-modal',
+                'title' => 'Confirmar Eliminación de Usuario',
+                'message' => '¿Estás seguro de que deseas eliminar este usuario? Esta acción eliminará permanentemente toda la información asociada.',
+                'itemName' => $user->name,
+                'itemDetails' => $user->email,
+                'deleteRoute' => route('users.destroy', $user->id),
+                'confirmText' => 'Eliminar Usuario'
+            ])
+        @endif
+    @endforeach
+    
     <script>
         function changePerPage(value) {
             const url = new URL(window.location);

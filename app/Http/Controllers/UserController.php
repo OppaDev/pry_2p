@@ -109,6 +109,17 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        try {
+            // Verificar que no sea el usuario autenticado
+            if (auth()->id() === $user->id) {
+                return redirect()->route('users.index')->with('error', 'No puedes eliminar tu propia cuenta.');
+            }
+
+            $user->delete();
+            
+            return redirect()->route('users.index')->with('success', 'Usuario eliminado exitosamente.');
+        } catch (\Exception $e) {
+            return redirect()->route('users.index')->with('error', 'Error al eliminar el usuario: ' . $e->getMessage());
+        }
     }
 }
