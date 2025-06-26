@@ -1,128 +1,19 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('assets/img/apple-icon.png') }}" />
-    <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon.png') }}" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>{{ config('app.name', 'Laravel') }}</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     
-    <!--     Fonts and icons     -->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
-    <!-- Font Awesome Icons -->
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
-    <!-- Nucleo Icons -->
-    <link href="{{ asset('assets/css/nucleo-icons.css')}}" rel="stylesheet" />
-    <link href="{{ asset('assets/css/nucleo-svg.css')}}" rel="stylesheet" />
-    
-    <!-- Popper -->
-    <script src="https://unpkg.com/@popperjs/core@2"></script>
-    
-    <!-- 🎨 ORDEN CORRECTO DE CARGA DE ESTILOS -->
-    <!-- 1. Soft UI Dashboard CSS (Base) -->
-    <link href="{{ asset('assets/css/soft-ui-dashboard-tailwind.css?v=1.0.5')}}" rel="stylesheet" /> 
-    
-    <!-- 2. Laravel Vite CSS (Tailwind + Personalizaciones) -->
+    <!-- Scripts y Estilos de Vite (Ahora controla TODO) -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
-    <!-- 3. Estilos adicionales para compatibilidad -->
-    <style>
-        /* 🔧 CORRECCIONES ESPECÍFICAS PARA COMPATIBILIDAD */
-        
-        /* Asegurar que las clases con punto funcionen correctamente */
-        .h-5\.75 { height: 1.4375rem !important; }
-        .w-5\.75 { width: 1.4375rem !important; }
-        .mr-1\.25 { margin-right: 0.3125rem !important; }
-        .before\:text-5\.5::before { font-size: 1.375rem !important; }
-        .before\:right-7\.5::before { right: 1.875rem !important; }
-        
-        /* Correcciones para el dropdown del usuario */
-        [dropdown-menu] {
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            transform-origin: top !important;
-        }
-        
-        [dropdown-menu].opacity-0 {
-            opacity: 0 !important;
-            pointer-events: none !important;
-            transform: perspective(999px) rotateX(-10deg) translateZ(0) translate3d(0,37px,0) !important;
-        }
-        
-        [dropdown-menu]:not(.opacity-0) {
-            opacity: 1 !important;
-            pointer-events: auto !important;
-            transform: perspective(999px) rotateX(0deg) translateZ(0) translate3d(0,37px,5px) !important;
-        }
-        
-        /* Asegurar que el sidenav funcione correctamente */
-        aside {
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        }
-        
-        @media (max-width: 1279px) {
-            aside.-translate-x-full {
-                transform: translateX(-100%) !important;
-            }
-            
-            aside.translate-x-0 {
-                transform: translateX(0) !important;
-            }
-        }
-        
-        @media (min-width: 1280px) {
-            aside {
-                transform: translateX(0) !important;
-            }
-        }
-        
-        /* Correcciones para botones y elementos interactivos */
-        .hover\:scale-102:hover {
-            transform: scale(1.02) !important;
-        }
-        
-        .active\:opacity-85:active {
-            opacity: 0.85 !important;
-        }
-        
-        /* Asegurar que los gradientes funcionen */
-        .bg-gradient-to-tl {
-            background-image: linear-gradient(310deg, var(--tw-gradient-from), var(--tw-gradient-to)) !important;
-        }
-        
-        /* Corrección para el configurador */
-        [fixed-plugin-card] {
-            transition: right 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        }
-        
-        [fixed-plugin-card].-right-90 {
-            right: -22.5rem !important;
-        }
-        
-        [fixed-plugin-card].right-0 {
-            right: 0 !important;
-        }
-        
-        /* Asegurar visibilidad de elementos */
-        .pointer-events-none {
-            pointer-events: none !important;
-        }
-        
-        .pointer-events-auto {
-            pointer-events: auto !important;
-        }
-        
-        /* Correcciones para responsive */
-        .flex-wrap-inherit {
-            flex-wrap: inherit !important;
-        }
-        
-        /* Asegurar que los pseudo-elementos funcionen */
-        .before\:content-\[\'\\f0d8\'\]::before {
-            content: '\f0d8' !important;
-            font-family: 'Font Awesome 5 Free' !important;
-            font-weight: 900 !important;
-        }
-    </style>
   </head>
 
   <body class="m-0 font-sans antialiased font-normal text-base leading-default bg-gray-50 text-slate-500">
@@ -287,14 +178,4 @@
       @yield('content')
     </main>
   </body>
-
-  <!-- 🔧 SCRIPTS -->
-  <!-- Plugin for charts -->
-  <script src="{{ asset('assets/js/plugins/chartjs.min.js') }}" async></script>
-  <!-- Plugin for scrollbar -->
-  <script src="{{ asset('assets/js/plugins/perfect-scrollbar.min.js')}}" async></script>
-  <!-- GitHub button -->
-  <script async defer src="https://buttons.github.io/buttons.js"></script>
-  <!-- Main script file -->
-  <script src="{{asset('assets/js/soft-ui-dashboard-tailwind.js?v=1.0.5')}}" async></script>
 </html>

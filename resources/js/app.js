@@ -202,3 +202,15 @@ window.SoftUICompatibility = {
     toggleSidenav,
     closeSidenav
 };
+
+import './soft-ui/perfect-scrollbar.js';
+import './soft-ui/chart-1.js'; // Asumiendo que necesita Chart.js, que se debe cargar antes
+import './soft-ui/chart-2.js';
+import './soft-ui/dropdown.js';
+import './soft-ui/fixed-plugin.js';
+import './soft-ui/nav-pills.js';
+import './soft-ui/navbar-collapse.js';
+import './soft-ui/navbar-sticky.js';
+import './soft-ui/sidenav-burger.js';
+import './soft-ui/tooltips.js';
+import './soft-ui/soft-ui-dashboard-tailwind.js';
