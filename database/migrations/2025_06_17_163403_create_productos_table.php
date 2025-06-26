@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('cantidad');
             $table->decimal('precio', 10, 2);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

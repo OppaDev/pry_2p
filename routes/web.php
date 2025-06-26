@@ -22,6 +22,11 @@ Route::middleware('auth')->group(function () {
     
     // Rutas resource para productos (plural para consistencia con el layout)
     Route::resource('productos', ProductoController::class);
+    
+    // Rutas adicionales para productos eliminados
+    Route::get('productos-eliminados', [ProductoController::class, 'deletedProducts'])->name('productos.deleted');
+    Route::patch('productos/{id}/restore', [ProductoController::class, 'restore'])->name('productos.restore');
+    Route::delete('productos/{id}/force-delete', [ProductoController::class, 'forceDelete'])->name('productos.forceDelete');
 });
 
 require __DIR__.'/auth.php';

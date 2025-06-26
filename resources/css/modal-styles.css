@@ -60,9 +60,25 @@
     transform: translateY(-1px);
 }
 
+.modal-button-restore {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    box-shadow: 0 4px 14px 0 rgba(34, 197, 94, 0.39), 0 2px 4px 0 rgba(34, 197, 94, 0.1);
+}
+
+.modal-button-restore:hover {
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    box-shadow: 0 20px 27px 0 rgba(34, 197, 94, 0.2), 0 2px 4px 0 rgba(34, 197, 94, 0.1);
+    transform: translateY(-1px);
+}
+
 .modal-info-box {
     background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
     border: 1px solid #fecaca;
+}
+
+.modal-success-box {
+    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+    border: 1px solid #86efac;
 }
 
 .modal-item-details {
@@ -91,6 +107,17 @@
     transition: all 0.2s ease-in-out;
 }
 
+/* Estilos especiales para productos eliminados */
+.table-row-deleted {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border-left: 4px solid #ef4444;
+}
+
+.table-row-deleted:hover {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.1), 0 2px 4px -1px rgba(239, 68, 68, 0.06);
+}
+
 /* Estilos para botones de acción en tabla */
 .action-buttons {
     opacity: 0.7;
@@ -99,4 +126,25 @@
 
 .table-row-hover:hover .action-buttons {
     opacity: 1;
+}
+
+/* Pulso suave para elementos importantes */
+@keyframes soft-pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+.pulse-soft {
+    animation: soft-pulse 2s infinite;
+}
+
+/* Efectos de enfoque mejorados */
+.focus-soft:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 0 0 1px rgba(59, 130, 246, 0.2);
+    transition: box-shadow 0.15s ease-in-out;
 }

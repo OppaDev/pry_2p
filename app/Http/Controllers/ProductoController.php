@@ -95,6 +95,73 @@ class ProductoController extends Controller
     }
 
     /**
+     * Display a listing of deleted products.
+     */
+    public function deletedProducts(Request $request)
+    {
+        $request->validate([
+            'per_page' => 'nullable|integer|in:5,10,15,25,50',
+            'search' => 'nullable|string|max:255'
+        ], [
+            'per_page.integer' => 'El valor debe ser un número entero.',
+            'per_page.in' => 'El valor debe ser uno de los siguientes: 5, 10, 15, 25, 50.',
+            'search.string' => 'El término de búsqueda debe ser una cadena de texto.',
+            'search.max' => 'El término de búsqueda no puede tener más de 255 caracteres.'
+        ]);
+        
+        $perPage = $request->get('per_page', 10);
+        $search = $request->get('search');
+        
+        $query = Producto::onlyTrashed()->select(['id', 'nombre', 'codigo', 'cantidad', 'precio', 'created_at', 'updated_at', 'deleted_at']);
+        
+        if (!empty($search)) {
+            $query->where(function($q) use ($search) {
+                $q->where('nombre', 'LIKE', '%' . $search . '%')
+                  ->orWhere('codigo', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        $query->orderBy('deleted_at', 'desc');
+        
+        $data = array(
+            'productos' => $query->paginate($perPage)->withQueryString(),
+            'perPage' => $perPage,
+            'search' => $search
+        );
+        return view('productos.deleteProducts', $data);
+    }
+
+    /**
+     * Restore a soft deleted product.
+     */
+    public function restore($id)
+    {
+        try {
+            $producto = Producto::onlyTrashed()->findOrFail($id);
+            $producto->restore();
+            
+            return redirect()->route('productos.deleted')->with('success', 'Producto restaurado exitosamente.');
+        } catch (\Exception $e) {
+            return redirect()->route('productos.deleted')->with('error', 'Error al restaurar el producto: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Permanently delete a product.
+     */
+    public function forceDelete($id)
+    {
+        try {
+            $producto = Producto::onlyTrashed()->findOrFail($id);
+            $producto->forceDelete();
+            
+            return redirect()->route('productos.deleted')->with('success', 'Producto eliminado permanentemente.');
+        } catch (\Exception $e) {
+            return redirect()->route('productos.deleted')->with('error', 'Error al eliminar permanentemente el producto: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Show the form for editing the specified resource.
      */
     public function edit(Producto $producto)
