@@ -69,12 +69,12 @@ class ProductoController extends Controller
             
             // Crear producto dentro de la transacción
             $producto = Producto::create($request->only(['nombre', 'codigo', 'cantidad', 'precio']));
-            $producto->nombre = $request->nombre . rand(1, 10);
+            $producto->nombre = $request->nombre;
             $producto->save();
 
-            $user = Auth::user();
-            $user->name="Acutualizado";
-            $user->save();
+            // $user = Auth::user();
+            // $user->name="OppaDev";
+            // $user->save();
 
             DB::commit();
             
@@ -190,7 +190,7 @@ class ProductoController extends Controller
     public function destroy(Producto $producto)
     {
         try {
-            // Opcional: Verificar si el producto tiene dependencias
+            
             // if ($producto->hasRelatedData()) {
             //     return redirect()->route('productos.index')
             //         ->with('error', 'No se puede eliminar el producto porque tiene datos relacionados.');

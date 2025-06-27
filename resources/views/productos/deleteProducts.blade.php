@@ -11,35 +11,7 @@
                 </a>
             </div>
         </div>
-        <div class="flex flex-wrap -mx-3">
-            <!-- Mostrar mensajes de éxito -->
-            @if(session('success'))
-                <div class="w-full max-w-full px-3 mb-4">
-                    <div class="relative w-full p-4 text-white bg-green-500 rounded-lg shadow-soft-xl">
-                        <div class="flex items-center">
-                            <i class="fas fa-check-circle mr-3"></i>
-                            <div>
-                                <strong>Éxito:</strong> {{ session('success') }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endif
-            
-            <!-- Mostrar mensajes de error -->
-            @if(session('error'))
-                <div class="w-full max-w-full px-3 mb-4">
-                    <div class="relative w-full p-4 text-white bg-red-500 rounded-lg shadow-soft-xl">
-                        <div class="flex items-center">
-                            <i class="fas fa-exclamation-circle mr-3"></i>
-                            <div>
-                                <strong>Error:</strong> {{ session('error') }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endif
-            
+        <div class="flex flex-wrap -mx-3">            
             <div class="flex-none w-full max-w-full px-3">
                 <div
                     class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-soft-xl rounded-2xl bg-clip-border">
