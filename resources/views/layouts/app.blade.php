@@ -61,6 +61,31 @@
             </a>
           </li>
 
+          <!-- Papelera con dropdown nativo -->
+          <li class="mt-0.5 w-full">
+            <a class="py-2.7 text-lg ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 cursor-pointer transition-colors {{ request()->routeIs('productos.deleted') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-700' }}" 
+               onclick="togglePapeleraDropdown()" id="papelera-trigger">
+              <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
+                <i class="fas fa-trash text-slate-700"></i>
+              </div>
+              <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Papelera</span>
+              <i class="fas fa-chevron-down ml-auto transition-transform duration-200 text-slate-400" id="papelera-chevron"></i>
+            </a>
+            
+            <!-- Submenu estilo sidebar -->
+            <ul class="pl-0 ml-6 mt-1 list-none h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out" id="papelera-submenu">
+              <li class="mt-0.5 w-full">
+                <a class="py-2.7 text-base ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('productos.deleted') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-600 hover:text-slate-700' }}" 
+                   href="{{ route('productos.deleted') }}">
+                  <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
+                    <i class="fas fa-box text-xs text-slate-600"></i>
+                  </div>
+                  <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Papelera Productos</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+
           <li class="w-full mt-4">
             <h6 class="pl-6 ml-2 text-xs font-bold leading-tight uppercase opacity-60">Cuenta</h6>
           </li>
@@ -202,5 +227,41 @@
             @endif
       @yield('content')
     </main>
+    
+    <script>
+        // Función para manejar el dropdown de papelera
+        function togglePapeleraDropdown() {
+            const submenu = document.getElementById('papelera-submenu');
+            const chevron = document.getElementById('papelera-chevron');
+            
+            if (submenu.style.height === '0px' || submenu.style.height === '') {
+                // Expandir
+                submenu.style.height = 'auto';
+                const height = submenu.scrollHeight + 'px';
+                submenu.style.height = '0px';
+                
+                // Forzar reflow y animar
+                submenu.offsetHeight;
+                submenu.style.height = height;
+                submenu.style.opacity = '1';
+                chevron.classList.add('rotate-180');
+            } else {
+                // Colapsar
+                submenu.style.height = '0px';
+                submenu.style.opacity = '0';
+                chevron.classList.remove('rotate-180');
+            }
+        }
+        
+        // Auto-expandir si estamos en una ruta de papelera
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            if (currentPath.includes('deleted') || currentPath.includes('papelera')) {
+                setTimeout(() => {
+                    togglePapeleraDropdown();
+                }, 100);
+            }
+        });
+    </script>
   </body>
 </html>
