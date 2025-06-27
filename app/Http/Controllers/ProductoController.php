@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use PhpParser\Node\Stmt\TryCatch;
 
 class ProductoController extends Controller
@@ -189,11 +190,25 @@ class ProductoController extends Controller
     public function destroy(Producto $producto)
     {
         try {
+            // Opcional: Verificar si el producto tiene dependencias
+            // if ($producto->hasRelatedData()) {
+            //     return redirect()->route('productos.index')
+            //         ->with('error', 'No se puede eliminar el producto porque tiene datos relacionados.');
+            // }
+            
             $producto->delete();
             
-            return redirect()->route('productos.index')->with('success', 'Producto eliminado exitosamente.');
+            return redirect()->route('productos.index')
+                ->with('success', 'Producto eliminado exitosamente.');
+                
         } catch (\Exception $e) {
-            return redirect()->route('productos.index')->with('error', 'Error al eliminar el producto: ' . $e->getMessage());
+            Log::error('Error al eliminar producto: ' . $e->getMessage(), [
+                'producto_id' => $producto->id,
+                'user_id' => Auth::id()
+            ]);
+            
+            return redirect()->route('productos.index')
+                ->with('error', 'Error al eliminar el producto. Por favor, intenta nuevamente.');
         }
     }
 }

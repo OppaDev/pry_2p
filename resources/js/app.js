@@ -6,22 +6,23 @@ import Alpine from 'alpinejs';
 import PerfectScrollbar from 'perfect-scrollbar';
 import Chart from 'chart.js/auto';
 
-// Importar mejoras de modal
-import './modal-enhancements';
+// 2. Importar nuestros componentes personalizados
+import './modal-manager';
 
-// 2. Hacer las librerías globales
+
+// 3. Hacer las librerías globales
 window.Alpine = Alpine;
 window.PerfectScrollbar = PerfectScrollbar;
 window.Chart = Chart;
 
-// 3. Definir variables globales dummy para compatibilidad
+// 4. Definir variables globales dummy para compatibilidad
 window.page = window.page || window.location.pathname.split("/").pop().split(".")[0] || 'dashboard';
 var page = window.page;
 window.aux = window.location.pathname.split("/");
 window.to_build = (window.aux.includes('pages') ? '../' : './');
 window.root = window.location.pathname.split("/");
 
-// 4. Importar scripts de la plantilla (excepto el del burger)
+// 5. Importar scripts de la plantilla (excepto el del burger)
 import './soft-ui/nav-pills.js';
 import './soft-ui/dropdown.js';
 // Comentados para evitar conflictos con Soft UI legacy
@@ -32,7 +33,7 @@ import './soft-ui/tooltips.js';
 import './soft-ui/chart-1.js';
 import './soft-ui/chart-2.js';
 
-// 5. Lógica del Sidenav integrada y robusta
+// 6. Lógica del Sidenav integrada y robusta
 function initializeSidenavBurger() {
     const sidenav = document.querySelector("aside");
     const sidenav_trigger = document.querySelector("[sidenav-trigger]");
@@ -86,7 +87,7 @@ function initializeSidenavBurger() {
     });
 }
 
-// 6. Inicialización centralizada
+// 7. Inicialización centralizada
 document.addEventListener("DOMContentLoaded", function(event) {
     initializeSidenavBurger();
     Alpine.start();

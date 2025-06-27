@@ -233,18 +233,20 @@
         </div>
     </div>
     
-    <!-- Modales de Confirmación de Eliminación -->
-    @foreach($productos as $producto)
-        @include('components.delete-modal', [
-            'modalId' => 'delete-producto-' . $producto->id . '-modal',
-            'title' => 'Confirmar Eliminación de Producto',
-            'message' => '¿Estás seguro de que deseas eliminar este producto? Esta acción eliminará permanentemente toda la información del producto.',
-            'itemName' => $producto->nombre,
-            'itemDetails' => 'Código: ' . $producto->codigo . ' | Precio: $' . number_format($producto->precio, 2),
-            'deleteRoute' => route('productos.destroy', $producto->id),
-            'confirmText' => 'Eliminar Producto'
-        ])
-    @endforeach
+    <!-- Modales de Confirmación de Eliminación - Solo cargar cuando hay productos -->
+    @if($productos->count() > 0)
+        @foreach($productos as $producto)
+            @include('components.delete-modal', [
+                'modalId' => 'delete-producto-' . $producto->id . '-modal',
+                'title' => 'Confirmar Eliminación de Producto',
+                'message' => '¿Estás seguro de que deseas eliminar este producto? Esta acción lo enviará a la papelera y podrá ser restaurado posteriormente.',
+                'itemName' => $producto->nombre,
+                'itemDetails' => 'Código: ' . $producto->codigo . ' | Precio: $' . number_format($producto->precio, 2),
+                'deleteRoute' => route('productos.destroy', $producto->id),
+                'confirmText' => 'Mover a Papelera'
+            ])
+        @endforeach
+    @endif
     
     <script>
         function changePerPage(value) {

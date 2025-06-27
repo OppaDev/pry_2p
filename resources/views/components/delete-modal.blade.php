@@ -13,7 +13,7 @@
                         </div>
                         <div>
                             <h3 class="text-xl font-bold text-slate-800 leading-tight">{{ $title }}</h3>
-                            <p class="text-sm text-slate-500 mt-1">Esta acción no se puede deshacer</p>
+                            <p class="text-sm text-slate-500 mt-1">Se moverá a la papelera y podrá ser restaurado</p>
                         </div>
                     </div>
                     <button type="button" onclick="closeModal('{{ $modalId }}')" 
@@ -46,7 +46,7 @@
                         <i class="fas fa-times mr-2"></i>
                         Cancelar
                     </button>
-                    <form method="POST" action="{{ $deleteRoute }}" class="inline-block">
+                    <form method="POST" action="{{ $deleteRoute }}" class="inline-block delete-form">
                         @csrf
                         @method('DELETE')
                         <button type="submit"
@@ -60,83 +60,3 @@
         </div>
     </div>
 </div>
-
-<script>
-function openModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-        
-        // Añadir clase para backdrop
-        modal.classList.add('modal-backdrop');
-        
-        // Animación de entrada más suave
-        requestAnimationFrame(() => {
-            const modalContent = modal.querySelector('.modal-content');
-            if (modalContent) {
-                modalContent.style.opacity = '0';
-                modalContent.style.transform = 'translateY(-20px) scale(0.95)';
-                
-                requestAnimationFrame(() => {
-                    modalContent.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
-                    modalContent.style.opacity = '1';
-                    modalContent.style.transform = 'translateY(0) scale(1)';
-                });
-            }
-        });
-    }
-}
-
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        const modalContent = modal.querySelector('.modal-content');
-        if (modalContent) {
-            modalContent.style.transition = 'all 0.2s ease-in-out';
-            modalContent.style.opacity = '0';
-            modalContent.style.transform = 'translateY(-10px) scale(0.95)';
-        }
-        
-        setTimeout(() => {
-            modal.classList.add('hidden');
-            modal.classList.remove('modal-backdrop');
-            document.body.style.overflow = 'auto';
-            
-            // Reset styles
-            if (modalContent) {
-                modalContent.style.opacity = '';
-                modalContent.style.transform = '';
-                modalContent.style.transition = '';
-            }
-        }, 200);
-    }
-}
-
-// Cerrar modal al hacer clic fuera de él
-document.addEventListener('click', function(event) {
-    if (event.target.classList.contains('modal-backdrop')) {
-        const modalId = event.target.id;
-        if (modalId) {
-            closeModal(modalId);
-        }
-    }
-});
-
-// Cerrar modal con tecla ESC
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') {
-        const modals = document.querySelectorAll('[id$="-modal"]:not(.hidden)');
-        modals.forEach(modal => {
-            closeModal(modal.id);
-        });
-    }
-});
-
-// Prevenir que los clics dentro del modal lo cierren
-document.addEventListener('click', function(event) {
-    if (event.target.closest('.modal-content')) {
-        event.stopPropagation();
-    }
-});
-</script>
