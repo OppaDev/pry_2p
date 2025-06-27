@@ -56,9 +56,9 @@ window.root = window.location.pathname.split("/");
 import './soft-ui/nav-pills.js';
 import './soft-ui/dropdown.js';
 // Comentados para evitar conflictos con Soft UI legacy
-// import './soft-ui/navbar-collapse.js';
-// import './soft-ui/fixed-plugin.js';
-// import './soft-ui/navbar-sticky.js';
+//import './soft-ui/navbar-collapse.js';
+//import './soft-ui/fixed-plugin.js';
+//import './soft-ui/navbar-sticky.js';
 import './soft-ui/tooltips.js';
 import './soft-ui/chart-1.js';
 import './soft-ui/chart-2.js';

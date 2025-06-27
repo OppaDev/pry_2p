@@ -11,17 +11,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 4. Estilos adicionales para el dropdown del perfil */
-.transform-dropdown {
-  transform: scale(0.9) translate3d(0, -10px, 0);
-  opacity: 0;
-  transition: opacity 0.15s ease-out, transform 0.15s ease-out;
-}
 
-.transform-dropdown-show {
-  transform: scale(1) translate3d(0, 0, 0);
-  opacity: 1;
-  transition: opacity 0.15s ease-in, transform 0.15s ease-in;
-}
 
 

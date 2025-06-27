@@ -100,16 +100,6 @@
           </li>
         </ul>
       </div>
-
-      <div class="mx-4">
-        <!-- Información del usuario -->
-        <div class="p-4 rounded-lg bg-gradient-to-tl from-blue-600 to-cyan-400">
-          <div class="text-white">
-            <div class="text-lg font-semibold">{{ Auth::user()->name }}</div>
-            <div class="text-base opacity-70">{{ Auth::user()->email }}</div>
-          </div>
-        </div>
-      </div>
     </aside>
     
     <!-- 📱 MAIN CONTENT -->
