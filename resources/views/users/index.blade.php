@@ -150,6 +150,16 @@
                                             </td>                            <td
                                 class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                 <div class="flex items-center space-x-2 action-buttons">
+                                    <a href="{{ route('users.show', $user->id) }}"
+                                        class="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-lg hover:from-indigo-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-200 transition-all duration-200 shadow-sm hover:shadow-md btn-soft-transition">
+                                        <i class="fas fa-eye mr-1"></i>
+                                        Ver
+                                    </a>
+                                    <a href="{{ route('users.audit-history', $user->id) }}"
+                                        class="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg hover:from-purple-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-200 transition-all duration-200 shadow-sm hover:shadow-md btn-soft-transition">
+                                        <i class="fas fa-history mr-1"></i>
+                                        Historial
+                                    </a>
                                     <a href="{{ route('users.edit', $user->id) }}"
                                         class="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm hover:shadow-md btn-soft-transition">
                                         <i class="fas fa-edit mr-1"></i>

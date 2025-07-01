@@ -37,6 +37,19 @@
                             </div>
                         @endif
                     </div>
+                    <!-- Campo de motivo -->
+                    <div class="mb-4">
+                        <label for="motivo-{{ $modalId }}" class="block text-sm font-bold text-slate-700 mb-2">
+                            <i class="fas fa-comment-alt mr-1 text-slate-500"></i>
+                            Motivo de la eliminación <span class="text-red-500">*</span>
+                        </label>
+                        <textarea id="motivo-{{ $modalId }}" name="motivo" 
+                                  class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-red-200 focus:border-red-400 resize-none transition-all duration-200"
+                                  rows="3" 
+                                  placeholder="Describe brevemente el motivo de esta eliminación..."
+                                  required></textarea>
+                        <p class="text-xs text-slate-500 mt-1">Este motivo quedará registrado en el historial de auditoría</p>
+                    </div>
                 </div>
                 
                 <!-- Modal Footer -->
@@ -46,10 +59,11 @@
                         <i class="fas fa-times mr-2"></i>
                         Cancelar
                     </button>
-                    <form method="POST" action="{{ $deleteRoute }}" class="inline-block delete-form">
+                    <form method="POST" action="{{ $deleteRoute }}" class="inline-block delete-form" id="delete-form-{{ $modalId }}">
                         @csrf
                         @method('DELETE')
-                        <button type="submit"
+                        <input type="hidden" name="motivo" id="motivo-input-{{ $modalId }}">
+                        <button type="button" onclick="submitDeleteForm('{{ $modalId }}')"
                             class="px-6 py-3 text-base font-bold text-white modal-button-delete rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:ring-offset-2 btn-soft-transition">
                             <i class="fas fa-trash mr-2"></i>
                             {{ $confirmText ?? 'Eliminar' }}
@@ -60,3 +74,23 @@
         </div>
     </div>
 </div>
+
+<script>
+function submitDeleteForm(modalId) {
+    const motivoTextarea = document.getElementById('motivo-' + modalId);
+    const motivoInput = document.getElementById('motivo-input-' + modalId);
+    const form = document.getElementById('delete-form-' + modalId);
+    
+    if (!motivoTextarea.value.trim()) {
+        motivoTextarea.focus();
+        motivoTextarea.classList.add('border-red-500', 'ring-red-200');
+        setTimeout(() => {
+            motivoTextarea.classList.remove('border-red-500', 'ring-red-200');
+        }, 3000);
+        return false;
+    }
+    
+    motivoInput.value = motivoTextarea.value;
+    form.submit();
+}
+</script>

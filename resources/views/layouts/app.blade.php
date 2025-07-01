@@ -75,6 +75,15 @@
             <!-- Submenu estilo sidebar -->
             <ul class="pl-0 ml-6 mt-1 list-none h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out" id="papelera-submenu">
               <li class="mt-0.5 w-full">
+                <a class="py-2.7 text-base ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('users.deleted') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-600 hover:text-slate-700' }}" 
+                   href="{{ route('users.deleted') }}">
+                  <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
+                    <i class="fas fa-user-slash text-xs text-slate-600"></i>
+                  </div>
+                  <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Papelera Usuarios</span>
+                </a>
+              </li>
+              <li class="mt-0.5 w-full">
                 <a class="py-2.7 text-base ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('productos.deleted') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-600 hover:text-slate-700' }}" 
                    href="{{ route('productos.deleted') }}">
                   <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">

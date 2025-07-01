@@ -2,39 +2,46 @@
 @section('content')
     <div class="w-full px-6 py-6 mx-auto text-lg">
         <div class="container-fluid py-4">
-            <h1 class="mb-0 text-2xl font-semibold text-slate-700">LISTA DE PRODUCTOS</h1>
+            <div class="flex items-center justify-between">
+                <h1 class="mb-0 text-2xl font-semibold text-slate-700">USUARIOS ELIMINADOS</h1>
+                <a href="{{ route('users.index') }}" 
+                    class="inline-block px-6 py-2 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-none cursor-pointer leading-pro text-base ease-soft-in tracking-tight-soft bg-gradient-to-tl from-blue-600 to-blue-400 bg-150 bg-x-25 border-blue-600 text-white hover:scale-102 hover:shadow-soft-xs active:opacity-85">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Volver a Usuarios
+                </a>
+            </div>
         </div>
-        <div class="flex flex-wrap -mx-3">
+        <div class="flex flex-wrap -mx-3">            
             <div class="flex-none w-full max-w-full px-3">
                 <div
                     class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-soft-xl rounded-2xl bg-clip-border">
                     <div class="p-6 pb-0 mb-0 bg-white border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
                         <div class="flex justify-between items-center">
                             <h6 class="mb-0 text-xl font-semibold text-slate-700">
-                                <i class="fas fa-box mr-2 text-slate-700"></i>
-                                PRODUCTOS
+                                <i class="fas fa-user-slash mr-2 text-slate-700"></i>
+                                USUARIOS ELIMINADOS
                             </h6>
                             <div class="flex items-center space-x-3">
                                 <!-- Formulario de búsqueda -->
-                                <form method="GET" action="{{ route('productos.index') }}" class="flex items-center space-x-2">
+                                <form method="GET" action="{{ route('users.deleted') }}" class="flex items-center space-x-2">
                                     <!-- Mantener el parámetro per_page -->
                                     <input type="hidden" name="per_page" value="{{ $perPage }}">
 
                                     <div
-                                        class="flex items-center space-x-2 bg-gradient-to-r from-blue-50 to-blue-100 px-4 py-2 rounded-xl border border-blue-200/60 shadow-sm">
-                                        <label for="search" class="text-lg font-medium text-blue-600 flex items-center">
-                                            <i class="fas fa-search mr-2 text-blue-500"></i>
+                                        class="flex items-center space-x-2 bg-gradient-to-r from-red-50 to-red-100 px-4 py-2 rounded-xl border border-red-200/60 shadow-sm">
+                                        <label for="search" class="text-lg font-medium text-red-600 flex items-center">
+                                            <i class="fas fa-search mr-2 text-red-500"></i>
                                             <span>Buscar:</span>
                                         </label>
                                         <input type="text" id="search" name="search" value="{{ $search }}"
-                                            placeholder="Nombre o código..."
-                                            class="px-3 py-1.5 text-lg bg-white/80 backdrop-blur-sm border border-blue-200/60 rounded-lg shadow-soft-xs hover:shadow-soft-sm focus:shadow-soft-md focus:outline-none focus:ring-2 focus:ring-blue-200/50 focus:border-blue-300 transition-all duration-300 ease-soft-in-out text-slate-700 min-w-[200px]">
+                                            placeholder="Nombre o email..."
+                                            class="px-3 py-1.5 text-lg bg-white/80 backdrop-blur-sm border border-red-200/60 rounded-lg shadow-soft-xs hover:shadow-soft-sm focus:shadow-soft-md focus:outline-none focus:ring-2 focus:ring-red-200/50 focus:border-red-300 transition-all duration-300 ease-soft-in-out text-slate-700 min-w-[200px]">
                                         <button type="submit"
-                                            class="px-3 py-1.5 text-lg bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-soft-xs hover:shadow-soft-sm focus:shadow-soft-md focus:outline-none focus:ring-2 focus:ring-blue-200/50 transition-all duration-300 ease-soft-in-out">
+                                            class="px-3 py-1.5 text-lg bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-soft-xs hover:shadow-soft-sm focus:shadow-soft-md focus:outline-none focus:ring-2 focus:ring-red-200/50 transition-all duration-300 ease-soft-in-out">
                                             <i class="fas fa-search"></i>
                                         </button>
                                         @if ($search)
-                                            <a href="{{ route('productos.index', ['per_page' => $perPage]) }}"
+                                            <a href="{{ route('users.deleted', ['per_page' => $perPage]) }}"
                                                 class="px-3 py-1.5 text-lg bg-gray-500 hover:bg-gray-600 text-white rounded-lg shadow-soft-xs hover:shadow-soft-sm focus:shadow-soft-md focus:outline-none focus:ring-2 focus:ring-gray-200/50 transition-all duration-300 ease-soft-in-out"
                                                 title="Limpiar búsqueda">
                                                 <i class="fas fa-times"></i>
@@ -74,12 +81,12 @@
                         @endif
                         @if ($search)
                             <div
-                                class="relative w-full p-4 text-blue-700 bg-blue-100 border border-blue-300 rounded-lg mt-4">
+                                class="relative w-full p-4 text-red-700 bg-red-100 border border-red-300 rounded-lg mt-4">
                                 <div class="flex items-center">
                                     <i class="fas fa-info-circle mr-2"></i>
                                     <span>Mostrando resultados para: <strong>"{{ $search }}"</strong></span>
-                                    <span class="ml-2 text-sm text-blue-600">({{ $productos->total() }}
-                                        {{ $productos->total() == 1 ? 'resultado' : 'resultados' }})</span>
+                                    <span class="ml-2 text-sm text-red-600">({{ $usuarios->total() }}
+                                        {{ $usuarios->total() == 1 ? 'resultado' : 'resultados' }})</span>
                                 </div>
                             </div>
                         @endif
@@ -91,100 +98,100 @@
                                     <tr>
                                         <th
                                             class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-base border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                            NOMBRE</th>
+                                            USUARIO</th>
                                         <th
                                             class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-base border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                            CÓDIGO</th>
+                                            EMAIL</th>
                                         <th
-                                            class="px-6 py-3 pl-2 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-base border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                            CANTIDAD</th>
+                                            class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-base border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                            ELIMINADO</th>
                                         <th
                                             class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-base border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                            PRECIO</th>
+                                            VERIFICADO</th>
                                         <th
                                             class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-base border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                             CREADO</th>
-                                        <th
-                                            class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-base border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                            ACTUALIZADO</th>
                                         <th
                                             class="px-6 py-3 font-semibold capitalize align-middle bg-transparent border-b border-gray-200 border-solid shadow-none tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($productos as $producto)
-                                        <tr class="table-row-hover transition-all duration-200">
+                                    @forelse ($usuarios as $user)
+                                        <tr class="table-row-hover transition-all duration-200 bg-red-50/30">
                                             <td
                                                 class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                                 <div class="flex px-2 py-1">
+                                                    <div>
+                                                        <img src="../assets/img/team-2.jpg"
+                                                            class="inline-flex items-center justify-center mr-4 text-sm text-white transition-all duration-200 ease-soft-in-out h-9 w-9 rounded-xl opacity-60"
+                                                            alt="user" />
+                                                    </div>
                                                     <div class="flex flex-col justify-center">
-                                                        <h6 class="mb-0 text-lg leading-normal">{{ $producto->nombre }}</h6>
+                                                        <h6 class="mb-0 text-lg leading-normal text-slate-600">{{ $user->name }}</h6>
+                                                        <p class="mb-0 text-base leading-tight text-slate-400">
+                                                            {{ $user->email }}</p>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td
                                                 class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                                <p class="mb-0 text-lg font-semibold leading-tight">{{ $producto->codigo }}</p>
+                                                <p class="mb-0 text-lg font-semibold leading-tight text-slate-500">{{ $user->email }}</p>
+                                            </td>
+                                            <td
+                                                class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                                <div class="flex flex-col">
+                                                    <span class="text-lg font-semibold leading-tight text-red-600">{{ $user->deleted_at->format('d/m/y') }}</span>
+                                                    <span class="text-sm text-slate-400">{{ $user->deleted_at->diffForHumans() }}</span>
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="p-2 text-lg leading-normal text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                                <span
+                                                    class="bg-gradient-to-tl {{ $user->email_verified_at ? 'from-green-600 to-lime-400' : 'from-slate-600 to-slate-300' }} px-2.5 text-base rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white opacity-80">
+                                                    {{ $user->email_verified_at ? 'Verificado' : 'No Verificado' }}
+                                                </span>
                                             </td>
                                             <td
                                                 class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                                 <span
-                                                    class="text-lg font-semibold leading-tight text-slate-400">{{ number_format($producto->cantidad) }}</span>
-                                            </td>
-                                            <td
-                                                class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                                <span
-                                                    class="text-lg font-semibold leading-tight text-green-600">${{ number_format($producto->precio, 2) }}</span>
-                                            </td>
-                                            <td
-                                                class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                                <span
-                                                    class="text-lg font-semibold leading-tight text-slate-400">{{ $producto->created_at->format('d/m/y') }}</span>
-                                            </td>
-                                            <td
-                                                class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                                <span
-                                                    class="text-lg font-semibold leading-tight text-slate-400">{{ $producto->updated_at->format('d/m/y') }}</span>
+                                                    class="text-lg font-semibold leading-tight text-slate-400">{{ $user->created_at->format('d/m/y') }}</span>
                                             </td>
                                             <td
                                                 class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                                 <div class="flex items-center space-x-2 action-buttons">
-                                                    <a href="{{ route('productos.show', $producto->id) }}"
-                                                        class="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-lg hover:from-indigo-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-200 transition-all duration-200 shadow-sm hover:shadow-md btn-soft-transition">
-                                                        <i class="fas fa-eye mr-1"></i>
-                                                        Ver
-                                                    </a>
-                                                    <a href="{{ route('productos.audit-history', $producto->id) }}"
-                                                        class="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg hover:from-purple-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-200 transition-all duration-200 shadow-sm hover:shadow-md btn-soft-transition">
-                                                        <i class="fas fa-history mr-1"></i>
-                                                        Historial
-                                                    </a>
-                                                    <a href="{{ route('productos.edit', $producto->id) }}"
-                                                        class="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm hover:shadow-md btn-soft-transition">
-                                                        <i class="fas fa-edit mr-1"></i>
-                                                        Editar
-                                                    </a>
-                                                    <button type="button" onclick="openModal('delete-producto-{{ $producto->id }}-modal')"
-                                                        class="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-red-500 to-red-600 rounded-lg hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-red-200 transition-all duration-200 shadow-sm hover:shadow-md btn-soft-transition">
-                                                        <i class="fas fa-trash mr-1"></i>
-                                                        Eliminar
-                                                    </button>
+                                                    @if(auth()->id() !== $user->id)
+                                                        <button type="button" onclick="openModal('restore-user-{{ $user->id }}-modal')"
+                                                            class="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-green-500 to-green-600 rounded-lg hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-200 transition-all duration-200 shadow-sm hover:shadow-md btn-soft-transition">
+                                                            <i class="fas fa-undo mr-1"></i>
+                                                            Restaurar
+                                                        </button>
+                                                        <button type="button" onclick="openModal('force-delete-user-{{ $user->id }}-modal')"
+                                                            class="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-red-500 to-red-600 rounded-lg hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-red-200 transition-all duration-200 shadow-sm hover:shadow-md btn-soft-transition">
+                                                            <i class="fas fa-trash-alt mr-1"></i>
+                                                            Eliminar Definitivo
+                                                        </button>
+                                                    @else
+                                                        <span class="px-3 py-1.5 text-sm font-semibold text-slate-400 bg-gradient-to-r from-slate-200 to-slate-300 rounded-lg cursor-not-allowed">
+                                                            <i class="fas fa-lock mr-1"></i>
+                                                            Tu cuenta
+                                                        </span>
+                                                    @endif
                                                 </div>
                                             </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="7"
+                                            <td colspan="6"
                                                 class="p-4 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                                 <div class="flex flex-col items-center py-8">
-                                                    <i class="fas fa-box-open text-4xl text-slate-300 mb-4"></i>
-                                                    <p class="text-xl font-medium text-slate-500">No hay productos disponibles</p>
+                                                    <i class="fas fa-user-slash text-4xl text-slate-300 mb-4"></i>
+                                                    <p class="text-xl font-medium text-slate-500">No hay usuarios eliminados</p>
                                                     <p class="text-lg text-slate-400">
                                                         @if($search)
-                                                            No se encontraron productos que coincidan con tu búsqueda.
+                                                            No se encontraron usuarios eliminados que coincidan con tu búsqueda.
                                                         @else
-                                                            Aún no has agregado ningún producto.
+                                                            La papelera de usuarios está vacía.
                                                         @endif
                                                     </p>
                                                 </div>
@@ -193,39 +200,45 @@
                                     @endforelse
                                 </tbody>
                             </table>
-                            <div class="flex justify-between items-center mt-6 p-6 pt-0 bg-gray-50/50 rounded-b-2xl border-t border-gray-100">
-                                <div class="flex-1">
-                                    {{ $productos->links() }}
-                                </div>
-                                <div class="ml-4 flex space-x-3">
-                                    <!-- Botón para crear un nuevo producto -->
-                                    <a href="{{ route('productos.create') }}" 
-                                        class="inline-block px-8 py-2 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-none cursor-pointer leading-pro text-base ease-soft-in tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 bg-150 bg-x-25 border-purple-700 text-white hover:scale-102 hover:shadow-soft-xs active:opacity-85">
-                                        <i class="fas fa-plus mr-2"></i>
-                                        Nuevo Producto
-                                    </a>
+                            <!-- Paginación -->
+                            <div class="flex items-center mt-6 px-6">
+                                <div class="w-full max-w-4xl">
+                                    {{ $usuarios->appends(request()->input())->links('pagination::tailwind') }}
                                 </div>
                             </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Modales de Confirmación de Eliminación - Solo cargar cuando hay productos -->
-    @if($productos->count() > 0)
-        @foreach($productos as $producto)
-            @include('components.delete-modal', [
-                'modalId' => 'delete-producto-' . $producto->id . '-modal',
-                'title' => 'Confirmar Eliminación de Producto',
-                'message' => '¿Estás seguro de que deseas eliminar este producto? Esta acción lo enviará a la papelera y podrá ser restaurado posteriormente.',
-                'itemName' => $producto->nombre,
-                'itemDetails' => 'Código: ' . $producto->codigo . ' | Precio: $' . number_format($producto->precio, 2),
-                'deleteRoute' => route('productos.destroy', $producto->id),
-                'confirmText' => 'Mover a Papelera'
+    <!-- Modales de Confirmación -->
+    @foreach($usuarios as $user)
+        @if(auth()->id() !== $user->id)
+            <!-- Modal de Restauración -->
+            @include('components.restore-modal', [
+                'modalId' => 'restore-user-' . $user->id . '-modal',
+                'title' => 'Confirmar Restauración de Usuario',
+                'message' => '¿Estás seguro de que deseas restaurar este usuario? Volverá a estar disponible en el sistema.',
+                'itemName' => $user->name,
+                'itemDetails' => $user->email,
+                'restoreRoute' => route('users.restore', $user->id),
+                'confirmText' => 'Restaurar Usuario'
             ])
-        @endforeach
-    @endif
+            
+            <!-- Modal de Eliminación Permanente -->
+            @include('components.force-delete-modal', [
+                'modalId' => 'force-delete-user-' . $user->id . '-modal',
+                'title' => 'Confirmar Eliminación Permanente',
+                'message' => '⚠️ ATENCIÓN: Esta acción eliminará permanentemente al usuario y NO SE PUEDE DESHACER. Todos los datos asociados se perderán para siempre.',
+                'itemName' => $user->name,
+                'itemDetails' => $user->email,
+                'deleteRoute' => route('users.forceDelete', $user->id),
+                'confirmText' => 'Eliminar Permanentemente'
+            ])
+        @endif
+    @endforeach
     
     <script>
         function changePerPage(value) {

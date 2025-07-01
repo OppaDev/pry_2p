@@ -40,6 +40,19 @@
                             </div>
                         @endif
                     </div>
+                    <!-- Campo de motivo -->
+                    <div class="mb-4">
+                        <label for="motivo-{{ $modalId }}" class="block text-sm font-bold text-slate-700 mb-2">
+                            <i class="fas fa-comment-alt mr-1 text-green-500"></i>
+                            Motivo de la restauración <span class="text-red-500">*</span>
+                        </label>
+                        <textarea id="motivo-{{ $modalId }}" name="motivo" 
+                                  class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-green-200 focus:border-green-400 resize-none transition-all duration-200"
+                                  rows="3" 
+                                  placeholder="Describe brevemente el motivo de esta restauración..."
+                                  required></textarea>
+                        <p class="text-xs text-slate-500 mt-1">Este motivo quedará registrado en el historial de auditoría</p>
+                    </div>
                 </div>
                 
                 <!-- Modal Footer -->
@@ -50,10 +63,11 @@
                         <i class="fas fa-times mr-2"></i>
                         Cancelar
                     </button>
-                    <form method="POST" action="{{ $restoreRoute }}" class="inline-block">
+                    <form method="POST" action="{{ $restoreRoute }}" class="inline-block" id="restore-form-{{ $modalId }}">
                         @csrf
                         @method('PATCH')
-                        <button type="submit"
+                        <input type="hidden" name="motivo" id="motivo-input-{{ $modalId }}">
+                        <button type="button" onclick="submitRestoreForm('{{ $modalId }}')"
                             class="px-6 py-3 text-base font-bold text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-green-200 focus:ring-offset-2 btn-soft-transition"
                             style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); box-shadow: 0 4px 14px 0 rgba(34, 197, 94, 0.39), 0 2px 4px 0 rgba(34, 197, 94, 0.1);">
                             <i class="fas fa-undo mr-2"></i>
@@ -65,3 +79,23 @@
         </div>
     </div>
 </div>
+
+<script>
+function submitRestoreForm(modalId) {
+    const motivoTextarea = document.getElementById('motivo-' + modalId);
+    const motivoInput = document.getElementById('motivo-input-' + modalId);
+    const form = document.getElementById('restore-form-' + modalId);
+    
+    if (!motivoTextarea.value.trim()) {
+        motivoTextarea.focus();
+        motivoTextarea.classList.add('border-red-500', 'ring-red-200');
+        setTimeout(() => {
+            motivoTextarea.classList.remove('border-red-500', 'ring-red-200');
+        }, 3000);
+        return false;
+    }
+    
+    motivoInput.value = motivoTextarea.value;
+    form.submit();
+}
+</script>

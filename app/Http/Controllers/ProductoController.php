@@ -92,7 +92,39 @@ class ProductoController extends Controller
      */
     public function show(Producto $producto)
     {
-        //
+        // Obtener auditorías del producto con información del usuario que hizo el cambio
+        $audits = $producto->audits()
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('productos.show', compact('producto', 'audits'));
+    }
+
+    /**
+     * Display audit history for a specific product.
+     */
+    public function auditHistory(Producto $producto, Request $request)
+    {
+        $request->validate([
+            'per_page' => 'nullable|integer|in:5,10,15,25,50',
+            'event' => 'nullable|string|in:created,updated,deleted,restored'
+        ]);
+
+        $perPage = $request->get('per_page', 10);
+        $eventFilter = $request->get('event');
+
+        $query = $producto->audits()->with('user');
+
+        if ($eventFilter) {
+            $query->where('event', $eventFilter);
+        }
+
+        $audits = $query->orderBy('created_at', 'desc')
+                       ->paginate($perPage)
+                       ->withQueryString();
+
+        return view('productos.audit-history', compact('producto', 'audits', 'eventFilter', 'perPage'));
     }
 
     /**
@@ -135,10 +167,20 @@ class ProductoController extends Controller
     /**
      * Restore a soft deleted product.
      */
-    public function restore($id)
+    public function restore($id, Request $request)
     {
+        $request->validate([
+            'motivo' => 'required|string|max:255'
+        ], [
+            'motivo.required' => 'El motivo de restauración es obligatorio.',
+            'motivo.max' => 'El motivo no puede exceder 255 caracteres.'
+        ]);
+
         try {
             $producto = Producto::onlyTrashed()->findOrFail($id);
+            
+            // Registrar el motivo en los metadatos de auditoría
+            $producto->auditComment = $request->motivo;
             $producto->restore();
             
             return redirect()->route('productos.deleted')->with('success', 'Producto restaurado exitosamente.');
@@ -187,8 +229,15 @@ class ProductoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Producto $producto)
+    public function destroy(Producto $producto, Request $request)
     {
+        $request->validate([
+            'motivo' => 'required|string|max:255'
+        ], [
+            'motivo.required' => 'El motivo de eliminación es obligatorio.',
+            'motivo.max' => 'El motivo no puede exceder 255 caracteres.'
+        ]);
+
         try {
             
             // if ($producto->hasRelatedData()) {
@@ -196,6 +245,8 @@ class ProductoController extends Controller
             //         ->with('error', 'No se puede eliminar el producto porque tiene datos relacionados.');
             // }
             
+            // Registrar el motivo en los metadatos de auditoría
+            $producto->auditComment = $request->motivo;
             $producto->delete();
             
             return redirect()->route('productos.index')
