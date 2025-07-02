@@ -186,6 +186,23 @@
                                     </div>
                                 </a>
                             </div>
+
+                            <!-- Botón Auditorías -->
+                            <div class="w-full max-w-full px-3 mb-4 sm:w-1/2 sm:flex-none lg:w-1/3">
+                                <a href="{{ route('audits.by-user') }}" class="relative flex flex-col min-w-0 break-words bg-gradient-to-tl from-purple-600 to-pink-500 shadow-soft-xl rounded-2xl bg-clip-border overflow-hidden transition-all hover:scale-105 hover:shadow-soft-2xl">
+                                    <div class="flex-auto p-4">
+                                        <div class="flex flex-row items-center">
+                                            <div class="flex items-center justify-center w-12 h-12 mr-4 text-white bg-white bg-opacity-20 rounded-lg">
+                                                <i class="fas fa-history text-lg"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 text-white text-lg">Auditorías</h6>
+                                                <p class="mb-0 text-base text-white opacity-60">Historial de actividades</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AuditController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 
@@ -16,6 +17,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Rutas para auditorías generales
+    Route::get('auditorias', [AuditController::class, 'auditsByUser'])->name('audits.by-user');
+    Route::get('auditorias/{audit}', [AuditController::class, 'show'])->name('audits.show');
 
     // Rutas resource para usuarios (plural para consistencia con el layout)
     Route::resource('users', UserController::class);
@@ -39,11 +44,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('productos/{id}/restore', [ProductoController::class, 'restore'])->name('productos.restore');
     Route::delete('productos/{id}/force-delete', [ProductoController::class, 'forceDelete'])->name('productos.forceDelete');
     
-    // Ruta temporal para debug
-    Route::get('debug-audit', function () {
-        $audits = \OwenIt\Auditing\Models\Audit::with('user')->latest()->take(5)->get();
-        return view('debug-audit', compact('audits'));
-    })->name('debug.audit');
     
 });
 

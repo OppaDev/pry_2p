@@ -230,10 +230,12 @@
             <!-- Modal de Eliminación Permanente -->
             @include('components.force-delete-modal', [
                 'modalId' => 'force-delete-user-' . $user->id . '-modal',
-                'title' => 'Confirmar Eliminación Permanente',
-                'message' => '⚠️ ATENCIÓN: Esta acción eliminará permanentemente al usuario y NO SE PUEDE DESHACER. Todos los datos asociados se perderán para siempre.',
+                'title' => 'Confirmar Eliminación Permanente de Usuario',
+                'message' => 'Esta acción eliminará permanentemente al usuario y NO se podrá recuperar jamás.',
                 'itemName' => $user->name,
                 'itemDetails' => $user->email,
+                'itemCode' => $user->email,
+                'itemType' => 'user',
                 'deleteRoute' => route('users.forceDelete', $user->id),
                 'confirmText' => 'Eliminar Permanentemente'
             ])

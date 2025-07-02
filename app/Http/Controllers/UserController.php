@@ -8,6 +8,7 @@ use App\Http\Requests\ValidarStoreUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -235,8 +236,18 @@ class UserController extends Controller
     /**
      * Permanently delete a user.
      */
-    public function forceDelete($id)
+    public function forceDelete($id, Request $request)
     {
+        $request->validate([
+            'motivo' => 'required|string|min:10|max:255',
+            'password' => 'required|string'
+        ], [
+            'motivo.required' => 'El comentario es obligatorio para eliminar permanentemente.',
+            'motivo.min' => 'El comentario debe tener al menos 10 caracteres.',
+            'motivo.max' => 'El comentario no puede exceder 255 caracteres.',
+            'password.required' => 'La contraseña es obligatoria para confirmar la eliminación permanente.'
+        ]);
+
         try {
             $user = User::onlyTrashed()->findOrFail($id);
             
@@ -245,10 +256,53 @@ class UserController extends Controller
                 return redirect()->route('users.deleted')->with('error', 'No puedes eliminar permanentemente tu propia cuenta.');
             }
             
+            // Verificar contraseña del usuario logueado
+            if (!Hash::check($request->password, Auth::user()->password)) {
+                return redirect()->route('users.deleted')->with('error', 'Contraseña incorrecta. No se puede eliminar permanentemente.');
+            }
+            
+            // Crear un registro de auditoría manual antes de la eliminación permanente
+            \OwenIt\Auditing\Models\Audit::create([
+                'user_type' => get_class(Auth::user()),
+                'user_id' => Auth::id(),
+                'event' => 'force_deleted',
+                'auditable_type' => get_class($user),
+                'auditable_id' => $user->id,
+                'old_values' => $user->toArray(),
+                'new_values' => [],
+                'url' => $request->url(),
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'tags' => json_encode([
+                    'motivo:' . $request->motivo, 
+                    'accion:eliminacion_permanente',
+                    'password_verificada:true'
+                ]),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            
+            Log::info('Usuario eliminado permanentemente', [
+                'deleted_user_id' => $user->id,
+                'deleted_user_email' => $user->email,
+                'deleted_user_name' => $user->name,
+                'admin_user_id' => Auth::id(),
+                'admin_user_name' => Auth::user()->name,
+                'motivo' => $request->motivo,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent()
+            ]);
+            
             $user->forceDelete();
             
             return redirect()->route('users.deleted')->with('success', 'Usuario eliminado permanentemente.');
         } catch (\Exception $e) {
+            Log::error('Error al eliminar permanentemente usuario: ' . $e->getMessage(), [
+                'user_id' => $id,
+                'admin_user_id' => Auth::id(),
+                'motivo' => $request->motivo ?? 'N/A'
+            ]);
+            
             return redirect()->route('users.deleted')->with('error', 'Error al eliminar permanentemente el usuario: ' . $e->getMessage());
         }
     }

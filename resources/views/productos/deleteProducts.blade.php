@@ -215,10 +215,12 @@
         <!-- Modal de Eliminación Permanente -->
         @include('components.force-delete-modal', [
             'modalId' => 'force-delete-producto-' . $producto->id . '-modal',
-            'title' => 'Confirmar Eliminación Permanente',
-            'message' => '¡ADVERTENCIA! Esta acción eliminará permanentemente el producto. No podrás recuperarlo después.',
+            'title' => 'Confirmar Eliminación Permanente de Producto',
+            'message' => 'Esta acción eliminará permanentemente el producto y NO se podrá recuperar jamás.',
             'itemName' => $producto->nombre,
-            'itemDetails' => 'Código: ' . $producto->codigo . ' | Precio: $' . number_format($producto->precio, 2),
+            'itemDetails' => 'Código: ' . $producto->codigo . ' | Cantidad: ' . $producto->cantidad,
+            'itemCode' => $producto->codigo,
+            'itemType' => 'producto',
             'deleteRoute' => route('productos.forceDelete', $producto->id),
             'confirmText' => 'Eliminar Permanentemente'
         ])

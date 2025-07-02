@@ -61,6 +61,15 @@
             </a>
           </li>
 
+          <li class="mt-0.5 w-full">
+            <a class="py-2.7 text-lg ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('audits.*') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-700' }}" href="{{ route('audits.by-user') }}">
+              <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
+                <i class="fas fa-history text-slate-700"></i>
+              </div>
+              <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Auditorías</span>
+            </a>
+          </li>
+
           <!-- Papelera con dropdown nativo -->
           <li class="mt-0.5 w-full">
             <a class="py-2.7 text-lg ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 cursor-pointer transition-colors {{ request()->routeIs('productos.deleted') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-700' }}" 
@@ -254,6 +263,49 @@
             }
         }
         
+        // Funciones globales para modales
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                // Si es un modal de force-delete, usar su función específica
+                if (modalId.includes('force-delete')) {
+                    openForceDeleteModal(modalId);
+                    return;
+                }
+                
+                modal.classList.remove('hidden');
+                modal.classList.add('active');
+                
+                // Enfocar primer input si existe
+                const firstInput = modal.querySelector('input, textarea, select');
+                if (firstInput) {
+                    setTimeout(() => firstInput.focus(), 100);
+                }
+            }
+        }
+        
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                // Si es un modal de force-delete, usar su función específica
+                if (modalId.includes('force-delete')) {
+                    closeForceDeleteModal(modalId);
+                    return;
+                }
+                
+                modal.classList.add('hidden');
+                modal.classList.remove('active');
+                
+                // Limpiar campos
+                const inputs = modal.querySelectorAll('input, textarea, select');
+                inputs.forEach(input => {
+                    if (input.type !== 'hidden' && input.name !== '_token') {
+                        input.value = '';
+                    }
+                });
+            }
+        }
+        
         // Auto-expandir si estamos en una ruta de papelera
         document.addEventListener('DOMContentLoaded', function() {
             const currentPath = window.location.pathname;
@@ -261,6 +313,25 @@
                 setTimeout(() => {
                     togglePapeleraDropdown();
                 }, 100);
+            }
+        });
+        
+        // Cerrar modal con tecla Escape (para modales generales)
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modals = document.querySelectorAll('.modal-backdrop.active');
+                modals.forEach(modal => {
+                    if (!modal.id.includes('force-delete')) { // Los force-delete tienen su propio handler
+                        closeModal(modal.id);
+                    }
+                });
+            }
+        });
+        
+        // Cerrar modal al hacer clic fuera (para modales generales)
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal-backdrop') && !event.target.id.includes('force-delete')) {
+                closeModal(event.target.id);
             }
         });
     </script>

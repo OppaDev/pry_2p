@@ -4,6 +4,7 @@
         <div class="relative w-full max-w-md mx-auto">
             <!-- Modal Container -->
             <div class="relative bg-white rounded-2xl shadow-2xl transform transition-all duration-300 ease-soft-spring modal-content" 
+                 onclick="event.stopPropagation()"
                  style="box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1);">
                 <!-- Modal Header -->
                 <div class="flex items-center justify-between p-6 pb-4">
@@ -76,6 +77,38 @@
 </div>
 
 <script>
+function openModal(modalId) {
+    openDeleteModal(modalId);
+}
+
+function openDeleteModal(modalId) {
+    document.getElementById(modalId).classList.remove('hidden');
+    document.getElementById(modalId).classList.add('flex');
+    // Limpiar el textarea al abrir
+    const motivoField = document.getElementById('motivo-' + modalId);
+    if (motivoField) {
+        motivoField.value = '';
+        setTimeout(() => {
+            motivoField.focus();
+        }, 100);
+    }
+}
+
+function closeModal(modalId) {
+    closeDeleteModal(modalId);
+}
+
+function closeDeleteModal(modalId) {
+    document.getElementById(modalId).classList.add('hidden');
+    document.getElementById(modalId).classList.remove('flex');
+    // Limpiar el textarea al cerrar
+    const motivoField = document.getElementById('motivo-' + modalId);
+    if (motivoField) {
+        motivoField.value = '';
+        motivoField.classList.remove('border-red-500', 'ring-red-200');
+    }
+}
+
 function submitDeleteForm(modalId) {
     const motivoTextarea = document.getElementById('motivo-' + modalId);
     const motivoInput = document.getElementById('motivo-input-' + modalId);
@@ -92,5 +125,35 @@ function submitDeleteForm(modalId) {
     
     motivoInput.value = motivoTextarea.value;
     form.submit();
+}
+
+// Solo registrar event listeners una vez para modales de eliminación
+if (!window.deleteModalEventListenersRegistered) {
+    window.deleteModalEventListenersRegistered = true;
+    
+    // Cerrar modal al hacer clic fuera (pero no en el contenido del modal)
+    document.addEventListener('click', function(event) {
+        const modals = document.querySelectorAll('[id*="delete"][id$="-modal"]:not([id*="force-delete"])');
+        modals.forEach(modal => {
+            if (!modal.classList.contains('hidden')) {
+                // Solo cerrar si se hace clic exactamente en el overlay (el elemento con clase modal-backdrop)
+                if (event.target === modal) {
+                    closeDeleteModal(modal.id);
+                }
+            }
+        });
+    });
+    
+    // Cerrar modal con Escape
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const deleteModals = document.querySelectorAll('[id*="delete"][id$="-modal"]:not([id*="force-delete"])');
+            deleteModals.forEach(modal => {
+                if (!modal.classList.contains('hidden')) {
+                    closeDeleteModal(modal.id);
+                }
+            });
+        }
+    });
 }
 </script>

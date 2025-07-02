@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
 use PhpParser\Node\Stmt\TryCatch;
 
 class ProductoController extends Controller
@@ -192,14 +193,68 @@ class ProductoController extends Controller
     /**
      * Permanently delete a product.
      */
-    public function forceDelete($id)
+    public function forceDelete($id, Request $request)
     {
+        $request->validate([
+            'motivo' => 'required|string|min:10|max:255',
+            'password' => 'required|string'
+        ], [
+            'motivo.required' => 'El comentario es obligatorio para eliminar permanentemente.',
+            'motivo.min' => 'El comentario debe tener al menos 10 caracteres.',
+            'motivo.max' => 'El comentario no puede exceder 255 caracteres.',
+            'password.required' => 'La contraseña es obligatoria para confirmar la eliminación permanente.'
+        ]);
+
         try {
             $producto = Producto::onlyTrashed()->findOrFail($id);
+            
+            // Verificar contraseña del usuario logueado
+            if (!Hash::check($request->password, Auth::user()->password)) {
+                return redirect()->route('productos.deleted')->with('error', 'Contraseña incorrecta. No se puede eliminar permanentemente.');
+            }
+            
+            // Crear un registro de auditoría manual antes de la eliminación permanente
+            \OwenIt\Auditing\Models\Audit::create([
+                'user_type' => get_class(Auth::user()),
+                'user_id' => Auth::id(),
+                'event' => 'force_deleted',
+                'auditable_type' => get_class($producto),
+                'auditable_id' => $producto->id,
+                'old_values' => $producto->toArray(),
+                'new_values' => [],
+                'url' => $request->url(),
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'tags' => json_encode([
+                    'motivo:' . $request->motivo, 
+                    'accion:eliminacion_permanente',
+                    'password_verificada:true'
+                ]),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            
+            Log::info('Producto eliminado permanentemente', [
+                'deleted_producto_id' => $producto->id,
+                'deleted_producto_codigo' => $producto->codigo,
+                'deleted_producto_nombre' => $producto->nombre,
+                'admin_user_id' => Auth::id(),
+                'admin_user_name' => Auth::user()->name,
+                'motivo' => $request->motivo,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent()
+            ]);
+            
             $producto->forceDelete();
             
             return redirect()->route('productos.deleted')->with('success', 'Producto eliminado permanentemente.');
         } catch (\Exception $e) {
+            Log::error('Error al eliminar permanentemente producto: ' . $e->getMessage(), [
+                'producto_id' => $id,
+                'user_id' => Auth::id(),
+                'motivo' => $request->motivo ?? 'N/A'
+            ]);
+            
             return redirect()->route('productos.deleted')->with('error', 'Error al eliminar permanentemente el producto: ' . $e->getMessage());
         }
     }
