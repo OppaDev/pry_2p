@@ -180,12 +180,18 @@ class ProductoController extends Controller
         try {
             $producto = Producto::onlyTrashed()->findOrFail($id);
             
+            DB::beginTransaction();
+            
             // Registrar el motivo en los metadatos de auditoría
             $producto->auditComment = $request->motivo;
             $producto->restore();
             
+            DB::commit();
+            
             return redirect()->route('productos.deleted')->with('success', 'Producto restaurado exitosamente.');
         } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al restaurar producto: ' . $e->getMessage());
             return redirect()->route('productos.deleted')->with('error', 'Error al restaurar el producto: ' . $e->getMessage());
         }
     }
@@ -212,6 +218,8 @@ class ProductoController extends Controller
             if (!Hash::check($request->password, Auth::user()->password)) {
                 return redirect()->route('productos.deleted')->with('error', 'Contraseña incorrecta. No se puede eliminar permanentemente.');
             }
+            
+            DB::beginTransaction();
             
             // Crear un registro de auditoría manual antes de la eliminación permanente
             \OwenIt\Auditing\Models\Audit::create([
@@ -247,8 +255,11 @@ class ProductoController extends Controller
             
             $producto->forceDelete();
             
+            DB::commit();
+            
             return redirect()->route('productos.deleted')->with('success', 'Producto eliminado permanentemente.');
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error('Error al eliminar permanentemente producto: ' . $e->getMessage(), [
                 'producto_id' => $id,
                 'user_id' => Auth::id(),
@@ -272,13 +283,22 @@ class ProductoController extends Controller
      */
     public function update(ValidarEditProducto $request, Producto $producto)
     {
-        // Actualizar el producto con los datos validados
-        $producto->update($request->only(['nombre', 'codigo', 'cantidad', 'precio']));
-        $producto->codigo = $producto->codigo . rand(100, 999);
-        $producto->save();
-
-        
-        return redirect()->route('productos.index')->with('success', 'Producto actualizado exitosamente.');
+        try {
+            DB::beginTransaction();
+            
+            // Actualizar el producto con los datos validados
+            $producto->update($request->only(['nombre', 'codigo', 'cantidad', 'precio']));
+            $producto->codigo = $producto->codigo . rand(100, 999);
+            $producto->save();
+            
+            DB::commit();
+            
+            return redirect()->route('productos.index')->with('success', 'Producto actualizado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al actualizar producto: ' . $e->getMessage());
+            return redirect()->route('productos.edit', $producto)->with('error', 'Error al actualizar el producto. Por favor, inténtalo de nuevo.');
+        }
     }
 
     /**
@@ -294,6 +314,7 @@ class ProductoController extends Controller
         ]);
 
         try {
+            DB::beginTransaction();
             
             // if ($producto->hasRelatedData()) {
             //     return redirect()->route('productos.index')
@@ -304,10 +325,13 @@ class ProductoController extends Controller
             $producto->auditComment = $request->motivo;
             $producto->delete();
             
+            DB::commit();
+            
             return redirect()->route('productos.index')
                 ->with('success', 'Producto eliminado exitosamente.');
                 
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error('Error al eliminar producto: ' . $e->getMessage(), [
                 'producto_id' => $producto->id,
                 'user_id' => Auth::id()

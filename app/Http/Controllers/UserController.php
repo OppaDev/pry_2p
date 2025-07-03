@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -62,13 +63,23 @@ class UserController extends Controller
      */
     public function store(ValidarStoreUser $request)
     {
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        try {
+            DB::beginTransaction();
+            
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
 
-        return redirect()->route('users.index')->with('success', 'Usuario creado exitosamente.');
+            DB::commit();
+            
+            return redirect()->route('users.index')->with('success', 'Usuario creado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al crear usuario: ' . $e->getMessage());
+            return redirect()->route('users.create')->with('error', 'Error al crear el usuario. Por favor, inténtalo de nuevo.');
+        }
     }
 
     /**
@@ -98,18 +109,28 @@ class UserController extends Controller
      */
     public function update(ValidarEditUser $request, User $user)
     {
-        // Preparar datos para actualizar
-        $data = $request->only(['name', 'email']);
-        
-        // Si se proporciona una nueva contraseña, la hasheamos
-        if ($request->filled('password')) {
-            $data['password'] = Hash::make($request->password);
-        }
-        
-        // Actualizar el usuario con los datos validados
-        $user->update($data);
+        try {
+            DB::beginTransaction();
+            
+            // Preparar datos para actualizar
+            $data = $request->only(['name', 'email']);
+            
+            // Si se proporciona una nueva contraseña, la hasheamos
+            if ($request->filled('password')) {
+                $data['password'] = Hash::make($request->password);
+            }
+            
+            // Actualizar el usuario con los datos validados
+            $user->update($data);
 
-        return redirect()->route('users.index')->with('success', 'Usuario actualizado exitosamente.');
+            DB::commit();
+            
+            return redirect()->route('users.index')->with('success', 'Usuario actualizado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al actualizar usuario: ' . $e->getMessage());
+            return redirect()->route('users.edit', $user)->with('error', 'Error al actualizar el usuario. Por favor, inténtalo de nuevo.');
+        }
     }
 
     /**
@@ -130,12 +151,18 @@ class UserController extends Controller
                 return redirect()->route('users.index')->with('error', 'No puedes eliminar tu propia cuenta.');
             }
 
+            DB::beginTransaction();
+            
             // Registrar el motivo en los metadatos de auditoría
             $user->auditComment = $request->motivo;
             $user->delete();
             
+            DB::commit();
+            
             return redirect()->route('users.index')->with('success', 'Usuario eliminado exitosamente.');
         } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al eliminar usuario: ' . $e->getMessage());
             return redirect()->route('users.index')->with('error', 'Error al eliminar el usuario: ' . $e->getMessage());
         }
     }
@@ -223,12 +250,18 @@ class UserController extends Controller
                 return redirect()->route('users.deleted')->with('error', 'No puedes restaurar tu propia cuenta mientras estás autenticado.');
             }
             
+            DB::beginTransaction();
+            
             // Registrar el motivo en los metadatos de auditoría
             $user->auditComment = $request->motivo;
             $user->restore();
             
+            DB::commit();
+            
             return redirect()->route('users.deleted')->with('success', 'Usuario restaurado exitosamente.');
         } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al restaurar usuario: ' . $e->getMessage());
             return redirect()->route('users.deleted')->with('error', 'Error al restaurar el usuario: ' . $e->getMessage());
         }
     }
@@ -260,6 +293,8 @@ class UserController extends Controller
             if (!Hash::check($request->password, Auth::user()->password)) {
                 return redirect()->route('users.deleted')->with('error', 'Contraseña incorrecta. No se puede eliminar permanentemente.');
             }
+            
+            DB::beginTransaction();
             
             // Crear un registro de auditoría manual antes de la eliminación permanente
             \OwenIt\Auditing\Models\Audit::create([
@@ -295,8 +330,11 @@ class UserController extends Controller
             
             $user->forceDelete();
             
+            DB::commit();
+            
             return redirect()->route('users.deleted')->with('success', 'Usuario eliminado permanentemente.');
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error('Error al eliminar permanentemente usuario: ' . $e->getMessage(), [
                 'user_id' => $id,
                 'admin_user_id' => Auth::id(),
