@@ -120,10 +120,12 @@ class ModalManager {
     // Funciones específicas para cada tipo de modal
     static submitDeleteForm(modalId) {
         const motivoValid = this.validateRequiredField(`motivo-${modalId}`);
+        const passwordValid = this.validateRequiredField(`password-${modalId}`);
         
-        if (!motivoValid) return false;
+        if (!motivoValid || !passwordValid) return false;
 
         this.transferFieldToHidden(`motivo-${modalId}`, `motivo-input-${modalId}`);
+        this.transferFieldToHidden(`password-${modalId}`, `password-input-${modalId}`);
         document.getElementById(`delete-form-${modalId}`).submit();
     }
 
@@ -140,10 +142,12 @@ class ModalManager {
 
     static submitRestoreForm(modalId) {
         const motivoValid = this.validateRequiredField(`motivo-${modalId}`);
+        const passwordValid = this.validateRequiredField(`password-${modalId}`);
         
-        if (!motivoValid) return false;
+        if (!motivoValid || !passwordValid) return false;
 
         this.transferFieldToHidden(`motivo-${modalId}`, `motivo-input-${modalId}`);
+        this.transferFieldToHidden(`password-${modalId}`, `password-input-${modalId}`);
         document.getElementById(`restore-form-${modalId}`).submit();
     }
     

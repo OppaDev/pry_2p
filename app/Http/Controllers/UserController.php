@@ -139,11 +139,20 @@ class UserController extends Controller
     public function destroy(User $user, Request $request)
     {
         $request->validate([
-            'motivo' => 'required|string|max:255'
+            'motivo' => 'required|string|max:255',
+            'password' => 'required|string'
         ], [
             'motivo.required' => 'El motivo de eliminación es obligatorio.',
-            'motivo.max' => 'El motivo no puede exceder 255 caracteres.'
+            'motivo.max' => 'El motivo no puede exceder 255 caracteres.',
+            'password.required' => 'La contraseña es obligatoria para confirmar la eliminación.'
         ]);
+
+        // Verificar la contraseña del usuario actual
+        if (!Hash::check($request->password, Auth::user()->password)) {
+            return redirect()->back()
+                ->with('error', 'La contraseña ingresada es incorrecta.')
+                ->withInput();
+        }
 
         try {
             // Verificar que no sea el usuario autenticado
@@ -236,11 +245,20 @@ class UserController extends Controller
     public function restore($id, Request $request)
     {
         $request->validate([
-            'motivo' => 'required|string|max:255'
+            'motivo' => 'required|string|max:255',
+            'password' => 'required|string'
         ], [
             'motivo.required' => 'El motivo de restauración es obligatorio.',
-            'motivo.max' => 'El motivo no puede exceder 255 caracteres.'
+            'motivo.max' => 'El motivo no puede exceder 255 caracteres.',
+            'password.required' => 'La contraseña es obligatoria para confirmar la restauración.'
         ]);
+
+        // Verificar la contraseña del usuario actual
+        if (!Hash::check($request->password, Auth::user()->password)) {
+            return redirect()->back()
+                ->with('error', 'La contraseña ingresada es incorrecta.')
+                ->withInput();
+        }
 
         try {
             $user = User::onlyTrashed()->findOrFail($id);

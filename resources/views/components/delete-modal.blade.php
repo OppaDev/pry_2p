@@ -50,6 +50,19 @@
                               required></textarea>
                     <p class="text-xs text-slate-500 mt-1">Este motivo quedará registrado en el historial de auditoría</p>
                 </div>
+                
+                <!-- Campo de contraseña -->
+                <div class="mb-4">
+                    <label for="password-{{ $modalId }}" class="block text-sm font-bold text-slate-700 mb-2">
+                        <i class="fas fa-lock mr-1 text-slate-500"></i>
+                        Confirma tu contraseña <span class="text-red-500">*</span>
+                    </label>
+                    <input type="password" id="password-{{ $modalId }}" name="password" 
+                           class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-red-200 focus:border-red-400 transition-all duration-200"
+                           placeholder="Ingresa tu contraseña actual..."
+                           required autocomplete="current-password">
+                    <p class="text-xs text-slate-500 mt-1">Requerido por seguridad para confirmar la eliminación</p>
+                </div>
             </div>
             
             <!-- Modal Footer -->
@@ -63,6 +76,7 @@
                     @csrf
                     @method('DELETE')
                     <input type="hidden" name="motivo" id="motivo-input-{{ $modalId }}">
+                    <input type="hidden" name="password" id="password-input-{{ $modalId }}">
                     <button type="button" onclick="submitDeleteForm('{{ $modalId }}')"
                         class="px-6 py-3 text-base font-bold text-white modal-button-delete rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:ring-offset-2 btn-soft-transition">
                         <i class="fas fa-trash mr-2"></i>
