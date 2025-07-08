@@ -19,6 +19,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 Route::middleware(['auth', 'verificar.estado'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/role', [ProfileController::class, 'updateRole'])->name('profile.update-role');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Rutas para auditorías generales
@@ -35,6 +36,10 @@ Route::middleware(['auth', 'verificar.estado'])->group(function () {
     Route::get('usuarios-eliminados', [UserController::class, 'deletedUsers'])->name('users.deleted');
     Route::patch('users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
     Route::delete('users/{id}/force-delete', [UserController::class, 'forceDelete'])->name('users.forceDelete');
+
+    // Rutas para activar/desactivar usuarios
+    Route::patch('users/{user}/activate', [UserController::class, 'activate'])->name('users.activate');
+    Route::patch('users/{user}/deactivate', [UserController::class, 'deactivate'])->name('users.deactivate');
 
     // Rutas resource para productos
     Route::resource('productos', ProductoController::class);
