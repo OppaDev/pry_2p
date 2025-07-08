@@ -36,6 +36,10 @@ Route::middleware(['auth', 'verificar.estado'])->group(function () {
     Route::patch('users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
     Route::delete('users/{id}/force-delete', [UserController::class, 'forceDelete'])->name('users.forceDelete');
 
+    // Rutas para activar/desactivar usuarios
+    Route::patch('users/{user}/activate', [UserController::class, 'activate'])->name('users.activate');
+    Route::patch('users/{user}/deactivate', [UserController::class, 'deactivate'])->name('users.deactivate');
+
     // Rutas resource para productos
     Route::resource('productos', ProductoController::class);
 

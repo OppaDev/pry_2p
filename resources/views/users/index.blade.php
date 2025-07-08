@@ -103,6 +103,9 @@
                                             VERIFICADO</th>
                                         <th
                                             class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-base border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                            ESTADO</th>
+                                        <th
+                                            class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-base border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                             ACTUALIZADO</th>
                                         <th
                                             class="px-6 py-3 font-semibold capitalize align-middle bg-transparent border-b border-gray-200 border-solid shadow-none tracking-none whitespace-nowrap text-slate-400 opacity-70">
@@ -144,6 +147,18 @@
                                                 </span>
                                             </td>
                                             <td
+                                                class="p-2 text-lg leading-normal text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                                <span
+                                                    class="bg-gradient-to-tl {{ $user->estado === 'activo' ? 'from-green-600 to-lime-400' : 'from-red-600 to-red-400' }} px-2.5 text-base rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
+                                                    {{ $user->estado === 'activo' ? 'Activo' : 'Inactivo' }}
+                                                </span>
+                                                @if($user->estado === 'inactivo' && $user->motivo)
+                                                    <div class="text-xs text-slate-500 mt-1" title="{{ $user->motivo }}">
+                                                        {{ Str::limit($user->motivo, 30) }}
+                                                    </div>
+                                                @endif
+                                            </td>
+                                            <td
                                                 class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                                 <span
                                                     class="text-lg font-semibold leading-tight text-slate-400">{{ $user->updated_at->format('d/m/y') }}</span>
@@ -166,6 +181,19 @@
                                         Editar
                                     </a>
                                     @if(auth()->id() !== $user->id)
+                                        @if($user->estado === 'activo')
+                                            <button type="button" onclick="openModal('deactivate-user-{{ $user->id }}-modal')"
+                                                class="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg hover:from-orange-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-all duration-200 shadow-sm hover:shadow-md btn-soft-transition">
+                                                <i class="fas fa-user-slash mr-1"></i>
+                                                Desactivar
+                                            </button>
+                                        @else
+                                            <button type="button" onclick="activateUser({{ $user->id }})"
+                                                class="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-green-500 to-green-600 rounded-lg hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-200 transition-all duration-200 shadow-sm hover:shadow-md btn-soft-transition">
+                                                <i class="fas fa-user-check mr-1"></i>
+                                                Activar
+                                            </button>
+                                        @endif
                                         <button type="button" onclick="openModal('delete-user-{{ $user->id }}-modal')"
                                             class="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-red-500 to-red-600 rounded-lg hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-red-200 transition-all duration-200 shadow-sm hover:shadow-md btn-soft-transition">
                                             <i class="fas fa-trash mr-1"></i>
@@ -182,7 +210,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="6"
+                                            <td colspan="7"
                                                 class="p-4 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                                 <div class="flex flex-col items-center py-8">
                                                     <i class="fas fa-user-slash text-4xl text-slate-300 mb-4"></i>
@@ -212,7 +240,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Modales de Confirmación de Eliminación -->
     @foreach($usuarios as $user)
         @if(auth()->id() !== $user->id)
@@ -227,7 +255,54 @@
             ])
         @endif
     @endforeach
-    
+
+    <!-- Modales de Desactivación de Usuario -->
+    @foreach($usuarios as $user)
+        @if(auth()->id() !== $user->id && $user->estado === 'activo')
+            <!-- Modal de desactivación -->
+            <div id="deactivate-user-{{ $user->id }}-modal" class="fixed inset-0 z-50 items-center justify-center hidden bg-black bg-opacity-50">
+                <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="flex-shrink-0 w-10 h-10 mx-auto bg-orange-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user-slash text-orange-600"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-900">Desactivar Usuario</h3>
+                                <p class="text-sm text-gray-500">{{ $user->name }} ({{ $user->email }})</p>
+                            </div>
+                        </div>
+
+                        <form id="deactivate-form-{{ $user->id }}" action="{{ route('users.deactivate', $user->id) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+
+                            <div class="mb-4">
+                                <label for="motivo-{{ $user->id }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Motivo de desactivación <span class="text-red-500">*</span>
+                                </label>
+                                <textarea id="motivo-{{ $user->id }}" name="motivo" rows="3" required
+                                    class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-orange-200 focus:border-orange-300"
+                                    placeholder="Explique el motivo de la desactivación..."></textarea>
+                            </div>
+
+                            <div class="flex justify-end space-x-3">
+                                <button type="button" onclick="closeModal('deactivate-user-{{ $user->id }}-modal')"
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 border border-gray-300 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-200">
+                                    Cancelar
+                                </button>
+                                <button type="submit"
+                                    class="px-4 py-2 text-sm font-medium text-white bg-orange-600 border border-transparent rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-200">
+                                    Desactivar Usuario
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @endif
+    @endforeach
+
     <script>
         function changePerPage(value) {
             const url = new URL(window.location);
@@ -239,5 +314,52 @@
             }
             window.location.href = url.toString();
         }
+
+        function activateUser(userId) {
+            if (confirm('¿Estás seguro de que deseas activar este usuario?')) {
+                // Crear formulario dinámico para activar usuario
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/users/${userId}/activate`;
+
+                // Token CSRF
+                const csrfToken = document.createElement('input');
+                csrfToken.type = 'hidden';
+                csrfToken.name = '_token';
+                csrfToken.value = '{{ csrf_token() }}';
+                form.appendChild(csrfToken);
+
+                // Método PATCH
+                const methodField = document.createElement('input');
+                methodField.type = 'hidden';
+                methodField.name = '_method';
+                methodField.value = 'PATCH';
+                form.appendChild(methodField);
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+            document.getElementById(modalId).classList.add('flex');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+            document.getElementById(modalId).classList.remove('flex');
+        }
+
+        // Cerrar modales con ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modals = document.querySelectorAll('[id$="-modal"]');
+                modals.forEach(modal => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                });
+            }
+        });
     </script>
 @endsection
