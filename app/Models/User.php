@@ -140,4 +140,36 @@ class User extends Authenticatable implements Auditable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Relación con asignaturas (muchos a muchos)
+     */
+    public function asignaturas()
+    {
+        return $this->belongsToMany(Asignatura::class, 'asignatura_users');
+    }
+
+    /**
+     * Relación con notas como estudiante
+     */
+    public function notas()
+    {
+        return $this->hasMany(Nota::class);
+    }
+
+    /**
+     * Verificar si el usuario tiene rol docente
+     */
+    public function esDocente()
+    {
+        return $this->hasRole('docente');
+    }
+
+    /**
+     * Verificar si el usuario tiene rol estudiante
+     */
+    public function esEstudiante()
+    {
+        return $this->hasRole('estudiante');
+    }
 }

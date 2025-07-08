@@ -28,4 +28,28 @@ class Asignatura extends Model
     {
         return $this->morphMany('App\Models\Audit', 'auditable');
     }
+
+    /**
+     * Relación con docentes (muchos a muchos)
+     */
+    public function docentes()
+    {
+        return $this->belongsToMany(User::class, 'asignatura_users');
+    }
+
+    /**
+     * Relación con notas
+     */
+    public function notas()
+    {
+        return $this->hasMany(Nota::class);
+    }
+
+    /**
+     * Verificar si un docente está asignado a esta asignatura
+     */
+    public function tieneDocente($docenteId)
+    {
+        return $this->docentes()->where('user_id', $docenteId)->exists();
+    }
 }

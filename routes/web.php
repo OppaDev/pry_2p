@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuditController;
+use App\Http\Controllers\NotaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 
@@ -46,6 +47,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('productos/{id}/force-delete', [ProductoController::class, 'forceDelete'])->name('productos.forceDelete');
 
     Route::resource('asignaturas', AsignaturaController::class);
+
+    // Rutas resource para notas
+    Route::resource('notas', NotaController::class);
+    
+    // Rutas adicionales para auditoría de notas
+    Route::get('notas/{nota}/audit-history', [NotaController::class, 'auditHistory'])->name('notas.audit-history');
 
 });
 
