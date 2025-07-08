@@ -49,23 +49,23 @@ class DashboardSeeder extends Seeder
         }
 
         // Crear productos de prueba si no existen
-        if (Producto::count() < 10) {
-            $productos = [
-                ['nombre' => 'Laptop Dell Inspiron', 'codigo' => 'LAP001', 'cantidad' => 15, 'precio' => 899.99],
-                ['nombre' => 'Mouse Inalámbrico', 'codigo' => 'MOU001', 'cantidad' => 50, 'precio' => 25.99],
-                ['nombre' => 'Teclado Mecánico', 'codigo' => 'TEC001', 'cantidad' => 30, 'precio' => 79.99],
-                ['nombre' => 'Monitor 24 pulgadas', 'codigo' => 'MON001', 'cantidad' => 20, 'precio' => 199.99],
-                ['nombre' => 'Impresora HP LaserJet', 'codigo' => 'IMP001', 'cantidad' => 8, 'precio' => 249.99],
-                ['nombre' => 'Disco Duro Externo 1TB', 'codigo' => 'HDD001', 'cantidad' => 25, 'precio' => 69.99],
-                ['nombre' => 'Memoria USB 32GB', 'codigo' => 'USB001', 'cantidad' => 100, 'precio' => 12.99],
-                ['nombre' => 'Webcam HD', 'codigo' => 'WEB001', 'cantidad' => 40, 'precio' => 49.99],
-                ['nombre' => 'Altavoces Bluetooth', 'codigo' => 'ALT001', 'cantidad' => 35, 'precio' => 39.99],
-                ['nombre' => 'Cable HDMI 2m', 'codigo' => 'CAB001', 'cantidad' => 75, 'precio' => 15.99],
-            ];
+        // if (Producto::count() < 10) {
+        //     $productos = [
+        //         ['nombre' => 'Laptop Dell Inspiron', 'codigo' => 'LAP001', 'cantidad' => 15, 'precio' => 899.99],
+        //         ['nombre' => 'Mouse Inalámbrico', 'codigo' => 'MOU001', 'cantidad' => 50, 'precio' => 25.99],
+        //         ['nombre' => 'Teclado Mecánico', 'codigo' => 'TEC001', 'cantidad' => 30, 'precio' => 79.99],
+        //         ['nombre' => 'Monitor 24 pulgadas', 'codigo' => 'MON001', 'cantidad' => 20, 'precio' => 199.99],
+        //         ['nombre' => 'Impresora HP LaserJet', 'codigo' => 'IMP001', 'cantidad' => 8, 'precio' => 249.99],
+        //         ['nombre' => 'Disco Duro Externo 1TB', 'codigo' => 'HDD001', 'cantidad' => 25, 'precio' => 69.99],
+        //         ['nombre' => 'Memoria USB 32GB', 'codigo' => 'USB001', 'cantidad' => 100, 'precio' => 12.99],
+        //         ['nombre' => 'Webcam HD', 'codigo' => 'WEB001', 'cantidad' => 40, 'precio' => 49.99],
+        //         ['nombre' => 'Altavoces Bluetooth', 'codigo' => 'ALT001', 'cantidad' => 35, 'precio' => 39.99],
+        //         ['nombre' => 'Cable HDMI 2m', 'codigo' => 'CAB001', 'cantidad' => 75, 'precio' => 15.99],
+        //     ];
 
-            foreach ($productos as $producto) {
-                Producto::create($producto);
-            }
-        }
+        //     foreach ($productos as $producto) {
+        //         Producto::create($producto);
+        //     }
+        // }
     }
 }

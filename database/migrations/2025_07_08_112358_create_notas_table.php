@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('notas', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('estudiante_id')->constrained();
+            $table->foreignId('user_id')->constrained();
             $table->foreignId('asignatura_id')->constrained();
             $table->decimal('nota_1', 3, 2);
             $table->decimal('nota_2', 3, 2);

@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -15,8 +14,12 @@ return new class extends Migration
         $connection = config('audit.drivers.database.connection', config('database.default'));
         $table = config('audit.drivers.database.table', 'audits');
 
-        // Para PostgreSQL, necesitamos usar SQL raw para especificar USING
-        DB::connection($connection)->statement("ALTER TABLE {$table} ALTER COLUMN tags TYPE json USING tags::json");
+        // Usamos el Schema Builder de Laravel, que es compatible con múltiples bases de datos.
+        Schema::connection($connection)->table($table, function (Blueprint $table) {
+            // Laravel generará el SQL correcto para MySQL ("MODIFY COLUMN ... json")
+            // o para PostgreSQL ("ALTER COLUMN ... TYPE json USING ...").
+            $table->json('tags')->nullable()->change();
+        });
     }
 
     /**
@@ -28,7 +31,7 @@ return new class extends Migration
         $table = config('audit.drivers.database.table', 'audits');
 
         Schema::connection($connection)->table($table, function (Blueprint $table) {
-            // Revertir a string
+            // Tu método down ya estaba correcto.
             $table->string('tags')->nullable()->change();
         });
     }
