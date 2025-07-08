@@ -21,6 +21,7 @@ return new class extends Migration
             $table->decimal('nota_3', 3, 2);
             $table->decimal('promedio', 3, 2);
             $table->string('estado_final');
+            $table->softDeletes();
         });
     }
 
