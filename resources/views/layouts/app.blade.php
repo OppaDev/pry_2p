@@ -10,13 +10,13 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Scripts y Estilos de Vite (Ahora controla TODO) -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
+
   </head>
 
   <body class="m-0 font-sans antialiased font-normal text-lg leading-relaxed bg-gray-50 text-slate-500">
@@ -57,6 +57,15 @@
           </li>
 
           <li class="mt-0.5 w-full">
+            <a class="py-2.7 text-lg ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('asignaturas.*') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-700' }}" href="{{ route('asignaturas.index') }}">
+              <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
+                <i class="fas fa-box text-slate-700"></i>
+              </div>
+              <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Asignaturas</span>
+            </a>
+          </li>
+
+          <li class="mt-0.5 w-full">
             <a class="py-2.7 text-lg ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('users.*') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-700' }}" href="{{ route('users.index') }}">
               <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
                 <i class="fas fa-users text-slate-700"></i>
@@ -76,7 +85,7 @@
 
           <!-- Papelera con dropdown nativo -->
           <li class="mt-0.5 w-full">
-            <a class="py-2.7 text-lg ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 cursor-pointer transition-colors {{ request()->routeIs('productos.deleted') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-700' }}" 
+            <a class="py-2.7 text-lg ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 cursor-pointer transition-colors {{ request()->routeIs('productos.deleted') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-700' }}"
                onclick="togglePapeleraDropdown()" id="papelera-trigger">
               <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
                 <i class="fas fa-trash text-slate-700"></i>
@@ -84,11 +93,11 @@
               <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Papelera</span>
               <i class="fas fa-chevron-down ml-auto transition-transform duration-200 text-slate-400" id="papelera-chevron"></i>
             </a>
-            
+
             <!-- Submenu estilo sidebar -->
             <ul class="pl-0 ml-6 mt-1 list-none h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out" id="papelera-submenu">
               <li class="mt-0.5 w-full">
-                <a class="py-2.7 text-base ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('users.deleted') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-600 hover:text-slate-700' }}" 
+                <a class="py-2.7 text-base ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('users.deleted') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-600 hover:text-slate-700' }}"
                    href="{{ route('users.deleted') }}">
                   <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
                     <i class="fas fa-user-slash text-xs text-slate-600"></i>
@@ -97,7 +106,7 @@
                 </a>
               </li>
               <li class="mt-0.5 w-full">
-                <a class="py-2.7 text-base ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('productos.deleted') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-600 hover:text-slate-700' }}" 
+                <a class="py-2.7 text-base ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('productos.deleted') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-600 hover:text-slate-700' }}"
                    href="{{ route('productos.deleted') }}">
                   <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
                     <i class="fas fa-box text-xs text-slate-600"></i>
@@ -123,7 +132,7 @@
         </ul>
       </div>
     </aside>
-    
+
     <!-- 📱 MAIN CONTENT -->
     <main class="ease-soft-in-out xl:ml-68.5 relative h-screen overflow-y-auto transition-all duration-200 text-lg">
       <!-- 🔝 NAVBAR -->
@@ -142,7 +151,7 @@
 
           <div class="flex items-center mt-2 grow sm:mt-0 sm:mr-6 md:mr-0 lg:flex lg:basis-auto">
             <div class="flex items-center md:ml-auto md:pr-4">
-              
+
             </div>
             <ul class="flex flex-row justify-end pl-0 mb-0 list-none md-max:w-full">
               <!-- Usuario dropdown -->
@@ -173,7 +182,7 @@
                     <li class="relative">
                       <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <a class="ease-soft py-1.2 lg:ease-soft clear-both block w-full whitespace-nowrap rounded-lg px-4 transition-colors duration-300 hover:bg-gray-200 hover:text-slate-700" 
+                        <a class="ease-soft py-1.2 lg:ease-soft clear-both block w-full whitespace-nowrap rounded-lg px-4 transition-colors duration-300 hover:bg-gray-200 hover:text-slate-700"
                            href="{{ route('logout') }}"
                            onclick="event.preventDefault(); this.closest('form').submit();">
                           <div class="flex py-1">
@@ -193,7 +202,7 @@
                       </form>
                     </li>
                   </ul>
-                </div>  
+                </div>
               </li>
               <li class="flex items-center px-4 xl:hidden">
                 <a href="javascript:;" class="ease-nav-brand p-0 transition-colors text-sm" sidenav-trigger>
@@ -224,7 +233,7 @@
                     </div>
                 </div>
             @endif
-            
+
             <!-- Mostrar mensajes de error -->
             @if(session('error'))
                 <div class="w-full max-w-full px-3 mb-4">
@@ -241,19 +250,19 @@
       @yield('content')
       </div>
     </main>
-    
+
     <script>
         // Función para manejar el dropdown de papelera
         function togglePapeleraDropdown() {
             const submenu = document.getElementById('papelera-submenu');
             const chevron = document.getElementById('papelera-chevron');
-            
+
             if (submenu.style.height === '0px' || submenu.style.height === '') {
                 // Expandir
                 submenu.style.height = 'auto';
                 const height = submenu.scrollHeight + 'px';
                 submenu.style.height = '0px';
-                
+
                 // Forzar reflow y animar
                 submenu.offsetHeight;
                 submenu.style.height = height;
@@ -266,7 +275,7 @@
                 chevron.classList.remove('rotate-180');
             }
         }
-        
+
         // Funciones globales para modales
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
@@ -276,10 +285,10 @@
                     openForceDeleteModal(modalId);
                     return;
                 }
-                
+
                 modal.classList.remove('hidden');
                 modal.classList.add('active');
-                
+
                 // Enfocar primer input si existe
                 const firstInput = modal.querySelector('input, textarea, select');
                 if (firstInput) {
@@ -287,7 +296,7 @@
                 }
             }
         }
-        
+
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) {
@@ -296,10 +305,10 @@
                     closeForceDeleteModal(modalId);
                     return;
                 }
-                
+
                 modal.classList.add('hidden');
                 modal.classList.remove('active');
-                
+
                 // Limpiar campos
                 const inputs = modal.querySelectorAll('input, textarea, select');
                 inputs.forEach(input => {
@@ -309,7 +318,7 @@
                 });
             }
         }
-        
+
         // Auto-expandir si estamos en una ruta de papelera
         document.addEventListener('DOMContentLoaded', function() {
             const currentPath = window.location.pathname;
@@ -319,7 +328,7 @@
                 }, 100);
             }
         });
-        
+
         // Cerrar modal con tecla Escape (para modales generales)
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
@@ -331,7 +340,7 @@
                 });
             }
         });
-        
+
         // Cerrar modal al hacer clic fuera (para modales generales)
         document.addEventListener('click', function(event) {
             if (event.target.classList.contains('modal-backdrop') && !event.target.id.includes('force-delete')) {

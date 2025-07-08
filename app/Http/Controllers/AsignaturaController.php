@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Asignatura;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -87,7 +88,11 @@ class AsignaturaController extends Controller
      */
     public function show(Asignatura $asignatura)
     {
-        return view('asignaturas.show', compact('asignatura'));
+        $estudiantes = User::whereHas('roles', function ($query) {
+            $query->where('name', 'estudiante');
+        })->get();
+
+        return view('asignaturas.show', compact('asignatura', 'estudiantes'));
     }
 
     /**
@@ -140,6 +145,32 @@ class AsignaturaController extends Controller
             DB::rollBack();
 
             return redirect()->route('asignaturas.index')->with('error', 'Error al eliminar asignatura: ' . $th->getMessage());
+        }
+    }
+
+    public function assignUsers(Request $request, Asignatura $asignatura)
+    {
+        $request->validate([
+            'users' => 'required|array',
+            'users.*' => 'exists:users,id',
+        ], [
+            'users.required' => 'Debe seleccionar al menos un estudiante.',
+            'users.*.exists' => 'Uno o más estudiantes seleccionados no existen.',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // Sync users to the asignatura
+            $asignatura->users()->sync($request->users);
+
+            DB::commit();
+
+            return redirect()->route('asignaturas.show', $asignatura->id)->with('success', 'Estudiantes asignados exitosamente.');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            return redirect()->route('asignaturas.show', $asignatura->id)->with('error', 'Error al asignar estudiantes: ' . $th->getMessage());
         }
     }
 }

@@ -44,9 +44,9 @@ Route::middleware('auth')->group(function () {
     Route::get('productos-eliminados', [ProductoController::class, 'deletedProducts'])->name('productos.deleted');
     Route::patch('productos/{id}/restore', [ProductoController::class, 'restore'])->name('productos.restore');
     Route::delete('productos/{id}/force-delete', [ProductoController::class, 'forceDelete'])->name('productos.forceDelete');
+    Route::post('asignaturas/{asignatura}/assign-users', [AsignaturaController::class, 'assignUsers'])->name('asignaturas.assign-users');
 
     Route::resource('asignaturas', AsignaturaController::class);
-
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

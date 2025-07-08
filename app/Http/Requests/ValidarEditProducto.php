@@ -13,11 +13,11 @@ class ValidarEditProducto extends FormRequest
      */
     public function authorize(): bool
     {
-        if(Auth::user() -> email === 'test@example.com')
-        {
-            return true;
-        }
-        return false;
+        // if(Auth::user() -> email === 'test@example.com')
+        // {
+        //     return true;
+        // }
+        // return false;
     }
 
     /**
@@ -28,7 +28,7 @@ class ValidarEditProducto extends FormRequest
     public function rules(): array
     {
         $productoId = $this->route('producto')->id;
-        
+
         return [
             'nombre' => [
                 'nullable',
@@ -80,15 +80,15 @@ class ValidarEditProducto extends FormRequest
     {
         // Para edición, limpiamos espacios y normalizamos los datos
         $data = [];
-        
+
         if ($this->has('nombre')) {
             $data['nombre'] = trim($this->nombre);
         }
-        
+
         if ($this->has('codigo')) {
             $data['codigo'] = strtoupper(trim($this->codigo));
         }
-        
+
         $this->merge($data);
     }
 }
