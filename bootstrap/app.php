@@ -18,16 +18,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'verificar.estado' => VerificarEstadoActivo::class,
         ]);
-
-        // Aplicar el middleware globalmente a todas las rutas web autenticadas
-        $middleware->web([
-            VerificarEstadoActivo::class,
-        ]);
-
-        $middleware->group('auth', [
-            'auth',
-            'verificar.estado',
-        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
