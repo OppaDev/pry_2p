@@ -39,7 +39,7 @@ class ProfileController extends Controller
     {
         try {
             DB::beginTransaction();
-            
+
             $request->user()->fill($request->validated());
 
             if ($request->user()->isDirty('email')) {
@@ -47,7 +47,7 @@ class ProfileController extends Controller
             }
 
             $request->user()->save();
-            
+
             DB::commit();
 
             return Redirect::route('profile.edit')->with('status', 'profile-updated');
@@ -69,7 +69,7 @@ class ProfileController extends Controller
 
         try {
             DB::beginTransaction();
-            
+
             $user = $request->user();
 
             Auth::logout();
@@ -78,7 +78,7 @@ class ProfileController extends Controller
 
             $request->session()->invalidate();
             $request->session()->regenerateToken();
-            
+
             DB::commit();
 
             return Redirect::to('/');
@@ -106,12 +106,12 @@ class ProfileController extends Controller
 
         try {
             DB::beginTransaction();
-            
+
             $targetUser = \App\Models\User::findOrFail($request->user_id);
-            
+
             // Remover todos los roles actuales y asignar el nuevo
             $targetUser->syncRoles([$request->role]);
-            
+
             DB::commit();
 
             return Redirect::route('profile.edit')->with('status', 'role-updated');
