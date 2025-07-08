@@ -40,7 +40,6 @@ class Asignatura extends Model implements AuditableContract
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
-<<<<<<< HEAD
 
     /**
      * Get the audits for the asignatura.
@@ -73,6 +72,4 @@ class Asignatura extends Model implements AuditableContract
     {
         return $this->docentes()->where('user_id', $docenteId)->exists();
     }
-=======
->>>>>>> 6f801e22343a10ee3292ae004e5915e4cecaf779
 }

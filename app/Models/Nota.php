@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-<<<<<<< HEAD
 use OwenIt\Auditing\Contracts\Auditable;
 
 class Nota extends Model implements Auditable
@@ -122,13 +121,4 @@ class Nota extends Model implements Auditable
     {
         return $query->where('estado_final', $estado);
     }
-=======
-use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
-use OwenIt\Auditing\Auditable;
-
-class Nota extends Model implements AuditableContract
-{
-    use SoftDeletes;
-    use Auditable;
->>>>>>> 6f801e22343a10ee3292ae004e5915e4cecaf779
 }

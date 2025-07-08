@@ -50,7 +50,6 @@ Route::middleware(['auth', 'verificar.estado'])->group(function () {
     Route::post('asignaturas/{asignatura}/assign-users', [AsignaturaController::class, 'assignUsers'])->name('asignaturas.assign-users');
 
     Route::resource('asignaturas', AsignaturaController::class);
-<<<<<<< HEAD
 
     // Rutas resource para notas
     Route::resource('notas', NotaController::class);
@@ -58,8 +57,6 @@ Route::middleware(['auth', 'verificar.estado'])->group(function () {
     // Rutas adicionales para auditoría de notas
     Route::get('notas/{nota}/audit-history', [NotaController::class, 'auditHistory'])->name('notas.audit-history');
 
-=======
->>>>>>> 6f801e22343a10ee3292ae004e5915e4cecaf779
 });
 
 require __DIR__ . '/auth.php';
