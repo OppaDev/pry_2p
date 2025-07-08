@@ -67,5 +67,7 @@ class DashboardSeeder extends Seeder
         //         Producto::create($producto);
         //     }
         // }
+
+        $this->call(RoleSeeder::class);
     }
 }

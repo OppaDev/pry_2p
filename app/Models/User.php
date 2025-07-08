@@ -18,7 +18,7 @@ class User extends Authenticatable implements Auditable
     use HasRoles;
     use SoftDeletes;
     use \OwenIt\Auditing\Auditable;
-    
+
     /**
      * Attributes to exclude from the Audit.
      *
@@ -38,6 +38,8 @@ class User extends Authenticatable implements Auditable
         'name',
         'email',
         'email_verified_at',
+        'estado',
+        'motivo',
     ];
 
     /**
@@ -67,11 +69,11 @@ class User extends Authenticatable implements Auditable
     public function generateTags(): array
     {
         $tags = [];
-        
+
         if ($this->auditComment) {
             $tags[] = 'motivo:' . $this->auditComment;
         }
-        
+
         return $tags;
     }
 
@@ -86,24 +88,24 @@ class User extends Authenticatable implements Auditable
         if ($this->auditComment) {
             // Obtener tags actuales o crear array vacío
             $currentTags = $data['tags'] ?? [];
-            
+
             // Si es string, decodificar
             if (is_string($currentTags)) {
                 $currentTags = json_decode($currentTags, true) ?? [];
             }
-            
+
             // Asegurar que es array
             if (!is_array($currentTags)) {
                 $currentTags = [];
             }
-            
+
             // Agregar el motivo
             $currentTags[] = 'motivo:' . $this->auditComment;
-            
+
             // Convertir a JSON string para PostgreSQL
             $data['tags'] = json_encode($currentTags);
         }
-        
+
         return $data;
     }
 
@@ -116,6 +118,8 @@ class User extends Authenticatable implements Auditable
         'name',
         'email',
         'password',
+        'estado',
+        'motivo',
     ];
 
     /**

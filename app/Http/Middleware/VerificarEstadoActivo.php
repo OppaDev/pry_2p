@@ -23,7 +23,7 @@ class VerificarEstadoActivo
             // Verificar si el usuario está inactivo
             if ($user->estado !== 'activo') {
                 // Obtener el motivo de inactivación
-                $motivo = $user->motivo_inactivo ?? 'Sin motivo especificado';
+                $motivo = $user->motivo ?? 'Sin motivo especificado';
 
                 // Cerrar sesión del usuario
                 Auth::logout();

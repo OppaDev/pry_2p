@@ -27,12 +27,12 @@ class UserController extends Controller
             'search.string' => 'El término de búsqueda debe ser una cadena de texto.',
             'search.max' => 'El término de búsqueda no puede tener más de 255 caracteres.'
         ]);
-        
+
         $perPage = $request->get('per_page', 10);
         $search = $request->get('search');
-        
-        $query = User::select(['id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at']);
-        
+
+        $query = User::select(['id', 'name', 'email', 'email_verified_at', 'estado', 'motivo', 'created_at', 'updated_at']);
+
         if (!empty($search)) {
             $query->where(function($q) use ($search) {
                 $q->where('name', 'LIKE', '%' . $search . '%')
@@ -41,7 +41,7 @@ class UserController extends Controller
         }
 
         $query->orderBy('created_at', 'desc');
-        
+
         $data = array(
             'usuarios' => $query->paginate($perPage)->withQueryString(),
             'perPage' => $perPage,
@@ -65,7 +65,7 @@ class UserController extends Controller
     {
         try {
             DB::beginTransaction();
-            
+
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
@@ -73,7 +73,7 @@ class UserController extends Controller
             ]);
 
             DB::commit();
-            
+
             return redirect()->route('users.index')->with('success', 'Usuario creado exitosamente.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -111,20 +111,20 @@ class UserController extends Controller
     {
         try {
             DB::beginTransaction();
-            
+
             // Preparar datos para actualizar
             $data = $request->only(['name', 'email']);
-            
+
             // Si se proporciona una nueva contraseña, la hasheamos
             if ($request->filled('password')) {
                 $data['password'] = Hash::make($request->password);
             }
-            
+
             // Actualizar el usuario con los datos validados
             $user->update($data);
 
             DB::commit();
-            
+
             return redirect()->route('users.index')->with('success', 'Usuario actualizado exitosamente.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -161,13 +161,13 @@ class UserController extends Controller
             }
 
             DB::beginTransaction();
-            
+
             // Registrar el motivo en los metadatos de auditoría
             $user->auditComment = $request->motivo;
             $user->delete();
-            
+
             DB::commit();
-            
+
             return redirect()->route('users.index')->with('success', 'Usuario eliminado exitosamente.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -201,7 +201,7 @@ class UserController extends Controller
 
         return view('users.audit-history', compact('user', 'audits', 'eventFilter', 'perPage'));
     }
-    
+
     /**
      * Display a listing of deleted users.
      */
@@ -216,12 +216,12 @@ class UserController extends Controller
             'search.string' => 'El término de búsqueda debe ser una cadena de texto.',
             'search.max' => 'El término de búsqueda no puede tener más de 255 caracteres.'
         ]);
-        
+
         $perPage = $request->get('per_page', 10);
         $search = $request->get('search');
-        
+
         $query = User::onlyTrashed()->select(['id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at', 'deleted_at']);
-        
+
         if (!empty($search)) {
             $query->where(function($q) use ($search) {
                 $q->where('name', 'LIKE', '%' . $search . '%')
@@ -230,7 +230,7 @@ class UserController extends Controller
         }
 
         $query->orderBy('deleted_at', 'desc');
-        
+
         $data = array(
             'usuarios' => $query->paginate($perPage)->withQueryString(),
             'perPage' => $perPage,
@@ -262,20 +262,20 @@ class UserController extends Controller
 
         try {
             $user = User::onlyTrashed()->findOrFail($id);
-            
+
             // Verificar que no sea el usuario autenticado
             if (Auth::id() === $user->id) {
                 return redirect()->route('users.deleted')->with('error', 'No puedes restaurar tu propia cuenta mientras estás autenticado.');
             }
-            
+
             DB::beginTransaction();
-            
+
             // Registrar el motivo en los metadatos de auditoría
             $user->auditComment = $request->motivo;
             $user->restore();
-            
+
             DB::commit();
-            
+
             return redirect()->route('users.deleted')->with('success', 'Usuario restaurado exitosamente.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -301,19 +301,19 @@ class UserController extends Controller
 
         try {
             $user = User::onlyTrashed()->findOrFail($id);
-            
+
             // Verificar que no sea el usuario autenticado
             if (Auth::id() === $user->id) {
                 return redirect()->route('users.deleted')->with('error', 'No puedes eliminar permanentemente tu propia cuenta.');
             }
-            
+
             // Verificar contraseña del usuario logueado
             if (!Hash::check($request->password, Auth::user()->password)) {
                 return redirect()->route('users.deleted')->with('error', 'Contraseña incorrecta. No se puede eliminar permanentemente.');
             }
-            
+
             DB::beginTransaction();
-            
+
             // Crear un registro de auditoría manual antes de la eliminación permanente
             \OwenIt\Auditing\Models\Audit::create([
                 'user_type' => get_class(Auth::user()),
@@ -327,14 +327,14 @@ class UserController extends Controller
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
                 'tags' => json_encode([
-                    'motivo:' . $request->motivo, 
+                    'motivo:' . $request->motivo,
                     'accion:eliminacion_permanente',
                     'password_verificada:true'
                 ]),
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            
+
             Log::info('Usuario eliminado permanentemente', [
                 'deleted_user_id' => $user->id,
                 'deleted_user_email' => $user->email,
@@ -345,11 +345,11 @@ class UserController extends Controller
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent()
             ]);
-            
+
             $user->forceDelete();
-            
+
             DB::commit();
-            
+
             return redirect()->route('users.deleted')->with('success', 'Usuario eliminado permanentemente.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -358,8 +358,99 @@ class UserController extends Controller
                 'admin_user_id' => Auth::id(),
                 'motivo' => $request->motivo ?? 'N/A'
             ]);
-            
+
             return redirect()->route('users.deleted')->with('error', 'Error al eliminar permanentemente el usuario: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Activate a user.
+     */
+    public function activate(User $user)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Verificar que no sea el usuario actual
+            if (Auth::id() === $user->id) {
+                return redirect()->back()->with('error', 'No puedes modificar tu propia cuenta.');
+            }
+
+            // Verificar que el usuario esté inactivo
+            if ($user->estado === 'activo') {
+                return redirect()->back()->with('warning', 'El usuario ya está activo.');
+            }
+
+            // Establecer comentario para auditoría
+            $user->auditComment = 'Usuario activado por administrador';
+
+            // Activar usuario
+            $user->update([
+                'estado' => 'activo',
+                'motivo' => null
+            ]);
+
+            DB::commit();
+
+            return redirect()->back()->with('success', "Usuario {$user->name} activado correctamente.");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al activar usuario: ' . $e->getMessage(), [
+                'user_id' => $user->id,
+                'admin_user_id' => Auth::id()
+            ]);
+
+            return redirect()->back()->with('error', 'Error al activar el usuario: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Deactivate a user.
+     */
+    public function deactivate(Request $request, User $user)
+    {
+        $request->validate([
+            'motivo' => 'required|string|max:500'
+        ], [
+            'motivo.required' => 'El motivo de desactivación es obligatorio.',
+            'motivo.string' => 'El motivo debe ser una cadena de texto.',
+            'motivo.max' => 'El motivo no puede tener más de 500 caracteres.'
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // Verificar que no sea el usuario actual
+            if (Auth::id() === $user->id) {
+                return redirect()->back()->with('error', 'No puedes desactivar tu propia cuenta.');
+            }
+
+            // Verificar que el usuario esté activo
+            if ($user->estado === 'inactivo') {
+                return redirect()->back()->with('warning', 'El usuario ya está inactivo.');
+            }
+
+            // Establecer comentario para auditoría
+            $user->auditComment = 'Usuario desactivado por administrador. Motivo: ' . $request->motivo;
+
+            // Desactivar usuario
+            $user->update([
+                'estado' => 'inactivo',
+                'motivo' => $request->motivo
+            ]);
+
+            DB::commit();
+
+            return redirect()->back()->with('success', "Usuario {$user->name} desactivado correctamente.");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al desactivar usuario: ' . $e->getMessage(), [
+                'user_id' => $user->id,
+                'admin_user_id' => Auth::id(),
+                'motivo' => $request->motivo
+            ]);
+
+            return redirect()->back()->with('error', 'Error al desactivar el usuario: ' . $e->getMessage());
         }
     }
 }
