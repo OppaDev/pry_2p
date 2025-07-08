@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AsignaturaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
@@ -46,6 +47,7 @@ Route::middleware(['auth', 'verificar.estado'])->group(function () {
     Route::patch('productos/{id}/restore', [ProductoController::class, 'restore'])->name('productos.restore');
     Route::delete('productos/{id}/force-delete', [ProductoController::class, 'forceDelete'])->name('productos.forceDelete');
 
+    Route::resource('asignaturas', AsignaturaController::class);
 
 });
 
