@@ -34,8 +34,7 @@ class VerificarEstadoActivo
 
                 // Redirigir al login con mensaje de error
                 return redirect()->route('login')
-                    ->withErrors(['error' => "Tu cuenta fue desactivada. Motivo: {$motivo}"])
-                    ->with('status', 'cuenta_desactivada');
+                    ->withErrors(['email' => "Tu cuenta está desactivada. Motivo: {$motivo}"]);
             }
         }
 
