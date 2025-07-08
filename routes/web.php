@@ -42,7 +42,26 @@ Route::middleware(['auth', 'verificar.estado'])->group(function () {
     Route::patch('users/{user}/activate', [UserController::class, 'activate'])->name('users.activate');
     Route::patch('users/{user}/deactivate', [UserController::class, 'deactivate'])->name('users.deactivate');
 
-    Route::resource('asignaturas', AsignaturaController::class)->middleware(['role:docente|admin']);
+    // Rutas resource para productos
+    Route::resource('productos', ProductoController::class);
+
+    // Rutas adicionales para auditoría de productos
+    Route::get('productos/{producto}/audit-history', [ProductoController::class, 'auditHistory'])->name('productos.audit-history');
+
+    // Rutas adicionales para productos eliminados
+    Route::get('productos-eliminados', [ProductoController::class, 'deletedProducts'])->name('productos.deleted');
+    Route::patch('productos/{id}/restore', [ProductoController::class, 'restore'])->name('productos.restore');
+    Route::delete('productos/{id}/force-delete', [ProductoController::class, 'forceDelete'])->name('productos.forceDelete');
+    Route::post('asignaturas/{asignatura}/assign-users', [AsignaturaController::class, 'assignUsers'])->name('asignaturas.assign-users');
+
+    Route::resource('asignaturas', AsignaturaController::class);
+
+    // Rutas resource para notas
+    Route::resource('notas', NotaController::class);
+
+    // Rutas adicionales para auditoría de notas
+    Route::get('notas/{nota}/audit-history', [NotaController::class, 'auditHistory'])->name('notas.audit-history');
+
 });
 
 require __DIR__ . '/auth.php';
