@@ -29,12 +29,12 @@ class ProductoController extends Controller
             'search.string' => 'El término de búsqueda debe ser una cadena de texto.',
             'search.max' => 'El término de búsqueda no puede tener más de 255 caracteres.'
         ]);
-        
+
         $perPage = $request->get('per_page', 10);
         $search = $request->get('search');
-        
+
         $query = Producto::select(['id', 'nombre', 'codigo', 'cantidad', 'precio', 'created_at', 'updated_at']);
-        
+
         if (!empty($search)) {
             $query->where(function($q) use ($search) {
                 $q->where('nombre', 'LIKE', '%' . $search . '%')
@@ -43,7 +43,7 @@ class ProductoController extends Controller
         }
 
         $query->orderBy('created_at', 'desc');
-        
+
         $data = array(
             'productos' => $query->paginate($perPage)->withQueryString(),
             'perPage' => $perPage,
@@ -67,7 +67,7 @@ class ProductoController extends Controller
     {
         try {
             DB::beginTransaction();
-            
+
             // Crear producto dentro de la transacción
             $producto = Producto::create($request->only(['nombre', 'codigo', 'cantidad', 'precio']));
             $producto->nombre = $request->nombre;
@@ -78,12 +78,12 @@ class ProductoController extends Controller
             // $user->save();
 
             DB::commit();
-            
+
             return redirect()->route('productos.index')->with('success', 'Producto creado exitosamente.');
 
         } catch (\Throwable $th) {
             DB::rollBack();
-            
+
             return redirect()->route('productos.create')->with('error', 'Error al crear producto: ');
         }
     }
@@ -142,12 +142,12 @@ class ProductoController extends Controller
             'search.string' => 'El término de búsqueda debe ser una cadena de texto.',
             'search.max' => 'El término de búsqueda no puede tener más de 255 caracteres.'
         ]);
-        
+
         $perPage = $request->get('per_page', 10);
         $search = $request->get('search');
-        
+
         $query = Producto::onlyTrashed()->select(['id', 'nombre', 'codigo', 'cantidad', 'precio', 'created_at', 'updated_at', 'deleted_at']);
-        
+
         if (!empty($search)) {
             $query->where(function($q) use ($search) {
                 $q->where('nombre', 'LIKE', '%' . $search . '%')
@@ -156,7 +156,7 @@ class ProductoController extends Controller
         }
 
         $query->orderBy('deleted_at', 'desc');
-        
+
         $data = array(
             'productos' => $query->paginate($perPage)->withQueryString(),
             'perPage' => $perPage,
@@ -188,15 +188,15 @@ class ProductoController extends Controller
 
         try {
             $producto = Producto::onlyTrashed()->findOrFail($id);
-            
+
             DB::beginTransaction();
-            
+
             // Registrar el motivo en los metadatos de auditoría
             $producto->auditComment = $request->motivo;
             $producto->restore();
-            
+
             DB::commit();
-            
+
             return redirect()->route('productos.deleted')->with('success', 'Producto restaurado exitosamente.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -222,14 +222,14 @@ class ProductoController extends Controller
 
         try {
             $producto = Producto::onlyTrashed()->findOrFail($id);
-            
+
             // Verificar contraseña del usuario logueado
             if (!Hash::check($request->password, Auth::user()->password)) {
                 return redirect()->route('productos.deleted')->with('error', 'Contraseña incorrecta. No se puede eliminar permanentemente.');
             }
-            
+
             DB::beginTransaction();
-            
+
             // Crear un registro de auditoría manual antes de la eliminación permanente
             \OwenIt\Auditing\Models\Audit::create([
                 'user_type' => get_class(Auth::user()),
@@ -243,14 +243,14 @@ class ProductoController extends Controller
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
                 'tags' => json_encode([
-                    'motivo:' . $request->motivo, 
+                    'motivo:' . $request->motivo,
                     'accion:eliminacion_permanente',
                     'password_verificada:true'
                 ]),
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            
+
             Log::info('Producto eliminado permanentemente', [
                 'deleted_producto_id' => $producto->id,
                 'deleted_producto_codigo' => $producto->codigo,
@@ -261,11 +261,11 @@ class ProductoController extends Controller
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent()
             ]);
-            
+
             $producto->forceDelete();
-            
+
             DB::commit();
-            
+
             return redirect()->route('productos.deleted')->with('success', 'Producto eliminado permanentemente.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -274,7 +274,7 @@ class ProductoController extends Controller
                 'user_id' => Auth::id(),
                 'motivo' => $request->motivo ?? 'N/A'
             ]);
-            
+
             return redirect()->route('productos.deleted')->with('error', 'Error al eliminar permanentemente el producto: ' . $e->getMessage());
         }
     }
@@ -294,14 +294,14 @@ class ProductoController extends Controller
     {
         try {
             DB::beginTransaction();
-            
+
             // Actualizar el producto con los datos validados
             $producto->update($request->only(['nombre', 'codigo', 'cantidad', 'precio']));
             $producto->codigo = $producto->codigo . rand(100, 999);
             $producto->save();
-            
+
             DB::commit();
-            
+
             return redirect()->route('productos.index')->with('success', 'Producto actualizado exitosamente.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -333,28 +333,28 @@ class ProductoController extends Controller
 
         try {
             DB::beginTransaction();
-            
+
             // if ($producto->hasRelatedData()) {
             //     return redirect()->route('productos.index')
             //         ->with('error', 'No se puede eliminar el producto porque tiene datos relacionados.');
             // }
-            
+
             // Registrar el motivo en los metadatos de auditoría
             $producto->auditComment = $request->motivo;
             $producto->delete();
-            
+
             DB::commit();
-            
+
             return redirect()->route('productos.index')
                 ->with('success', 'Producto eliminado exitosamente.');
-                
+
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error al eliminar producto: ' . $e->getMessage(), [
                 'producto_id' => $producto->id,
                 'user_id' => Auth::id()
             ]);
-            
+
             return redirect()->route('productos.index')
                 ->with('error', 'Error al eliminar el producto. Por favor, intenta nuevamente.');
         }

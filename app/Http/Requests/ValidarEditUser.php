@@ -13,11 +13,11 @@ class ValidarEditUser extends FormRequest
      */
     public function authorize(): bool
     {
-        if(Auth::user() -> email === 'test@example.com')
-        {
-            return true;
-        }
-        return false;
+        // if(Auth::user() -> email === 'test@example.com')
+        // {
+        //     return true;
+        // }
+        // return false;
     }
 
     /**
@@ -28,7 +28,7 @@ class ValidarEditUser extends FormRequest
     public function rules(): array
     {
         $userId = $this->route('user')->id;
-        
+
         return [
             'name' => [
                 'required',
@@ -76,15 +76,15 @@ class ValidarEditUser extends FormRequest
     {
         // Para edición, limpiamos espacios y normalizamos los datos
         $data = [];
-        
+
         if ($this->has('name')) {
             $data['name'] = trim($this->name);
         }
-        
+
         if ($this->has('email')) {
             $data['email'] = strtolower(trim($this->email));
         }
-        
+
         $this->merge($data);
     }
 }

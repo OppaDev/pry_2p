@@ -12,11 +12,12 @@ class ValidarStoreProducto extends FormRequest
      */
     public function authorize(): bool
     {
-        if(Auth::user() -> email === 'test@example.com')
-        {
-            return true;
-        }
-        return false;
+        // if(Auth::user() -> email === 'test@example.com')
+        // {
+        //     return true;
+        // }
+        // return false;
+        return true;
     }
 
     /**

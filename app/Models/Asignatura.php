@@ -4,12 +4,32 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use OwenIt\Auditing\Auditable;
 
-class Asignatura extends Model
+class Asignatura extends Model implements AuditableContract
 {
     use SoftDeletes;
-    use \OwenIt\Auditing\Auditable;
+    use Auditable;
+
     protected $fillable = ['nombre', 'codigo'];
+
+    protected $auditInclude = [
+        'nombre',
+        'codigo',
+    ];
+
+    /**
+     * The events that should trigger an audit.
+     *
+     * @var array
+     */
+    protected $auditEvents = [
+        'created',
+        'updated',
+        'deleted',
+        'restored',
+    ];
 
     /**
      * The attributes that should be cast to native types.
@@ -20,6 +40,7 @@ class Asignatura extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+<<<<<<< HEAD
 
     /**
      * Get the audits for the asignatura.
@@ -52,4 +73,6 @@ class Asignatura extends Model
     {
         return $this->docentes()->where('user_id', $docenteId)->exists();
     }
+=======
+>>>>>>> 6f801e22343a10ee3292ae004e5915e4cecaf779
 }

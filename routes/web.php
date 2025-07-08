@@ -13,9 +13,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified', 'verificar.estado'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+//Verificar el estado de los usuarios
+// Las rutas de autenticación están protegidas por el middleware VerificarEstadoActivo
+Route::middleware(['auth', 'verificar.estado'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -45,8 +47,10 @@ Route::middleware('auth')->group(function () {
     Route::get('productos-eliminados', [ProductoController::class, 'deletedProducts'])->name('productos.deleted');
     Route::patch('productos/{id}/restore', [ProductoController::class, 'restore'])->name('productos.restore');
     Route::delete('productos/{id}/force-delete', [ProductoController::class, 'forceDelete'])->name('productos.forceDelete');
+    Route::post('asignaturas/{asignatura}/assign-users', [AsignaturaController::class, 'assignUsers'])->name('asignaturas.assign-users');
 
     Route::resource('asignaturas', AsignaturaController::class);
+<<<<<<< HEAD
 
     // Rutas resource para notas
     Route::resource('notas', NotaController::class);
@@ -54,6 +58,8 @@ Route::middleware('auth')->group(function () {
     // Rutas adicionales para auditoría de notas
     Route::get('notas/{nota}/audit-history', [NotaController::class, 'auditHistory'])->name('notas.audit-history');
 
+=======
+>>>>>>> 6f801e22343a10ee3292ae004e5915e4cecaf779
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

@@ -7,8 +7,8 @@ use App\Http\Middleware\VerificarEstadoActivo;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        commands: __DIR__.'/../routes/console.php',
+        web: __DIR__ . '/../routes/web.php',
+        commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
@@ -20,14 +20,14 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         // Aplicar el middleware globalmente a todas las rutas web autenticadas
-        $middleware->web([
-            VerificarEstadoActivo::class,
-        ]);
+        // $middleware->web([
+        //     VerificarEstadoActivo::class,
+        // ]);
 
-        $middleware->group('auth', [
-            'auth',
-            'verificar.estado',
-        ]);
+        // $middleware->group('auth', [
+        //     'auth',
+        //     'verificar.estado',
+        // ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
