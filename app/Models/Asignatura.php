@@ -40,4 +40,10 @@ class Asignatura extends Model implements AuditableContract
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'asignatura_user', 'asignatura_id', 'user_id');
+    }
 }
