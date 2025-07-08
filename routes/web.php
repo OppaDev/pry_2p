@@ -19,6 +19,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 Route::middleware(['auth', 'verificar.estado'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/role', [ProfileController::class, 'updateRole'])->name('profile.update-role');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Rutas para auditorías generales
