@@ -42,14 +42,6 @@ class Asignatura extends Model implements AuditableContract
     ];
 
     /**
-     * Get the audits for the asignatura.
-     */
-    public function audits()
-    {
-        return $this->morphMany('App\Models\Audit', 'auditable');
-    }
-
-    /**
      * Relación con docentes (muchos a muchos)
      */
     public function docentes()
