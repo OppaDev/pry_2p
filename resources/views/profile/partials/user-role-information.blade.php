@@ -36,7 +36,7 @@
                 </div>
                 <div class="ml-4">
                     <div class="text-sm font-medium text-gray-900">
-                        Rol actual: 
+                        Rol actual:
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                             @if($userRole === 'admin') bg-red-100 text-red-800
                             @elseif($userRole === 'docente') bg-blue-100 text-blue-800
@@ -66,7 +66,7 @@
                 <h3 class="text-sm font-medium text-yellow-800 mb-3">
                     🔒 Panel de Administrador - Gestión de Roles
                 </h3>
-                
+
                 <form method="post" action="{{ route('profile.update-role') }}" class="space-y-4">
                     @csrf
                     @method('patch')

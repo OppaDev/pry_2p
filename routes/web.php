@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuditController;
+use App\Http\Controllers\NotaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 
