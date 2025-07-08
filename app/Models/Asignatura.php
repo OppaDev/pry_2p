@@ -63,9 +63,5 @@ class Asignatura extends Model implements AuditableContract
     public function tieneDocente($docenteId)
     {
         return $this->docentes()->where('user_id', $docenteId)->exists();
-
-    public function users()
-    {
-        return $this->belongsToMany(User::class, 'asignatura_user', 'asignatura_id', 'user_id');
     }
 }
