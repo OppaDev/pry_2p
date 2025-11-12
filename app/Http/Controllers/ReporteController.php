@@ -39,7 +39,11 @@ class ReporteController extends Controller
             return $this->exportarVentasPdf($datos);
         }
         
-        return view('reportes.ventas', $datos);
+        // Obtener listas para filtros
+        $vendedores = \App\Models\User::select('id', 'name', 'email')->get();
+        $clientes = \App\Models\Cliente::select('id', 'nombre_completo', 'identificacion')->get();
+        
+        return view('reportes.ventas', compact('datos', 'vendedores', 'clientes'));
     }
     
     /**
@@ -58,7 +62,10 @@ class ReporteController extends Controller
             return $this->exportarInventarioPdf($datos);
         }
         
-        return view('reportes.inventario', $datos);
+        // Obtener categorías para filtros
+        $categorias = \App\Models\Categoria::select('id', 'nombre')->get();
+        
+        return view('reportes.inventario', compact('datos', 'categorias'));
     }
     
     /**
@@ -78,7 +85,10 @@ class ReporteController extends Controller
             return $this->exportarProductosMasVendidosPdf($datos);
         }
         
-        return view('reportes.productos-mas-vendidos', $datos);
+        // Obtener categorías para filtros
+        $categorias = \App\Models\Categoria::select('id', 'nombre')->get();
+        
+        return view('reportes.productos-mas-vendidos', compact('datos', 'categorias'));
     }
     
     /**
@@ -97,7 +107,11 @@ class ReporteController extends Controller
             return $this->exportarMovimientosPdf($datos);
         }
         
-        return view('reportes.movimientos-inventario', $datos);
+        // Obtener listas para filtros
+        $productos = \App\Models\Producto::select('id', 'nombre', 'codigo')->get();
+        $responsables = \App\Models\User::select('id', 'name')->get();
+        
+        return view('reportes.movimientos-inventario', compact('datos', 'productos', 'responsables'));
     }
     
     /**
@@ -116,7 +130,7 @@ class ReporteController extends Controller
             return $this->exportarClientesPdf($datos);
         }
         
-        return view('reportes.clientes', $datos);
+        return view('reportes.clientes', compact('datos'));
     }
     
     /**
@@ -135,11 +149,11 @@ class ReporteController extends Controller
             return $this->exportarVentasPorVendedorPdf($datos);
         }
         
-        return view('reportes.ventas-por-vendedor', $datos);
+        return view('reportes.ventas-por-vendedor', compact('datos'));
     }
     
     /**
-     * Generar reporte de bajo stock
+     * Generar reporte de productos con bajo stock
      */
     public function bajoStock(Request $request)
     {
@@ -153,7 +167,7 @@ class ReporteController extends Controller
             return $this->exportarBajoStockPdf($datos);
         }
         
-        return view('reportes.bajo-stock', $datos);
+        return view('reportes.bajo-stock', compact('datos'));
     }
     
     // ==================== MÉTODOS DE EXPORTACIÓN EXCEL ====================
