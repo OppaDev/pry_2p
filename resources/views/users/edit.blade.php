@@ -99,7 +99,16 @@
                             <div class="flex flex-wrap -mx-3">
                                 <div class="w-full max-w-full px-3">
                                     <div class="mb-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
-                                        <h6 class="mb-2 text-lg font-semibold text-slate-700">Información del Usuario</h6>
+                                        <div class="flex items-center justify-between mb-3">
+                                            <h6 class="mb-0 text-lg font-semibold text-slate-700">Información del Usuario</h6>
+                                            @can('usuarios.asignar_rol')
+                                            <a href="{{ route('users.edit-roles', $user->id) }}"
+                                                class="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-orange-500 to-yellow-500 rounded-lg hover:from-orange-600 hover:to-yellow-600 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-all duration-200 shadow-sm hover:shadow-md">
+                                                <i class="fas fa-user-tag mr-2"></i>
+                                                Gestionar Roles
+                                            </a>
+                                            @endcan
+                                        </div>
                                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-600">
                                             <div>
                                                 <span class="font-semibold">Email verificado:</span>
@@ -117,6 +126,36 @@
                                                 <span class="ml-1">{{ $user->updated_at->format('d/m/Y H:i') }}</span>
                                             </div>
                                         </div>
+                                        @if($user->roles->count() > 0)
+                                            <div class="mt-4 pt-4 border-t border-slate-200">
+                                                <div class="flex items-center">
+                                                    <span class="font-semibold text-slate-700 mr-3">
+                                                        <i class="fas fa-shield-alt mr-1"></i>Roles asignados:
+                                                    </span>
+                                                    <div class="flex flex-wrap gap-2">
+                                                        @foreach($user->roles as $role)
+                                                            <span class="bg-gradient-to-tl 
+                                                                @switch($role->name)
+                                                                    @case('administrador')
+                                                                        from-red-600 to-rose-400
+                                                                        @break
+                                                                    @case('vendedor')
+                                                                        from-green-600 to-lime-400
+                                                                        @break
+                                                                    @case('jefe_bodega')
+                                                                        from-blue-600 to-cyan-400
+                                                                        @break
+                                                                    @default
+                                                                        from-slate-600 to-slate-300
+                                                                @endswitch
+                                                                px-2.5 py-1 text-xs rounded-lg text-white font-bold uppercase">
+                                                                {{ str_replace('_', ' ', $role->name) }}
+                                                            </span>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

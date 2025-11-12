@@ -105,6 +105,9 @@
                                             class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-base border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                             ACTUALIZADO</th>
                                         <th
+                                            class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-base border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                            ROLES</th>
+                                        <th
                                             class="px-6 py-3 font-semibold capitalize align-middle bg-transparent border-b border-gray-200 border-solid shadow-none tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                         </th>
                                     </tr>
@@ -147,7 +150,36 @@
                                                 class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                                 <span
                                                     class="text-lg font-semibold leading-tight text-slate-400">{{ $user->updated_at->format('d/m/y') }}</span>
-                                            </td>                            <td
+                                            </td>
+                                            <td
+                                                class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                                @if($user->roles->count() > 0)
+                                                    <div class="flex flex-wrap gap-1 justify-center">
+                                                        @foreach($user->roles as $role)
+                                                            <span class="bg-gradient-to-tl 
+                                                                @switch($role->name)
+                                                                    @case('administrador')
+                                                                        from-red-600 to-rose-400
+                                                                        @break
+                                                                    @case('vendedor')
+                                                                        from-green-600 to-lime-400
+                                                                        @break
+                                                                    @case('jefe_bodega')
+                                                                        from-blue-600 to-cyan-400
+                                                                        @break
+                                                                    @default
+                                                                        from-slate-600 to-slate-300
+                                                                @endswitch
+                                                                px-2 text-xs rounded-1.8 py-1 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
+                                                                {{ str_replace('_', ' ', $role->name) }}
+                                                            </span>
+                                                        @endforeach
+                                                    </div>
+                                                @else
+                                                    <span class="text-sm text-slate-400">Sin roles</span>
+                                                @endif
+                                            </td>
+                                            <td
                                 class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                 <div class="flex items-center space-x-2 action-buttons">
                                     <a href="{{ route('users.show', $user->id) }}"
@@ -160,6 +192,13 @@
                                         <i class="fas fa-history mr-1"></i>
                                         Historial
                                     </a>
+                                    @can('usuarios.asignar_rol')
+                                    <a href="{{ route('users.edit-roles', $user->id) }}"
+                                        class="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-orange-500 to-yellow-500 rounded-lg hover:from-orange-600 hover:to-yellow-600 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-all duration-200 shadow-sm hover:shadow-md btn-soft-transition">
+                                        <i class="fas fa-user-tag mr-1"></i>
+                                        Roles
+                                    </a>
+                                    @endcan
                                     <a href="{{ route('users.edit', $user->id) }}"
                                         class="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm hover:shadow-md btn-soft-transition">
                                         <i class="fas fa-edit mr-1"></i>
@@ -182,7 +221,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="6"
+                                            <td colspan="7"
                                                 class="p-4 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                                 <div class="flex flex-col items-center py-8">
                                                     <i class="fas fa-user-slash text-4xl text-slate-300 mb-4"></i>
