@@ -7,6 +7,7 @@ use App\Http\Controllers\AuditController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\ReporteController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -71,6 +72,18 @@ Route::middleware('auth')->group(function () {
     
     // Rutas adicionales para categorías
     Route::patch('categorias/{id}/restore', [CategoriaController::class, 'restore'])->name('categorias.restore');
+    
+    // Rutas para reportes
+    Route::prefix('reportes')->name('reportes.')->group(function () {
+        Route::get('/', [ReporteController::class, 'index'])->name('index');
+        Route::get('ventas', [ReporteController::class, 'ventas'])->name('ventas');
+        Route::get('inventario', [ReporteController::class, 'inventario'])->name('inventario');
+        Route::get('productos-mas-vendidos', [ReporteController::class, 'productosMasVendidos'])->name('productos-mas-vendidos');
+        Route::get('movimientos-inventario', [ReporteController::class, 'movimientosInventario'])->name('movimientos-inventario');
+        Route::get('clientes', [ReporteController::class, 'clientes'])->name('clientes');
+        Route::get('ventas-por-vendedor', [ReporteController::class, 'ventasPorVendedor'])->name('ventas-por-vendedor');
+        Route::get('bajo-stock', [ReporteController::class, 'bajoStock'])->name('bajo-stock');
+    });
     
 });
 
