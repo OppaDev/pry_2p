@@ -12,16 +12,34 @@ class Producto extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
 
     protected $auditInclude = [
-        'nombre',
         'codigo',
-        'cantidad',
-        'precio'
+        'nombre',
+        'marca',
+        'precio',
+        'stock_actual',
+        'estado',
     ];
+    
     protected $fillable = [
-        'nombre',
         'codigo',
-        'cantidad',
-        'precio'
+        'nombre',
+        'marca',
+        'presentacion',
+        'capacidad',
+        'volumen_ml',
+        'precio',
+        'stock_actual',
+        'stock_minimo',
+        'estado',
+        'descripcion',
+        'categoria_id',
+    ];
+    
+    protected $casts = [
+        'precio' => 'decimal:2',
+        'stock_actual' => 'integer',
+        'stock_minimo' => 'integer',
+        'volumen_ml' => 'integer',
     ];
     
     protected $auditEvents = [
@@ -84,6 +102,102 @@ class Producto extends Model implements Auditable
         }
         
         return $data;
+    }
+    
+    // ==================== RELACIONES ====================
+    
+    /**
+     * Categoría del producto
+     */
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class);
+    }
+    
+    /**
+     * Detalles de venta de este producto
+     */
+    public function detallesVenta()
+    {
+        return $this->hasMany(DetalleVenta::class);
+    }
+    
+    /**
+     * Movimientos de inventario de este producto
+     */
+    public function movimientosInventario()
+    {
+        return $this->hasMany(MovimientoInventario::class);
+    }
+    
+    // ==================== MÉTODOS DE NEGOCIO ====================
+    
+    /**
+     * Actualizar el precio del producto
+     */
+    public function actualizarPrecio(float $nuevoPrecio): bool
+    {
+        $this->precio = $nuevoPrecio;
+        return $this->save();
+    }
+    
+    /**
+     * Actualizar el estado del producto
+     */
+    public function actualizarEstado(string $nuevoEstado): bool
+    {
+        $this->estado = $nuevoEstado;
+        return $this->save();
+    }
+    
+    /**
+     * Consultar el stock actual
+     */
+    public function consultarStock(): int
+    {
+        return $this->stock_actual;
+    }
+    
+    /**
+     * Verificar si está en bajo stock
+     */
+    public function estaEnBajoStock(): bool
+    {
+        return $this->stock_actual <= $this->stock_minimo;
+    }
+    
+    /**
+     * Verificar si tiene stock suficiente
+     */
+    public function tieneStock(int $cantidad): bool
+    {
+        return $this->stock_actual >= $cantidad;
+    }
+    
+    // ==================== SCOPES ====================
+    
+    /**
+     * Scope para filtrar solo productos activos
+     */
+    public function scopeActivos($query)
+    {
+        return $query->where('estado', 'activo');
+    }
+    
+    /**
+     * Scope para filtrar productos con bajo stock
+     */
+    public function scopeBajoStock($query)
+    {
+        return $query->whereColumn('stock_actual', '<=', 'stock_minimo');
+    }
+    
+    /**
+     * Scope para filtrar productos con stock disponible
+     */
+    public function scopeConStock($query)
+    {
+        return $query->where('stock_actual', '>', 0);
     }
 
 }

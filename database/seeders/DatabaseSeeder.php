@@ -13,15 +13,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        //User::factory(50)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => bcrypt('test@example.com')
+        // Ejecutar seeders en orden
+        $this->call([
+            RolesAndPermissionsSeeder::class,
+            CategoriasSeeder::class,
+            AdminUserSeeder::class,
         ]);
-
         
-
+        $this->command->info('');
+        $this->command->info('🎉 Base de datos inicializada correctamente!');
+        $this->command->info('');
     }
 }

@@ -116,6 +116,7 @@ class User extends Authenticatable implements Auditable
         'name',
         'email',
         'password',
+        'cedula',
     ];
 
     /**
@@ -139,5 +140,75 @@ class User extends Authenticatable implements Auditable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    
+    // ==================== RELACIONES ====================
+    
+    /**
+     * Ventas realizadas por el vendedor
+     */
+    public function ventas()
+    {
+        return $this->hasMany(Venta::class, 'vendedor_id');
+    }
+    
+    /**
+     * Movimientos de inventario registrados por el usuario
+     */
+    public function movimientosInventario()
+    {
+        return $this->hasMany(MovimientoInventario::class, 'responsable_id');
+    }
+    
+    // ==================== MÉTODOS DE NEGOCIO ====================
+    
+    /**
+     * Verifica si el usuario tiene el rol de Administrador
+     */
+    public function esAdministrador(): bool
+    {
+        return $this->hasRole('administrador');
+    }
+    
+    /**
+     * Verifica si el usuario tiene el rol de Vendedor
+     */
+    public function esVendedor(): bool
+    {
+        return $this->hasRole('vendedor');
+    }
+    
+    /**
+     * Verifica si el usuario tiene el rol de Jefe de Bodega
+     */
+    public function esJefeBodega(): bool
+    {
+        return $this->hasRole('jefe_bodega');
+    }
+    
+    // ==================== SCOPES ====================
+    
+    /**
+     * Scope para filtrar solo administradores
+     */
+    public function scopeAdministradores($query)
+    {
+        return $query->role('administrador');
+    }
+    
+    /**
+     * Scope para filtrar solo vendedores
+     */
+    public function scopeVendedores($query)
+    {
+        return $query->role('vendedor');
+    }
+    
+    /**
+     * Scope para filtrar solo jefes de bodega
+     */
+    public function scopeJefesBodega($query)
+    {
+        return $query->role('jefe_bodega');
     }
 }
