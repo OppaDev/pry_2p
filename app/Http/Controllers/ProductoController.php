@@ -404,17 +404,24 @@ class ProductoController extends Controller
     /**
      * Mostrar productos con bajo stock.
      */
-    public function bajosEnStock()
+    public function bajosEnStock(Request $request)
     {
         $this->authorize('viewStock', Producto::class);
         
-        $productos = Producto::with('categoria')
+        $query = Producto::with('categoria')
             ->bajoStock()
-            ->activos()
-            ->orderBy('stock_actual')
-            ->paginate(20);
+            ->activos();
         
-        return view('productos.bajos-stock', compact('productos'));
+        // Filtro por categoría
+        if ($request->filled('categoria_id')) {
+            $query->where('categoria_id', $request->categoria_id);
+        }
+        
+        $productos = $query->orderBy('stock_actual')->paginate(20)->withQueryString();
+        
+        $categorias = \App\Models\Categoria::orderBy('nombre')->get();
+        
+        return view('productos.bajos-stock', compact('productos', 'categorias'));
     }
     
     /**

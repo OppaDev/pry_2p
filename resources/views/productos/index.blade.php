@@ -15,31 +15,65 @@
                                 PRODUCTOS
                             </h6>
                             <div class="flex items-center space-x-3">
-                                <!-- Formulario de búsqueda -->
-                                <form method="GET" action="{{ route('productos.index') }}" class="flex items-center space-x-2">
+                                <!-- Formulario de búsqueda y filtros -->
+                                <form method="GET" action="{{ route('productos.index') }}" class="flex items-center flex-wrap gap-2">
                                     <!-- Mantener el parámetro per_page -->
                                     <input type="hidden" name="per_page" value="{{ $perPage }}">
 
-                                    <div
-                                        class="flex items-center space-x-2 bg-gradient-to-r from-blue-50 to-blue-100 px-4 py-2 rounded-xl border border-blue-200/60 shadow-sm">
-                                        <label for="search" class="text-lg font-medium text-blue-600 flex items-center">
-                                            <i class="fas fa-search mr-2 text-blue-500"></i>
+                                    <!-- Búsqueda -->
+                                    <div class="flex items-center space-x-2 bg-gradient-to-r from-blue-50 to-blue-100 px-3 py-1.5 rounded-xl border border-blue-200/60 shadow-sm">
+                                        <label for="search" class="text-sm font-medium text-blue-600 flex items-center">
+                                            <i class="fas fa-search mr-1 text-blue-500"></i>
                                             <span>Buscar:</span>
                                         </label>
-                                        <input type="text" id="search" name="search" value="{{ $search }}"
-                                            placeholder="Nombre o código..."
-                                            class="px-3 py-1.5 text-lg bg-white/80 backdrop-blur-sm border border-blue-200/60 rounded-lg shadow-soft-xs hover:shadow-soft-sm focus:shadow-soft-md focus:outline-none focus:ring-2 focus:ring-blue-200/50 focus:border-blue-300 transition-all duration-300 ease-soft-in-out text-slate-700 min-w-[200px]">
-                                        <button type="submit"
-                                            class="px-3 py-1.5 text-lg bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-soft-xs hover:shadow-soft-sm focus:shadow-soft-md focus:outline-none focus:ring-2 focus:ring-blue-200/50 transition-all duration-300 ease-soft-in-out">
+                                        <input type="text" id="search" name="search" value="{{ request('search') }}"
+                                            placeholder="Nombre, código o marca..."
+                                            class="px-2 py-1 text-sm bg-white/80 border border-blue-200/60 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200/50 text-slate-700 w-[180px]">
+                                        <button type="submit" class="px-2 py-1 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded-lg">
                                             <i class="fas fa-search"></i>
                                         </button>
-                                        @if ($search)
-                                            <a href="{{ route('productos.index', ['per_page' => $perPage]) }}"
-                                                class="px-3 py-1.5 text-lg bg-gray-500 hover:bg-gray-600 text-white rounded-lg shadow-soft-xs hover:shadow-soft-sm focus:shadow-soft-md focus:outline-none focus:ring-2 focus:ring-gray-200/50 transition-all duration-300 ease-soft-in-out"
-                                                title="Limpiar búsqueda">
-                                                <i class="fas fa-times"></i>
-                                            </a>
-                                        @endif
+                                    </div>
+
+                                    <!-- Filtro Categoría -->
+                                    <div class="flex items-center space-x-2 bg-gradient-to-r from-purple-50 to-pink-100 px-3 py-1.5 rounded-xl border border-purple-200/60 shadow-sm">
+                                        <label for="categoria_id" class="text-sm font-medium text-purple-600 flex items-center">
+                                            <i class="fas fa-tags mr-1 text-purple-500"></i>
+                                            <span>Categoría:</span>
+                                        </label>
+                                        <select id="categoria_id" name="categoria_id" onchange="this.form.submit()"
+                                            class="px-2 py-1 text-sm bg-white/80 border border-purple-200/60 rounded-lg focus:outline-none text-slate-700 cursor-pointer">
+                                            <option value="">Todas</option>
+                                            @foreach($categorias as $categoria)
+                                                <option value="{{ $categoria->id }}" {{ request('categoria_id') == $categoria->id ? 'selected' : '' }}>
+                                                    {{ $categoria->nombre }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <!-- Filtro Estado -->
+                                    <div class="flex items-center space-x-2 bg-gradient-to-r from-green-50 to-lime-100 px-3 py-1.5 rounded-xl border border-green-200/60 shadow-sm">
+                                        <label for="estado" class="text-sm font-medium text-green-600 flex items-center">
+                                            <i class="fas fa-toggle-on mr-1 text-green-500"></i>
+                                            <span>Estado:</span>
+                                        </label>
+                                        <select id="estado" name="estado" onchange="this.form.submit()"
+                                            class="px-2 py-1 text-sm bg-white/80 border border-green-200/60 rounded-lg focus:outline-none text-slate-700 cursor-pointer">
+                                            <option value="">Todos</option>
+                                            <option value="activo" {{ request('estado') == 'activo' ? 'selected' : '' }}>Activo</option>
+                                            <option value="inactivo" {{ request('estado') == 'inactivo' ? 'selected' : '' }}>Inactivo</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Checkbox Bajo Stock -->
+                                    <div class="flex items-center space-x-2 bg-gradient-to-r from-red-50 to-rose-100 px-3 py-1.5 rounded-xl border border-red-200/60 shadow-sm">
+                                        <label for="bajo_stock" class="text-sm font-medium text-red-600 flex items-center cursor-pointer">
+                                            <input type="checkbox" id="bajo_stock" name="bajo_stock" value="1" {{ request('bajo_stock') ? 'checked' : '' }}
+                                                onchange="this.form.submit()"
+                                                class="mr-2 w-4 h-4 text-red-600 bg-gray-100 border-gray-300 rounded focus:ring-red-500">
+                                            <i class="fas fa-exclamation-triangle mr-1 text-red-500"></i>
+                                            <span>Bajo Stock</span>
+                                        </label>
                                     </div>
                                 </form>
 
@@ -90,23 +124,23 @@
                                 <thead class="align-bottom">
                                     <tr>
                                         <th
-                                            class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-base border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                            NOMBRE</th>
+                                            class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-sm border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                            PRODUCTO</th>
                                         <th
-                                            class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-base border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                            CÓDIGO</th>
+                                            class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-sm border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                            CATEGORÍA</th>
                                         <th
-                                            class="px-6 py-3 pl-2 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-base border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                            CANTIDAD</th>
+                                            class="px-6 py-3 pl-2 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-sm border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                            PRESENTACIÓN</th>
                                         <th
-                                            class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-base border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                            class="px-6 py-3 pl-2 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-sm border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                            STOCK</th>
+                                        <th
+                                            class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-sm border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                             PRECIO</th>
                                         <th
-                                            class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-base border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                            CREADO</th>
-                                        <th
-                                            class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-base border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                            ACTUALIZADO</th>
+                                            class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-sm border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                            ESTADO</th>
                                         <th
                                             class="px-6 py-3 font-semibold capitalize align-middle bg-transparent border-b border-gray-200 border-solid shadow-none tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                         </th>
@@ -114,38 +148,49 @@
                                 </thead>
                                 <tbody>
                                     @forelse ($productos as $producto)
-                                        <tr class="table-row-hover transition-all duration-200">
-                                            <td
-                                                class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <tr class="table-row-hover transition-all duration-200 {{ $producto->estaEnBajoStock() ? 'bg-red-50/30' : '' }}">
+                                            <td class="p-2 align-middle bg-transparent border-b shadow-transparent">
                                                 <div class="flex px-2 py-1">
                                                     <div class="flex flex-col justify-center">
-                                                        <h6 class="mb-0 text-lg leading-normal">{{ $producto->nombre }}</h6>
+                                                        <h6 class="mb-0 text-sm font-semibold leading-normal text-slate-700">{{ $producto->nombre }}</h6>
+                                                        <p class="mb-0 text-xs text-slate-400">{{ $producto->codigo }} • {{ $producto->marca }}</p>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td
-                                                class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                                <p class="mb-0 text-lg font-semibold leading-tight">{{ $producto->codigo }}</p>
+                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                                @if($producto->categoria)
+                                                    <span class="px-2 py-1 text-xs font-semibold rounded-lg bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700">
+                                                        {{ $producto->categoria->nombre }}
+                                                    </span>
+                                                @else
+                                                    <span class="text-xs text-slate-400">Sin categoría</span>
+                                                @endif
                                             </td>
-                                            <td
-                                                class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                                <span
-                                                    class="text-lg font-semibold leading-tight text-slate-400">{{ number_format($producto->cantidad) }}</span>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                                <p class="mb-0 text-sm font-medium text-slate-600">{{ $producto->presentacion }}</p>
+                                                <p class="mb-0 text-xs text-slate-400">{{ $producto->capacidad }} ({{ $producto->volumen_ml }}ml)</p>
                                             </td>
-                                            <td
-                                                class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                                <span
-                                                    class="text-lg font-semibold leading-tight text-green-600">${{ number_format($producto->precio, 2) }}</span>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                                <div class="flex flex-col items-center">
+                                                    <span class="text-sm font-bold {{ $producto->estaEnBajoStock() ? 'text-red-600' : 'text-slate-700' }}">
+                                                        {{ number_format($producto->stock_actual) }}
+                                                    </span>
+                                                    <span class="text-xs text-slate-400">mín: {{ number_format($producto->stock_minimo) }}</span>
+                                                    @if($producto->estaEnBajoStock())
+                                                        <span class="inline-flex items-center px-2 py-0.5 mt-1 text-xs font-medium rounded-full bg-red-100 text-red-800">
+                                                            <i class="fas fa-exclamation-triangle mr-1 text-xs"></i>
+                                                            Bajo Stock
+                                                        </span>
+                                                    @endif
+                                                </div>
                                             </td>
-                                            <td
-                                                class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                                <span
-                                                    class="text-lg font-semibold leading-tight text-slate-400">{{ $producto->created_at->format('d/m/y') }}</span>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                                <span class="text-sm font-bold leading-tight text-green-600">${{ number_format($producto->precio, 2) }}</span>
                                             </td>
-                                            <td
-                                                class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                                <span
-                                                    class="text-lg font-semibold leading-tight text-slate-400">{{ $producto->updated_at->format('d/m/y') }}</span>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                                <span class="px-2 py-1 text-xs font-semibold rounded-lg {{ $producto->estado == 'activo' ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600' }}">
+                                                    {{ ucfirst($producto->estado) }}
+                                                </span>
                                             </td>
                                             <td
                                                 class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
@@ -180,9 +225,9 @@
                                                 <div class="flex flex-col items-center py-8">
                                                     <i class="fas fa-box-open text-4xl text-slate-300 mb-4"></i>
                                                     <p class="text-xl font-medium text-slate-500">No hay productos disponibles</p>
-                                                    <p class="text-lg text-slate-400">
-                                                        @if($search)
-                                                            No se encontraron productos que coincidan con tu búsqueda.
+                                                    <p class="text-sm text-slate-400">
+                                                        @if(request('search') || request('categoria_id') || request('estado') || request('bajo_stock'))
+                                                            No se encontraron productos con los filtros aplicados.
                                                         @else
                                                             Aún no has agregado ningún producto.
                                                         @endif
