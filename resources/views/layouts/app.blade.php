@@ -47,23 +47,72 @@
             </a>
           </li>
 
+          @can('clientes.ver')
           <li class="mt-0.5 w-full">
-            <a class="py-2.7 text-lg ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('productos.*') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-700' }}" href="{{ route('productos.index') }}">
+            <a class="py-2.7 text-lg ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('clientes.*') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-700' }}" href="{{ route('clientes.index') }}">
+              <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
+                <i class="fas fa-users text-slate-700"></i>
+              </div>
+              <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Clientes</span>
+            </a>
+          </li>
+          @endcan
+
+          @can('productos.ver')
+          <li class="mt-0.5 w-full">
+            <a class="py-2.7 text-lg ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('productos.*') || request()->routeIs('categorias.*') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-700' }}" 
+               onclick="toggleProductosDropdown()" id="productos-trigger">
               <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
                 <i class="fas fa-box text-slate-700"></i>
               </div>
-              <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Productos</span>
+              <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Inventario</span>
+              <i class="fas fa-chevron-down ml-auto transition-transform duration-200 text-slate-400" id="productos-chevron"></i>
             </a>
+            
+            <ul class="pl-0 ml-6 mt-1 list-none h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out" id="productos-submenu">
+              <li class="mt-0.5 w-full">
+                <a class="py-2.7 text-base ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('productos.*') && !request()->routeIs('productos.bajos-stock') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-600 hover:text-slate-700' }}" 
+                   href="{{ route('productos.index') }}">
+                  <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
+                    <i class="fas fa-box text-xs text-slate-600"></i>
+                  </div>
+                  <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Productos</span>
+                </a>
+              </li>
+              <li class="mt-0.5 w-full">
+                <a class="py-2.7 text-base ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('categorias.*') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-600 hover:text-slate-700' }}" 
+                   href="{{ route('categorias.index') }}">
+                  <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
+                    <i class="fas fa-tags text-xs text-slate-600"></i>
+                  </div>
+                  <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Categorías</span>
+                </a>
+              </li>
+              @can('inventario.ver')
+              <li class="mt-0.5 w-full">
+                <a class="py-2.7 text-base ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('productos.bajos-stock') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-600 hover:text-slate-700' }}" 
+                   href="{{ route('productos.bajos-stock') }}">
+                  <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
+                    <i class="fas fa-exclamation-triangle text-xs text-slate-600"></i>
+                  </div>
+                  <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Bajo Stock</span>
+                </a>
+              </li>
+              @endcan
+            </ul>
           </li>
+          @endcan
 
+          @can('usuarios.ver')
           <li class="mt-0.5 w-full">
             <a class="py-2.7 text-lg ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('users.*') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-700' }}" href="{{ route('users.index') }}">
               <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
-                <i class="fas fa-users text-slate-700"></i>
+                <i class="fas fa-user-shield text-slate-700"></i>
               </div>
               <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Usuarios</span>
             </a>
           </li>
+          @endcan
 
           <li class="mt-0.5 w-full">
             <a class="py-2.7 text-lg ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('audits.*') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-700' }}" href="{{ route('audits.by-user') }}">
@@ -87,6 +136,15 @@
             
             <!-- Submenu estilo sidebar -->
             <ul class="pl-0 ml-6 mt-1 list-none h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out" id="papelera-submenu">
+              <li class="mt-0.5 w-full">
+                <a class="py-2.7 text-base ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('clientes.deleted') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-600 hover:text-slate-700' }}" 
+                   href="{{ route('clientes.deleted') }}">
+                  <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
+                    <i class="fas fa-user-times text-xs text-slate-600"></i>
+                  </div>
+                  <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Papelera Clientes</span>
+                </a>
+              </li>
               <li class="mt-0.5 w-full">
                 <a class="py-2.7 text-base ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('users.deleted') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-600 hover:text-slate-700' }}" 
                    href="{{ route('users.deleted') }}">
@@ -267,6 +325,27 @@
             }
         }
         
+        // Función para manejar el dropdown de productos/inventario
+        function toggleProductosDropdown() {
+            const submenu = document.getElementById('productos-submenu');
+            const chevron = document.getElementById('productos-chevron');
+            
+            if (submenu.style.height === '0px' || submenu.style.height === '') {
+                submenu.style.height = 'auto';
+                const height = submenu.scrollHeight + 'px';
+                submenu.style.height = '0px';
+                
+                submenu.offsetHeight;
+                submenu.style.height = height;
+                submenu.style.opacity = '1';
+                chevron.classList.add('rotate-180');
+            } else {
+                submenu.style.height = '0px';
+                submenu.style.opacity = '0';
+                chevron.classList.remove('rotate-180');
+            }
+        }
+        
         // Funciones globales para modales
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
@@ -310,12 +389,17 @@
             }
         }
         
-        // Auto-expandir si estamos en una ruta de papelera
+        // Auto-expandir si estamos en una ruta de papelera o productos/categorías
         document.addEventListener('DOMContentLoaded', function() {
             const currentPath = window.location.pathname;
             if (currentPath.includes('deleted') || currentPath.includes('papelera')) {
                 setTimeout(() => {
                     togglePapeleraDropdown();
+                }, 100);
+            }
+            if (currentPath.includes('productos') || currentPath.includes('categorias') || currentPath.includes('inventario')) {
+                setTimeout(() => {
+                    toggleProductosDropdown();
                 }, 100);
             }
         });

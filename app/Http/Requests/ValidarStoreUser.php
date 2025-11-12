@@ -12,13 +12,8 @@ class ValidarStoreUser extends FormRequest
      */
     public function authorize(): bool
     {
-        if(Auth::user() -> email === 'test@example.com')
-        {
-            return true;
-        }
-        return false;
+        return $this->user()->can('usuarios.crear');
     }
-
     /**
      * Get the validation rules that apply to the request.
      *

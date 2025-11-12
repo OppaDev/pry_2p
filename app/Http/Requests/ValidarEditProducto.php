@@ -13,13 +13,8 @@ class ValidarEditProducto extends FormRequest
      */
     public function authorize(): bool
     {
-        if(Auth::user() -> email === 'test@example.com')
-        {
-            return true;
-        }
-        return false;
+        return $this->user()->can('productos.editar');
     }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -31,54 +26,96 @@ class ValidarEditProducto extends FormRequest
         
         return [
             'nombre' => [
-                'nullable',
+                'required',
                 'string',
-                'max:50',
-                Rule::unique('productos', 'nombre')->ignore($productoId)
+                'max:200',
             ],
             'codigo' => [
                 'required',
                 'string',
-                'max:10',
+                'max:50',
                 Rule::unique('productos', 'codigo')->ignore($productoId)
             ],
-            'cantidad' => 'required|integer|min:0',
-            'precio' => 'required|numeric|min:0|regex:/^\d+(\.\d{1,2})?$/'
+            'marca' => 'required|string|max:100',
+            'presentacion' => 'required|string|max:100',
+            'capacidad' => 'required|string|max:50',
+            'volumen_ml' => 'required|integer|min:1',
+            'stock_actual' => 'required|integer|min:0',
+            'stock_minimo' => 'required|integer|min:0',
+            'precio' => 'required|numeric|min:0|regex:/^\d+(\.\d{1,2})?$/',
+            'categoria_id' => 'required|exists:categorias,id',
+            'descripcion' => 'nullable|string|max:500',
+            'estado' => 'required|in:activo,inactivo',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'nombre.max' => 'El nombre del producto no puede exceder los 50 caracteres.',
-            'nombre.string' => 'El nombre del producto debe ser una cadena de texto.',
-            'nombre.unique' => 'Ya existe otro producto con este nombre.',
+            'nombre.required' => 'El nombre del producto es obligatorio.',
+            'nombre.max' => 'El nombre del producto no puede exceder los 200 caracteres.',
+            
             'codigo.required' => 'El código es obligatorio.',
             'codigo.unique' => 'El código ya está en uso por otro producto.',
-            'codigo.max' => 'El código no puede exceder los 10 caracteres.',
-            'cantidad.required' => 'La cantidad es obligatoria.',
-            'cantidad.integer' => 'La cantidad debe ser un número entero.',
-            'cantidad.min' => 'La cantidad no puede ser negativa.',
+            'codigo.max' => 'El código no puede exceder 50 caracteres.',
+            
+            'marca.required' => 'La marca es obligatoria.',
+            'marca.max' => 'La marca no puede exceder 100 caracteres.',
+            
+            'presentacion.required' => 'La presentación es obligatoria.',
+            'presentacion.max' => 'La presentación no puede exceder 100 caracteres.',
+            
+            'capacidad.required' => 'La capacidad es obligatoria.',
+            'capacidad.max' => 'La capacidad no puede exceder 50 caracteres.',
+            
+            'volumen_ml.required' => 'El volumen en ml es obligatorio.',
+            'volumen_ml.integer' => 'El volumen debe ser un número entero.',
+            'volumen_ml.min' => 'El volumen debe ser al menos 1 ml.',
+            
+            'stock_actual.required' => 'El stock actual es obligatorio.',
+            'stock_actual.integer' => 'El stock debe ser un número entero.',
+            'stock_actual.min' => 'El stock no puede ser negativo.',
+            
+            'stock_minimo.required' => 'El stock mínimo es obligatorio.',
+            'stock_minimo.integer' => 'El stock mínimo debe ser un número entero.',
+            'stock_minimo.min' => 'El stock mínimo no puede ser negativo.',
+            
             'precio.required' => 'El precio es obligatorio.',
             'precio.numeric' => 'El precio debe ser un número.',
             'precio.min' => 'El precio no puede ser negativo.',
-            'precio.regex' => 'El precio debe tener como máximo dos decimales.'
+            'precio.regex' => 'El precio debe tener como máximo dos decimales.',
+            
+            'categoria_id.required' => 'La categoría es obligatoria.',
+            'categoria_id.exists' => 'La categoría seleccionada no existe.',
+            
+            'descripcion.max' => 'La descripción no puede exceder 500 caracteres.',
+            
+            'estado.required' => 'El estado es obligatorio.',
+            'estado.in' => 'El estado debe ser activo o inactivo.',
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'nombre' => 'Nombre del producto',
-            'codigo' => 'Código del producto',
-            'cantidad' => 'Stock del producto',
-            'precio' => 'Precio del producto'
+            'nombre' => 'nombre del producto',
+            'codigo' => 'código del producto',
+            'marca' => 'marca',
+            'presentacion' => 'presentación',
+            'capacidad' => 'capacidad',
+            'volumen_ml' => 'volumen en ml',
+            'stock_actual' => 'stock actual',
+            'stock_minimo' => 'stock mínimo',
+            'precio' => 'precio',
+            'categoria_id' => 'categoría',
+            'descripcion' => 'descripción',
+            'estado' => 'estado',
         ];
     }
 
     protected function prepareForValidation(): void
     {
-        // Para edición, limpiamos espacios y normalizamos los datos
+        // Limpiar espacios sin agregar sufijo aleatorio
         $data = [];
         
         if ($this->has('nombre')) {
@@ -87,6 +124,10 @@ class ValidarEditProducto extends FormRequest
         
         if ($this->has('codigo')) {
             $data['codigo'] = strtoupper(trim($this->codigo));
+        }
+        
+        if ($this->has('marca')) {
+            $data['marca'] = trim($this->marca);
         }
         
         $this->merge($data);

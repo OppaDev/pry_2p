@@ -6,6 +6,8 @@ use App\Http\Requests\ValidarStoreProducto;
 use App\Http\Requests\ValidarEditProducto;
 use App\Models\Producto;
 use App\Models\User;
+use App\Models\MovimientoInventario;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,14 +17,26 @@ use PhpParser\Node\Stmt\TryCatch;
 
 class ProductoController extends Controller
 {
+    use AuthorizesRequests;
+    
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Producto::class);
+        
         $request->validate([
             'per_page' => 'nullable|integer|in:5,10,15,25,50',
-            'search' => 'nullable|string|max:255'
+            'search' => 'nullable|string|max:255',
+            'categoria_id' => 'nullable|exists:categorias,id',
+            'estado' => 'nullable|in:activo,inactivo',
+            'bajo_stock' => 'nullable|boolean'
         ], [
             'per_page.integer' => 'El valor debe ser un número entero.',
             'per_page.in' => 'El valor debe ser uno de los siguientes: 5, 10, 15, 25, 50.',
@@ -33,21 +47,40 @@ class ProductoController extends Controller
         $perPage = $request->get('per_page', 10);
         $search = $request->get('search');
         
-        $query = Producto::select(['id', 'nombre', 'codigo', 'cantidad', 'precio', 'created_at', 'updated_at']);
+        $query = Producto::with('categoria')
+            ->select(['id', 'nombre', 'codigo', 'stock_actual', 'precio', 'stock_minimo', 'estado', 'categoria_id', 'created_at', 'updated_at']);
         
         if (!empty($search)) {
             $query->where(function($q) use ($search) {
                 $q->where('nombre', 'LIKE', '%' . $search . '%')
-                  ->orWhere('codigo', 'LIKE', '%' . $search . '%');
+                  ->orWhere('codigo', 'LIKE', '%' . $search . '%')
+                  ->orWhere('marca', 'LIKE', '%' . $search . '%');
             });
         }
+        
+        if ($request->filled('categoria_id')) {
+            $query->where('categoria_id', $request->categoria_id);
+        }
+        
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        } else {
+            $query->activos();
+        }
+        
+        if ($request->boolean('bajo_stock')) {
+            $query->bajoStock();
+        }
 
-        $query->orderBy('created_at', 'desc');
+        $query->orderBy('nombre');
+        
+        $categorias = \App\Models\Categoria::orderBy('nombre')->get();
         
         $data = array(
             'productos' => $query->paginate($perPage)->withQueryString(),
             'perPage' => $perPage,
-            'search' => $search
+            'search' => $search,
+            'categorias' => $categorias
         );
         return view('productos.index', $data);
     }
@@ -65,26 +98,32 @@ class ProductoController extends Controller
      */
     public function store(ValidarStoreProducto $request)
     {
+        $this->authorize('create', Producto::class);
+        
         try {
             DB::beginTransaction();
             
-            // Crear producto dentro de la transacción
-            $producto = Producto::create($request->only(['nombre', 'codigo', 'cantidad', 'precio']));
-            $producto->nombre = $request->nombre;
-            $producto->save();
-
-            // $user = Auth::user();
-            // $user->name="OppaDev";
-            // $user->save();
+            // Crear producto sin sufijo aleatorio
+            $producto = Producto::create($request->validated());
 
             DB::commit();
+            
+            Log::info('Producto creado', [
+                'producto_id' => $producto->id,
+                'usuario_id' => Auth::id()
+            ]);
             
             return redirect()->route('productos.index')->with('success', 'Producto creado exitosamente.');
 
         } catch (\Throwable $th) {
             DB::rollBack();
             
-            return redirect()->route('productos.create')->with('error', 'Error al crear producto: ');
+            Log::error('Error al crear producto', [
+                'error' => $th->getMessage(),
+                'usuario_id' => Auth::id()
+            ]);
+            
+            return redirect()->route('productos.create')->with('error', 'Error al crear producto.');
         }
     }
 
@@ -292,21 +331,26 @@ class ProductoController extends Controller
      */
     public function update(ValidarEditProducto $request, Producto $producto)
     {
+        $this->authorize('update', $producto);
+        
         try {
             DB::beginTransaction();
             
-            // Actualizar el producto con los datos validados
-            $producto->update($request->only(['nombre', 'codigo', 'cantidad', 'precio']));
-            $producto->codigo = $producto->codigo . rand(100, 999);
-            $producto->save();
+            // Actualizar sin agregar sufijo aleatorio
+            $producto->update($request->validated());
             
             DB::commit();
+            
+            Log::info('Producto actualizado', [
+                'producto_id' => $producto->id,
+                'usuario_id' => Auth::id()
+            ]);
             
             return redirect()->route('productos.index')->with('success', 'Producto actualizado exitosamente.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error al actualizar producto: ' . $e->getMessage());
-            return redirect()->route('productos.edit', $producto)->with('error', 'Error al actualizar el producto. Por favor, inténtalo de nuevo.');
+            return redirect()->route('productos.edit', $producto)->with('error', 'Error al actualizar el producto.');
         }
     }
 
@@ -315,6 +359,8 @@ class ProductoController extends Controller
      */
     public function destroy(Producto $producto, Request $request)
     {
+        $this->authorize('delete', $producto);
+        
         $request->validate([
             'motivo' => 'required|string|max:255',
             'password' => 'required|string'
@@ -334,11 +380,6 @@ class ProductoController extends Controller
         try {
             DB::beginTransaction();
             
-            // if ($producto->hasRelatedData()) {
-            //     return redirect()->route('productos.index')
-            //         ->with('error', 'No se puede eliminar el producto porque tiene datos relacionados.');
-            // }
-            
             // Registrar el motivo en los metadatos de auditoría
             $producto->auditComment = $request->motivo;
             $producto->delete();
@@ -356,7 +397,211 @@ class ProductoController extends Controller
             ]);
             
             return redirect()->route('productos.index')
-                ->with('error', 'Error al eliminar el producto. Por favor, intenta nuevamente.');
+                ->with('error', 'Error al eliminar el producto.');
         }
+    }
+    
+    /**
+     * Mostrar productos con bajo stock.
+     */
+    public function bajosEnStock()
+    {
+        $this->authorize('viewStock', Producto::class);
+        
+        $productos = Producto::with('categoria')
+            ->bajoStock()
+            ->activos()
+            ->orderBy('stock_actual')
+            ->paginate(20);
+        
+        return view('productos.bajos-stock', compact('productos'));
+    }
+    
+    /**
+     * Ajustar el stock de un producto.
+     */
+    public function ajustarStock(Request $request, Producto $producto)
+    {
+        $this->authorize('adjustStock', Producto::class);
+        
+        $request->validate([
+            'tipo_movimiento' => 'required|in:entrada,salida,ajuste',
+            'cantidad' => 'required|integer|min:1',
+            'descripcion' => 'required|string|max:500',
+        ], [
+            'tipo_movimiento.required' => 'El tipo de movimiento es obligatorio.',
+            'cantidad.required' => 'La cantidad es obligatoria.',
+            'cantidad.integer' => 'La cantidad debe ser un número entero.',
+            'cantidad.min' => 'La cantidad debe ser al menos 1.',
+            'descripcion.required' => 'La descripción es obligatoria.',
+        ]);
+        
+        try {
+            DB::beginTransaction();
+            
+            $stockAnterior = $producto->stock_actual;
+            $cantidad = $request->cantidad;
+            
+            switch ($request->tipo_movimiento) {
+                case 'entrada':
+                    MovimientoInventario::registrarIngreso(
+                        $producto->id,
+                        $cantidad,
+                        $request->descripcion,
+                        Auth::id()
+                    );
+                    break;
+                    
+                case 'salida':
+                    if ($producto->stock_actual < $cantidad) {
+                        return redirect()->back()
+                            ->with('error', 'No hay suficiente stock para realizar la salida.')
+                            ->withInput();
+                    }
+                    
+                    MovimientoInventario::registrarSalida(
+                        $producto->id,
+                        $cantidad,
+                        $request->descripcion,
+                        Auth::id()
+                    );
+                    break;
+                    
+                case 'ajuste':
+                    MovimientoInventario::registrarAjuste(
+                        $producto->id,
+                        $cantidad,
+                        $request->descripcion,
+                        Auth::id()
+                    );
+                    break;
+            }
+            
+            DB::commit();
+            
+            Log::info('Stock ajustado', [
+                'producto_id' => $producto->id,
+                'tipo' => $request->tipo_movimiento,
+                'cantidad' => $cantidad,
+                'stock_anterior' => $stockAnterior,
+                'stock_nuevo' => $producto->fresh()->stock_actual,
+                'usuario_id' => Auth::id()
+            ]);
+            
+            return redirect()
+                ->route('productos.show', $producto)
+                ->with('success', 'Stock ajustado exitosamente.');
+                
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al ajustar stock', [
+                'producto_id' => $producto->id,
+                'error' => $e->getMessage(),
+                'usuario_id' => Auth::id()
+            ]);
+            
+            return redirect()
+                ->back()
+                ->with('error', 'Error al ajustar el stock.')
+                ->withInput();
+        }
+    }
+    
+    /**
+     * Ver movimientos de inventario de un producto.
+     */
+    public function movimientos(Producto $producto, Request $request)
+    {
+        $this->authorize('view', $producto);
+        
+        $request->validate([
+            'tipo' => 'nullable|in:entrada,salida,ajuste',
+            'fecha_desde' => 'nullable|date',
+            'fecha_hasta' => 'nullable|date|after_or_equal:fecha_desde',
+        ]);
+        
+        $query = $producto->movimientosInventario()
+            ->with('responsable');
+        
+        if ($request->filled('tipo')) {
+            $query->where('tipo', $request->tipo);
+        }
+        
+        if ($request->filled('fecha_desde')) {
+            $query->whereDate('fecha', '>=', $request->fecha_desde);
+        }
+        
+        if ($request->filled('fecha_hasta')) {
+            $query->whereDate('fecha', '<=', $request->fecha_hasta);
+        }
+        
+        $movimientos = $query->orderBy('fecha', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate(20)
+            ->appends($request->except('page'));
+        
+        return view('productos.movimientos', compact('producto', 'movimientos'));
+    }
+    
+    /**
+     * Exportar inventario a CSV/Excel.
+     */
+    public function exportarInventario()
+    {
+        $this->authorize('viewAny', Producto::class);
+        
+        $productos = Producto::with('categoria')
+            ->activos()
+            ->orderBy('categoria_id')
+            ->orderBy('nombre')
+            ->get();
+        
+        $filename = 'inventario_' . now()->format('Y-m-d_His') . '.csv';
+        
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+        
+        $callback = function() use ($productos) {
+            $file = fopen('php://output', 'w');
+            
+            // BOM para UTF-8
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            
+            // Encabezados
+            fputcsv($file, [
+                'Código',
+                'Nombre',
+                'Marca',
+                'Categoría',
+                'Presentación',
+                'Capacidad (ml)',
+                'Stock Actual',
+                'Stock Mínimo',
+                'Precio',
+                'Estado',
+            ]);
+            
+            // Datos
+            foreach ($productos as $producto) {
+                fputcsv($file, [
+                    $producto->codigo,
+                    $producto->nombre,
+                    $producto->marca,
+                    $producto->categoria?->nombre,
+                    $producto->presentacion,
+                    $producto->volumen_ml,
+                    $producto->stock_actual,
+                    $producto->stock_minimo,
+                    number_format($producto->precio, 2),
+                    $producto->estado,
+                ]);
+            }
+            
+            fclose($file);
+        };
+        
+        return response()->stream($callback, 200, $headers);
     }
 }

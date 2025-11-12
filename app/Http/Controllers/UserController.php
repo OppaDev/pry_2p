@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Http\Requests\ValidarEditUser;
 use App\Http\Requests\ValidarStoreUser;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -13,14 +14,24 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
+    use AuthorizesRequests;
+    
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
+        abort_unless(Auth::user()->can('usuarios.ver'), 403);
+        
         $request->validate([
             'per_page' => 'nullable|integer|in:5,10,15,25,50',
-            'search' => 'nullable|string|max:255'
+            'search' => 'nullable|string|max:255',
+            'role' => 'nullable|exists:roles,name'
         ], [
             'per_page.integer' => 'El valor debe ser un número entero.',
             'per_page.in' => 'El valor debe ser uno de los siguientes: 5, 10, 15, 25, 50.',
@@ -31,21 +42,31 @@ class UserController extends Controller
         $perPage = $request->get('per_page', 10);
         $search = $request->get('search');
         
-        $query = User::select(['id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at']);
+        $query = User::with('roles')
+            ->select(['id', 'name', 'email', 'cedula', 'email_verified_at', 'created_at', 'updated_at']);
         
         if (!empty($search)) {
             $query->where(function($q) use ($search) {
                 $q->where('name', 'LIKE', '%' . $search . '%')
-                  ->orWhere('email', 'LIKE', '%' . $search . '%');
+                  ->orWhere('email', 'LIKE', '%' . $search . '%')
+                  ->orWhere('cedula', 'LIKE', '%' . $search . '%');
             });
+        }
+        
+        // Filtrar por rol
+        if ($request->filled('role')) {
+            $query->role($request->role);
         }
 
         $query->orderBy('created_at', 'desc');
         
+        $roles = \Spatie\Permission\Models\Role::all();
+        
         $data = array(
             'usuarios' => $query->paginate($perPage)->withQueryString(),
             'perPage' => $perPage,
-            'search' => $search
+            'search' => $search,
+            'roles' => $roles
         );
         return view('users.index', $data);
     }
@@ -361,5 +382,84 @@ class UserController extends Controller
             
             return redirect()->route('users.deleted')->with('error', 'Error al eliminar permanentemente el usuario: ' . $e->getMessage());
         }
+    }
+    
+    /**
+     * Mostrar formulario para asignar roles a un usuario.
+     */
+    public function editRoles(User $user)
+    {
+        abort_unless(Auth::user()->can('usuarios.asignar_rol'), 403);
+        
+        $roles = \Spatie\Permission\Models\Role::all();
+        $userRoles = $user->roles->pluck('name')->toArray();
+        
+        return view('users.edit-roles', compact('user', 'roles', 'userRoles'));
+    }
+    
+    /**
+     * Actualizar roles de un usuario.
+     */
+    public function updateRoles(Request $request, User $user)
+    {
+        abort_unless(Auth::user()->can('usuarios.asignar_rol'), 403);
+        
+        $request->validate([
+            'roles' => 'required|array|min:1',
+            'roles.*' => 'exists:roles,name'
+        ], [
+            'roles.required' => 'Debe seleccionar al menos un rol.',
+            'roles.array' => 'Los roles deben ser un arreglo.',
+            'roles.min' => 'Debe seleccionar al menos un rol.',
+        ]);
+        
+        try {
+            DB::beginTransaction();
+            
+            // Sincronizar roles (elimina los anteriores y asigna los nuevos)
+            $user->syncRoles($request->roles);
+            
+            DB::commit();
+            
+            Log::info('Roles actualizados', [
+                'user_id' => $user->id,
+                'roles' => $request->roles,
+                'admin_id' => Auth::id()
+            ]);
+            
+            return redirect()
+                ->route('users.show', $user)
+                ->with('success', 'Roles actualizados exitosamente.');
+                
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al actualizar roles', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage()
+            ]);
+            
+            return redirect()
+                ->back()
+                ->with('error', 'Error al actualizar los roles.');
+        }
+    }
+    
+    /**
+     * Ver permisos de un usuario.
+     */
+    public function showPermissions(User $user)
+    {
+        abort_unless(Auth::user()->can('usuarios.ver'), 403);
+        
+        // Permisos directos
+        $directPermissions = $user->permissions;
+        
+        // Permisos a través de roles
+        $rolePermissions = $user->getPermissionsViaRoles();
+        
+        // Todos los permisos (combinados)
+        $allPermissions = $user->getAllPermissions();
+        
+        return view('users.permissions', compact('user', 'directPermissions', 'rolePermissions', 'allPermissions'));
     }
 }

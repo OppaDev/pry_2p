@@ -13,11 +13,7 @@ class ValidarEditUser extends FormRequest
      */
     public function authorize(): bool
     {
-        if(Auth::user() -> email === 'test@example.com')
-        {
-            return true;
-        }
-        return false;
+        return $this->user()->can('usuarios.editar');
     }
 
     /**
