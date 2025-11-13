@@ -328,6 +328,16 @@
                 </div>
                 <div class="flex-auto p-6">
                     <div class="grid grid-cols-2 gap-3">
+                        <a href="{{ route('ventas.create') }}" class="flex items-center p-3 bg-gradient-to-r from-green-50 to-lime-50 border border-green-200 rounded-lg hover:from-green-100 hover:to-lime-100 transition-all group">
+                            <div class="flex items-center justify-center w-10 h-10 mr-3 bg-gradient-to-tl from-green-500 to-lime-500 rounded-lg shadow-soft-sm group-hover:scale-110 transition-transform">
+                                <i class="fas fa-cash-register text-white"></i>
+                            </div>
+                            <div>
+                                <p class="mb-0 text-xs font-semibold text-green-700">Nueva</p>
+                                <p class="mb-0 text-sm font-bold text-green-900">Venta</p>
+                            </div>
+                        </a>
+
                         <a href="{{ route('productos.index') }}" class="flex items-center p-3 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-lg hover:from-blue-100 hover:to-cyan-100 transition-all group">
                             <div class="flex items-center justify-center w-10 h-10 mr-3 bg-gradient-to-tl from-blue-500 to-cyan-500 rounded-lg shadow-soft-sm group-hover:scale-110 transition-transform">
                                 <i class="fas fa-boxes text-white"></i>
@@ -348,23 +358,13 @@
                             </div>
                         </a>
 
-                        <a href="{{ route('categorias.index') }}" class="flex items-center p-3 bg-gradient-to-r from-green-50 to-lime-50 border border-green-200 rounded-lg hover:from-green-100 hover:to-lime-100 transition-all group">
-                            <div class="flex items-center justify-center w-10 h-10 mr-3 bg-gradient-to-tl from-green-500 to-lime-500 rounded-lg shadow-soft-sm group-hover:scale-110 transition-transform">
-                                <i class="fas fa-tags text-white"></i>
-                            </div>
-                            <div>
-                                <p class="mb-0 text-xs font-semibold text-green-700">Gestionar</p>
-                                <p class="mb-0 text-sm font-bold text-green-900">Categorías</p>
-                            </div>
-                        </a>
-
-                        <a href="{{ route('users.index') }}" class="flex items-center p-3 bg-gradient-to-r from-orange-50 to-yellow-50 border border-orange-200 rounded-lg hover:from-orange-100 hover:to-yellow-100 transition-all group">
+                        <a href="{{ route('facturas.index') }}" class="flex items-center p-3 bg-gradient-to-r from-orange-50 to-yellow-50 border border-orange-200 rounded-lg hover:from-orange-100 hover:to-yellow-100 transition-all group">
                             <div class="flex items-center justify-center w-10 h-10 mr-3 bg-gradient-to-tl from-orange-500 to-yellow-500 rounded-lg shadow-soft-sm group-hover:scale-110 transition-transform">
-                                <i class="fas fa-user-tie text-white"></i>
+                                <i class="fas fa-file-invoice text-white"></i>
                             </div>
                             <div>
                                 <p class="mb-0 text-xs font-semibold text-orange-700">Gestionar</p>
-                                <p class="mb-0 text-sm font-bold text-orange-900">Usuarios</p>
+                                <p class="mb-0 text-sm font-bold text-orange-900">Facturas</p>
                             </div>
                         </a>
                     </div>
