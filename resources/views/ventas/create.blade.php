@@ -71,8 +71,8 @@
                                             <option value="{{ $producto->id }}" 
                                                 data-nombre="{{ $producto->nombre }}"
                                                 data-precio="{{ $producto->precio }}"
-                                                data-stock="{{ $producto->cantidad }}">
-                                                {{ $producto->codigo }} - {{ $producto->nombre }} (Stock: {{ $producto->cantidad }})
+                                                data-stock="{{ $producto->capacidad }}">
+                                                {{ $producto->codigo }} - {{ $producto->nombre }} (Stock: {{ $producto->capacidad }})
                                             </option>
                                         @endforeach
                                     </select>

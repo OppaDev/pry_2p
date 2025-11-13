@@ -74,7 +74,7 @@ class VentaController extends Controller
      */
     public function create()
     {
-        $productos = Producto::where('cantidad', '>', 0)
+        $productos = Producto::where('capacidad', '>', 0)
             ->orderBy('nombre')
             ->get();
         
