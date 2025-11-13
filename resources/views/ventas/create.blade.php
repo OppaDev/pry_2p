@@ -185,10 +185,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const producto = {
             id: option.value,
             nombre: option.dataset.nombre,
-            precio: parseFloat(option.dataset.precio),
-            stock: parseInt(option.dataset.stock),
+            precio: parseFloat(option.dataset.precio) || 0,
+            stock: parseInt(option.dataset.stock) || 0,
             cantidad: 1
         };
+        
+        console.log('Producto agregado:', producto); // Debug
         
         // Verificar stock disponible
         if (producto.stock <= 0) {

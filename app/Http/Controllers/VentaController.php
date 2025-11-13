@@ -75,6 +75,7 @@ class VentaController extends Controller
     public function create()
     {
         $productos = Producto::where('stock_actual', '>', 0)
+            ->select('id', 'codigo', 'nombre', 'precio', 'stock_actual', 'categoria_id')
             ->with('categoria')
             ->orderBy('nombre')
             ->get();

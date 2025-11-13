@@ -119,7 +119,7 @@
                                         <td class="px-4 py-3">{{ $detalle->producto->nombre }}</td>
                                         <td class="px-4 py-3 text-center">{{ $detalle->cantidad }}</td>
                                         <td class="px-4 py-3 text-right">${{ number_format($detalle->precio_unitario, 2) }}</td>
-                                        <td class="px-4 py-3 text-right font-semibold">${{ number_format($detalle->subtotal, 2) }}</td>
+                                        <td class="px-4 py-3 text-right font-semibold">${{ number_format($detalle->subtotal_item, 2) }}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>

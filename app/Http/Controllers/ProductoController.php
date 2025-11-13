@@ -185,7 +185,7 @@ class ProductoController extends Controller
         $perPage = $request->get('per_page', 10);
         $search = $request->get('search');
         
-        $query = Producto::onlyTrashed()->select(['id', 'nombre', 'codigo', 'cantidad', 'precio', 'created_at', 'updated_at', 'deleted_at']);
+        $query = Producto::onlyTrashed()->select(['id', 'nombre', 'codigo', 'stock_actual', 'precio', 'created_at', 'updated_at', 'deleted_at']);
         
         if (!empty($search)) {
             $query->where(function($q) use ($search) {

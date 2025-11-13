@@ -205,16 +205,20 @@
                                                         <i class="fas fa-history mr-1"></i>
                                                         Historial
                                                     </a>
+                                                    @can('productos.editar')
                                                     <a href="{{ route('productos.edit', $producto->id) }}"
                                                         class="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm hover:shadow-md btn-soft-transition">
                                                         <i class="fas fa-edit mr-1"></i>
                                                         Editar
                                                     </a>
+                                                    @endcan
+                                                    @can('productos.eliminar')
                                                     <button type="button" onclick="openModal('delete-producto-{{ $producto->id }}-modal')"
                                                         class="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-red-500 to-red-600 rounded-lg hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-red-200 transition-all duration-200 shadow-sm hover:shadow-md btn-soft-transition">
                                                         <i class="fas fa-trash mr-1"></i>
                                                         Eliminar
                                                     </button>
+                                                    @endcan
                                                 </div>
                                             </td>
                                         </tr>
