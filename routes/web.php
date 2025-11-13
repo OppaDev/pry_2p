@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\FacturaController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -83,6 +84,18 @@ Route::middleware('auth')->group(function () {
         Route::get('clientes', [ReporteController::class, 'clientes'])->name('clientes');
         Route::get('ventas-por-vendedor', [ReporteController::class, 'ventasPorVendedor'])->name('ventas-por-vendedor');
         Route::get('bajo-stock', [ReporteController::class, 'bajoStock'])->name('bajo-stock');
+    });
+    
+    // Rutas para facturación electrónica
+    Route::prefix('facturas')->name('facturas.')->group(function () {
+        Route::get('/', [FacturaController::class, 'index'])->name('index');
+        Route::get('/{factura}', [FacturaController::class, 'show'])->name('show');
+        Route::post('/crear', [FacturaController::class, 'crear'])->name('crear');
+        Route::get('/{factura}/xml', [FacturaController::class, 'descargarXML'])->name('descargar-xml');
+        Route::get('/{factura}/ride', [FacturaController::class, 'descargarRIDE'])->name('descargar-ride');
+        Route::post('/{factura}/anular', [FacturaController::class, 'anular'])->name('anular');
+        Route::post('/{factura}/reenviar-email', [FacturaController::class, 'reenviarEmail'])->name('reenviar-email');
+        Route::post('/{factura}/enviar-sri', [FacturaController::class, 'enviarSRI'])->name('enviar-sri');
     });
     
 });

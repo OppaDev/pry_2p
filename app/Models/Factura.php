@@ -63,36 +63,63 @@ class Factura extends Model implements Auditable
         return $this->belongsTo(Venta::class);
     }
     
+    /**
+     * Cliente de la factura
+     */
+    public function cliente()
+    {
+        return $this->belongsTo(Cliente::class, 'venta_id', 'id')
+            ->join('ventas', 'ventas.cliente_id', '=', 'clientes.id')
+            ->where('ventas.id', $this->venta_id);
+    }
+    
+    /**
+     * Usuario que emitió la factura
+     */
+    public function usuario()
+    {
+        return $this->hasOneThrough(User::class, Venta::class, 'id', 'id', 'venta_id', 'usuario_id');
+    }
+    
     // ==================== MÉTODOS DE NEGOCIO ====================
     
     /**
-     * Generar la factura electrónica (XML)
-     * Este método será implementado en el servicio de facturación
+     * Verifica si la factura está autorizada
      */
-    public function generarFacturaElectronica(): string
+    public function estaAutorizada(): bool
     {
-        // Será implementado con el servicio de facturación
-        return "XML generado";
+        return $this->estado_autorizacion === 'autorizada';
     }
     
     /**
-     * Enviar factura al SRI
-     * Este método será implementado en el servicio de facturación
+     * Verifica si la factura está pendiente
      */
-    public function enviarSRI(): bool
+    public function estaPendiente(): bool
     {
-        // Será implementado con el servicio de facturación
-        return true;
+        return $this->estado_autorizacion === 'pendiente';
     }
     
     /**
-     * Descargar factura en PDF (RIDE)
-     * Este método será implementado en el servicio de facturación
+     * Verifica si la factura está anulada
      */
-    public function descargarFacturaPDF(): string
+    public function estaAnulada(): bool
     {
-        // Será implementado con el servicio de facturación
-        return "path/to/pdf";
+        return $this->estado_autorizacion === 'anulada';
+    }
+    
+    /**
+     * Obtener badge HTML para estado
+     */
+    public function getBadgeEstadoAttribute(): string
+    {
+        $badges = [
+            'pendiente' => '<span class="badge bg-warning">Pendiente</span>',
+            'autorizada' => '<span class="badge bg-success">Autorizada</span>',
+            'rechazada' => '<span class="badge bg-danger">Rechazada</span>',
+            'anulada' => '<span class="badge bg-secondary">Anulada</span>',
+        ];
+        
+        return $badges[$this->estado_autorizacion] ?? '<span class="badge bg-secondary">Desconocido</span>';
     }
     
     // ==================== SCOPES ====================
