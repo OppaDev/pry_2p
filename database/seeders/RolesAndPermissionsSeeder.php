@@ -95,42 +95,52 @@ class RolesAndPermissionsSeeder extends Seeder
         );
         
         foreach ($todosPermisos as $permiso) {
-            Permission::create(['name' => $permiso]);
+            Permission::firstOrCreate(['name' => $permiso]);
         }
         
         // ==================== CREAR ROLES ====================
         
         // Rol: Administrador (tiene todos los permisos)
-        $rolAdmin = Role::create(['name' => 'administrador']);
-        $rolAdmin->givePermissionTo(Permission::all());
+        $rolAdmin = Role::firstOrCreate(['name' => 'administrador']);
+        $rolAdmin->syncPermissions(Permission::all());
         
-        // Rol: Vendedor
-        $rolVendedor = Role::create(['name' => 'vendedor']);
-        $rolVendedor->givePermissionTo([
-            // Clientes
+        // Rol: Vendedor (solo clientes, ventas y facturas)
+        $rolVendedor = Role::firstOrCreate(['name' => 'vendedor']);
+        $rolVendedor->syncPermissions([
+            // ===== CLIENTES (COMPLETO) =====
             'clientes.ver',
             'clientes.crear',
             'clientes.editar',
+            'clientes.eliminar',
+            'clientes.restaurar',
             'clientes.verificar_edad',
-            // Ventas
+            
+            // ===== VENTAS (COMPLETO) =====
             'ventas.ver',
             'ventas.crear',
-            // Facturas
+            'ventas.editar',
+            'ventas.anular',
+            
+            // ===== FACTURAS (COMPLETO) =====
             'facturas.ver',
             'facturas.crear',
+            'facturas.anular',
             'facturas.descargar',
             'facturas.enviar_email',
-            // Productos (solo ver y stock)
+            
+            // ===== PRODUCTOS (SOLO VER - no crear/editar/eliminar) =====
             'productos.ver',
             'productos.ver_stock',
-            // Reportes ventas
+            
+            // ===== REPORTES (solo relacionados con ventas/clientes) =====
             'reportes.ventas',
+            'reportes.exportar',
         ]);
         
-        // Rol: Jefe de Bodega
-        $rolJefeBodega = Role::create(['name' => 'jefe_bodega']);
-        $rolJefeBodega->givePermissionTo([
-            // Productos
+        // Rol: Jefe de Bodega (solo inventario y productos)
+        $rolJefeBodega = Role::firstOrCreate(['name' => 'jefe_bodega']);
+        $rolJefeBodega->syncPermissions([
+            // ===== PRODUCTOS (COMPLETO) =====
             'productos.ver',
             'productos.crear',
             'productos.editar',
@@ -138,14 +148,17 @@ class RolesAndPermissionsSeeder extends Seeder
             'productos.restaurar',
             'productos.ver_stock',
             'productos.ajustar_stock',
-            // Inventario (todos)
+            
+            // ===== INVENTARIO (COMPLETO) =====
             'inventario.ver',
             'inventario.entrada',
             'inventario.salida',
             'inventario.ajuste',
             'inventario.reportes',
-            // Reportes
+            
+            // ===== REPORTES (solo relacionados con inventario/productos) =====
             'reportes.inventario',
+            'reportes.exportar',
         ]);
         
         $this->command->info('✅ Roles y permisos creados exitosamente!');

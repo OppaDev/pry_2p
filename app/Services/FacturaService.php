@@ -221,8 +221,8 @@ class FacturaService
             $subtotal += $detalle->precio_unitario * $detalle->cantidad;
         }
         
-        // IVA 12% (puede ser configurable)
-        $tarifaIva = 12;
+        // IVA 15% (vigente desde 2025)
+        $tarifaIva = 15;
         $iva = $subtotal * ($tarifaIva / 100);
         $total = $subtotal + $iva;
         
@@ -281,7 +281,7 @@ class FacturaService
         $totalConImpuestos = $xml->createElement('totalConImpuestos');
         $totalImpuesto = $xml->createElement('totalImpuesto');
         $this->addElement($xml, $totalImpuesto, 'codigo', '2'); // 2=IVA
-        $this->addElement($xml, $totalImpuesto, 'codigoPorcentaje', '2'); // 2=12%
+        $this->addElement($xml, $totalImpuesto, 'codigoPorcentaje', '4'); // 4=15%
         $this->addElement($xml, $totalImpuesto, 'baseImponible', number_format($totales['subtotal'], 2, '.', ''));
         $this->addElement($xml, $totalImpuesto, 'valor', number_format($totales['iva'], 2, '.', ''));
         $totalConImpuestos->appendChild($totalImpuesto);
@@ -307,7 +307,7 @@ class FacturaService
             $impuestosDetalle = $xml->createElement('impuestos');
             $impuesto = $xml->createElement('impuesto');
             $this->addElement($xml, $impuesto, 'codigo', '2');
-            $this->addElement($xml, $impuesto, 'codigoPorcentaje', '2');
+            $this->addElement($xml, $impuesto, 'codigoPorcentaje', '4'); // 4=15%
             $this->addElement($xml, $impuesto, 'tarifa', $totales['tarifa_iva']);
             $baseImponible = $detalle->precio_unitario * $detalle->cantidad;
             $this->addElement($xml, $impuesto, 'baseImponible', number_format($baseImponible, 2, '.', ''));

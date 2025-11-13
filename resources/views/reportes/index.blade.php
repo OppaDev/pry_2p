@@ -8,6 +8,7 @@
 
         <div class="flex flex-wrap -mx-3">
             <!-- Reporte de Ventas -->
+            @can('verReportesVentas')
             <div class="w-full md:w-1/2 lg:w-1/3 px-3 mb-6">
                 <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border hover:scale-102 transition-transform duration-200">
                     <div class="p-6">
@@ -23,8 +24,10 @@
                     </div>
                 </div>
             </div>
+            @endcan
 
             <!-- Reporte de Inventario -->
+            @can('verReportesInventario')
             <div class="w-full md:w-1/2 lg:w-1/3 px-3 mb-6">
                 <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border hover:scale-102 transition-transform duration-200">
                     <div class="p-6">
@@ -40,8 +43,10 @@
                     </div>
                 </div>
             </div>
+            @endcan
 
             <!-- Productos Más Vendidos -->
+            @can('verReportesInventario')
             <div class="w-full md:w-1/2 lg:w-1/3 px-3 mb-6">
                 <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border hover:scale-102 transition-transform duration-200">
                     <div class="p-6">
@@ -57,8 +62,10 @@
                     </div>
                 </div>
             </div>
+            @endcan
 
             <!-- Movimientos de Inventario -->
+            @can('verReportesInventario')
             <div class="w-full md:w-1/2 lg:w-1/3 px-3 mb-6">
                 <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border hover:scale-102 transition-transform duration-200">
                     <div class="p-6">
@@ -74,8 +81,10 @@
                     </div>
                 </div>
             </div>
+            @endcan
 
             <!-- Reporte de Clientes -->
+            @can('verReportesVentas')
             <div class="w-full md:w-1/2 lg:w-1/3 px-3 mb-6">
                 <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border hover:scale-102 transition-transform duration-200">
                     <div class="p-6">
@@ -91,8 +100,10 @@
                     </div>
                 </div>
             </div>
+            @endcan
 
             <!-- Ventas por Vendedor -->
+            @can('verReportesVentas')
             <div class="w-full md:w-1/2 lg:w-1/3 px-3 mb-6">
                 <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border hover:scale-102 transition-transform duration-200">
                     <div class="p-6">
@@ -108,8 +119,10 @@
                     </div>
                 </div>
             </div>
+            @endcan
 
             <!-- Productos con Bajo Stock -->
+            @can('verReportesInventario')
             <div class="w-full md:w-1/2 lg:w-1/3 px-3 mb-6">
                 <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border hover:scale-102 transition-transform duration-200">
                     <div class="p-6">
@@ -125,6 +138,7 @@
                     </div>
                 </div>
             </div>
+            @endcan
         </div>
 
         <!-- Información Adicional -->

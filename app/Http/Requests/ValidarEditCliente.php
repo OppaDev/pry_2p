@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use App\Services\ValidacionService;
 use Carbon\Carbon;
 
@@ -23,7 +24,7 @@ class ValidarEditCliente extends FormRequest
      */
     public function rules(): array
     {
-        $clienteId = $this->route('cliente');
+        $clienteId = $this->route('cliente')->id;
         
         return [
             'tipo_identificacion' => 'required|in:cedula,ruc,pasaporte',
@@ -31,7 +32,7 @@ class ValidarEditCliente extends FormRequest
                 'required',
                 'string',
                 'max:20',
-                'unique:clientes,identificacion,' . $clienteId,
+                \Illuminate\Validation\Rule::unique('clientes', 'identificacion')->ignore($clienteId),
                 function ($attribute, $value, $fail) {
                     if ($this->tipo_identificacion === 'cedula') {
                         if (!ValidacionService::validarCedulaEcuatoriana($value)) {
@@ -60,13 +61,13 @@ class ValidarEditCliente extends FormRequest
                     }
                 },
             ],
-            'direccion' => 'nullable|string|max:500',
+            'direccion' => 'required|string|max:500',
             'telefono' => [
-                'nullable',
+                'required',
                 'string',
                 'max:15',
                 function ($attribute, $value, $fail) {
-                    if ($value && !ValidacionService::validarTelefonoEcuatoriano($value)) {
+                    if (!ValidacionService::validarTelefonoEcuatoriano($value)) {
                         $fail('El número de teléfono no tiene un formato válido ecuatoriano.');
                     }
                 },
@@ -81,12 +82,33 @@ class ValidarEditCliente extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        $this->merge([
-            'nombres' => trim($this->nombres ?? ''),
-            'apellidos' => trim($this->apellidos ?? ''),
-            'identificacion' => preg_replace('/[^0-9]/', '', $this->identificacion ?? ''),
-            'correo' => $this->correo ? strtolower(trim($this->correo)) : null,
-        ]);
+        $data = [];
+        
+        if ($this->has('nombres')) {
+            $data['nombres'] = trim($this->nombres);
+        }
+        
+        if ($this->has('apellidos')) {
+            $data['apellidos'] = trim($this->apellidos);
+        }
+        
+        if ($this->has('identificacion')) {
+            $data['identificacion'] = preg_replace('/[^0-9A-Za-z]/', '', $this->identificacion);
+        }
+        
+        if ($this->has('telefono')) {
+            $data['telefono'] = preg_replace('/[^0-9]/', '', $this->telefono);
+        }
+        
+        if ($this->has('correo')) {
+            $data['correo'] = $this->correo ? strtolower(trim($this->correo)) : null;
+        }
+        
+        if ($this->has('direccion')) {
+            $data['direccion'] = trim($this->direccion);
+        }
+        
+        $this->merge($data);
     }
 
     /**
@@ -106,8 +128,11 @@ class ValidarEditCliente extends FormRequest
             'fecha_nacimiento.required' => 'La fecha de nacimiento es obligatoria.',
             'fecha_nacimiento.date' => 'La fecha de nacimiento debe ser una fecha válida.',
             'fecha_nacimiento.before' => 'La fecha de nacimiento debe ser anterior a hoy.',
-            'correo.email' => 'El correo electrónico debe tener un formato válido.',
+            'direccion.required' => 'La dirección es obligatoria.',
+            'direccion.max' => 'La dirección no puede exceder 500 caracteres.',
+            'telefono.required' => 'El teléfono es obligatorio.',
             'telefono.max' => 'El teléfono no puede exceder 15 caracteres.',
+            'correo.email' => 'El correo electrónico debe tener un formato válido.',
         ];
     }
 

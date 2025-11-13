@@ -243,12 +243,14 @@
                                     {{ $productos->links() }}
                                 </div>
                                 <div class="ml-4 flex space-x-3">
-                                    <!-- Botón para crear un nuevo producto -->
-                                    <a href="{{ route('productos.create') }}" 
-                                        class="inline-block px-8 py-2 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-none cursor-pointer leading-pro text-base ease-soft-in tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 bg-150 bg-x-25 border-purple-700 text-white hover:scale-102 hover:shadow-soft-xs active:opacity-85">
-                                        <i class="fas fa-plus mr-2"></i>
-                                        Nuevo Producto
-                                    </a>
+                                    <!-- Botón para crear un nuevo producto (solo Jefe de Bodega y Administrador) -->
+                                    @can('productos.crear')
+                                        <a href="{{ route('productos.create') }}" 
+                                            class="inline-block px-8 py-2 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-none cursor-pointer leading-pro text-base ease-soft-in tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 bg-150 bg-x-25 border-purple-700 text-white hover:scale-102 hover:shadow-soft-xs active:opacity-85">
+                                            <i class="fas fa-plus mr-2"></i>
+                                            Nuevo Producto
+                                        </a>
+                                    @endcan
                                 </div>
                             </div>
                     </div>

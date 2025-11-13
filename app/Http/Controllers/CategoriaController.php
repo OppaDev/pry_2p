@@ -149,22 +149,35 @@ class CategoriaController extends Controller
     /**
      * Remove the specified resource from storage (soft delete).
      */
-    public function destroy(Categoria $categoria)
+    public function destroy(Request $request, Categoria $categoria)
     {
         $this->authorize('delete', $categoria);
 
+        // Validar motivo de eliminación
+        $request->validate([
+            'motivo' => 'required|string|max:255',
+        ], [
+            'motivo.required' => 'El motivo de eliminación es obligatorio.',
+            'motivo.max' => 'El motivo no puede exceder 255 caracteres.',
+        ]);
+
         try {
-            // Verificar si tiene productos asociados
-            if ($categoria->productos()->count() > 0) {
+            // Verificar si tiene productos asociados activos
+            $productosActivos = $categoria->productos()->where('estado', 'activo')->count();
+            
+            if ($productosActivos > 0) {
                 return redirect()
                     ->back()
-                    ->with('warning', 'No se puede eliminar la categoría porque tiene productos asociados. Se desactivará en su lugar.');
+                    ->with('warning', "No se puede eliminar la categoría porque tiene {$productosActivos} producto(s) activo(s) asociado(s). Desactive los productos primero.");
             }
 
+            // Registrar motivo en auditoría
+            $categoria->auditComment = $request->motivo;
             $categoria->delete();
 
             Log::warning('Categoría eliminada', [
                 'categoria_id' => $categoria->id,
+                'motivo' => $request->motivo,
                 'usuario_id' => Auth::id()
             ]);
 

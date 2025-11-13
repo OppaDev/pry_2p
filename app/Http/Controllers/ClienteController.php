@@ -168,19 +168,41 @@ class ClienteController extends Controller
     {
         $this->authorize('delete', $cliente);
 
+        // Validar motivo de eliminación
+        $request->validate([
+            'motivo' => 'required|string|max:255',
+        ], [
+            'motivo.required' => 'El motivo de eliminación es obligatorio.',
+            'motivo.max' => 'El motivo no puede exceder 255 caracteres.',
+        ]);
+
         try {
             // Verificar si tiene ventas asociadas
-            if ($cliente->ventas()->count() > 0) {
+            $totalVentas = $cliente->ventas()->count();
+            
+            if ($totalVentas > 0) {
+                // En lugar de eliminar, desactivar el cliente
+                $cliente->update(['estado' => 'inactivo']);
+                
+                Log::warning('Cliente desactivado por tener ventas asociadas', [
+                    'cliente_id' => $cliente->id,
+                    'total_ventas' => $totalVentas,
+                    'motivo' => $request->motivo,
+                    'usuario_id' => Auth::id()
+                ]);
+                
                 return redirect()
-                    ->back()
-                    ->with('warning', 'No se puede eliminar el cliente porque tiene ventas registradas. Se desactivará en su lugar.');
+                    ->route('clientes.index')
+                    ->with('warning', "El cliente tiene {$totalVentas} venta(s) registrada(s). Se ha desactivado en lugar de eliminarse.");
             }
 
+            // Registrar motivo en auditoría
+            $cliente->auditComment = $request->motivo;
             $cliente->delete();
 
             Log::warning('Cliente eliminado', [
                 'cliente_id' => $cliente->id,
-                'motivo' => $request->input('motivo_eliminacion'),
+                'motivo' => $request->motivo,
                 'usuario_id' => Auth::id()
             ]);
 

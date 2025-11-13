@@ -70,9 +70,10 @@
                                         @foreach($productos as $producto)
                                             <option value="{{ $producto->id }}" 
                                                 data-nombre="{{ $producto->nombre }}"
+                                                data-codigo="{{ $producto->codigo }}"
                                                 data-precio="{{ $producto->precio }}"
-                                                data-stock="{{ $producto->capacidad }}">
-                                                {{ $producto->codigo }} - {{ $producto->nombre }} (Stock: {{ $producto->capacidad }})
+                                                data-stock="{{ $producto->stock_actual }}">
+                                                {{ $producto->codigo }} - {{ $producto->nombre }} (Stock: {{ $producto->stock_actual }})
                                             </option>
                                         @endforeach
                                     </select>
@@ -154,56 +155,83 @@
     </div>
 </div>
 
-@push('scripts')
 <script>
 let carrito = [];
 
-document.getElementById('btn-agregar-producto').addEventListener('click', function() {
-    const select = document.getElementById('producto_select');
-    const option = select.options[select.selectedIndex];
+document.addEventListener('DOMContentLoaded', function() {
+    const btnAgregar = document.getElementById('btn-agregar-producto');
     
-    if (!option.value) {
-        alert('Por favor seleccione un producto');
+    if (!btnAgregar) {
+        console.error('No se encontró el botón btn-agregar-producto');
         return;
     }
-    
-    const producto = {
-        id: option.value,
-        nombre: option.dataset.nombre,
-        precio: parseFloat(option.dataset.precio),
-        stock: parseInt(option.dataset.stock),
-        cantidad: 1
-    };
-    
-    // Verificar si ya está en el carrito
-    const existe = carrito.find(p => p.id === producto.id);
-    if (existe) {
-        if (existe.cantidad < existe.stock) {
-            existe.cantidad++;
-        } else {
-            alert('No hay suficiente stock disponible');
+
+    if (!btnAgregar) {
+        console.error('ERROR: No se encontró el botón btn-agregar-producto');
+        return;
+    }
+
+    btnAgregar.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const select = document.getElementById('producto_select');
+        const option = select.options[select.selectedIndex];
+        
+        if (!option.value) {
+            mostrarAlerta('Por favor seleccione un producto', 'warning');
             return;
         }
-    } else {
-        carrito.push(producto);
-    }
-    
-    actualizarTabla();
-    select.value = '';
-});
-
-function actualizarTabla() {
+        
+        const producto = {
+            id: option.value,
+            nombre: option.dataset.nombre,
+            precio: parseFloat(option.dataset.precio),
+            stock: parseInt(option.dataset.stock),
+            cantidad: 1
+        };
+        
+        // Verificar stock disponible
+        if (producto.stock <= 0) {
+            mostrarAlerta('No hay stock disponible para este producto', 'error');
+            return;
+        }
+        
+        // Verificar si ya está en el carrito
+        const existe = carrito.find(p => p.id === producto.id);
+        if (existe) {
+            if (existe.cantidad < existe.stock) {
+                existe.cantidad++;
+                mostrarAlerta('Cantidad actualizada en el carrito', 'success');
+            } else {
+                mostrarAlerta('No hay suficiente stock disponible', 'error');
+                return;
+            }
+        } else {
+            carrito.push(producto);
+            mostrarAlerta('Producto agregado al carrito', 'success');
+        }
+        
+        actualizarTabla();
+        select.value = '';
+    });
+});function actualizarTabla() {
     const tbody = document.getElementById('tbody-productos');
-    const emptyRow = document.getElementById('empty-row');
+    const btnProcesar = document.getElementById('btn-procesar');
     
     if (carrito.length === 0) {
-        emptyRow.style.display = 'table-row';
-        document.getElementById('btn-procesar').disabled = true;
+        tbody.innerHTML = `
+            <tr id="empty-row">
+                <td colspan="5" class="px-4 py-8 text-center text-slate-400">
+                    <i class="fas fa-shopping-cart text-4xl mb-2"></i>
+                    <p>No hay productos agregados</p>
+                </td>
+            </tr>
+        `;
+        btnProcesar.disabled = true;
         return;
     }
     
-    emptyRow.style.display = 'none';
-    document.getElementById('btn-procesar').disabled = false;
+    btnProcesar.disabled = false;
     
     let html = '';
     carrito.forEach((producto, index) => {
@@ -291,10 +319,70 @@ document.getElementById('cliente_id').addEventListener('change', function() {
     const edad = parseInt(option.dataset.edad);
     
     if (edad < 18) {
-        alert('⚠️ Advertencia: El cliente es menor de 18 años. No puede comprar licores.');
+        mostrarAlerta('⚠️ Advertencia: El cliente es menor de 18 años. No puede comprar licores.', 'warning');
         this.value = '';
     }
 });
+
+// Validar formulario antes de enviar
+document.getElementById('form-venta').addEventListener('submit', function(e) {
+    if (carrito.length === 0) {
+        e.preventDefault();
+        mostrarAlerta('⚠️ Debe agregar al menos un producto para procesar la venta', 'error');
+        return false;
+    }
+    
+    const clienteId = document.getElementById('cliente_id').value;
+    const metodoPago = document.getElementById('metodo_pago').value;
+    
+    if (!clienteId) {
+        e.preventDefault();
+        mostrarAlerta('⚠️ Debe seleccionar un cliente', 'error');
+        return false;
+    }
+    
+    if (!metodoPago) {
+        e.preventDefault();
+        mostrarAlerta('⚠️ Debe seleccionar un método de pago', 'error');
+        return false;
+    }
+    
+    return true;
+});
+
+// Función para mostrar alertas
+function mostrarAlerta(mensaje, tipo) {
+    const colores = {
+        'success': 'bg-green-100 border-green-400 text-green-700',
+        'error': 'bg-red-100 border-red-400 text-red-700',
+        'warning': 'bg-yellow-100 border-yellow-400 text-yellow-700',
+        'info': 'bg-blue-100 border-blue-400 text-blue-700'
+    };
+    
+    const iconos = {
+        'success': 'fa-check-circle',
+        'error': 'fa-exclamation-circle',
+        'warning': 'fa-exclamation-triangle',
+        'info': 'fa-info-circle'
+    };
+    
+    const alerta = document.createElement('div');
+    alerta.className = `fixed top-4 right-4 z-50 px-4 py-3 rounded border ${colores[tipo] || colores.info} shadow-lg max-w-md animate-fade-in-down`;
+    alerta.innerHTML = `
+        <div class="flex items-center">
+            <i class="fas ${iconos[tipo] || iconos.info} mr-2"></i>
+            <span>${mensaje}</span>
+            <button onclick="this.parentElement.parentElement.remove()" class="ml-4">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(alerta);
+    
+    setTimeout(() => {
+        alerta.remove();
+    }, 5000);
+}
 </script>
-@endpush
 @endsection

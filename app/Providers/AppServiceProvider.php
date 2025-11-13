@@ -13,6 +13,7 @@ use App\Policies\ClientePolicy;
 use App\Policies\CategoriaPolicy;
 use App\Policies\ProductoPolicy;
 use App\Policies\VentaPolicy;
+use App\Policies\ReportePolicy;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,5 +35,12 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Categoria::class, CategoriaPolicy::class);
         Gate::policy(Producto::class, ProductoPolicy::class);
         Gate::policy(Venta::class, VentaPolicy::class);
+        
+        // Registrar gates para reportes (sin modelo asociado)
+        $reportePolicy = new ReportePolicy();
+        Gate::define('verReportesVentas', fn($user) => $reportePolicy->verReportesVentas($user));
+        Gate::define('verReportesInventario', fn($user) => $reportePolicy->verReportesInventario($user));
+        Gate::define('verReportesAuditoria', fn($user) => $reportePolicy->verReportesAuditoria($user));
+        Gate::define('exportarReportes', fn($user) => $reportePolicy->exportarReportes($user));
     }
 }

@@ -262,103 +262,134 @@
     
     <!-- Modal: Ajustar Stock -->
     @can('productos.editar')
-        <div id="ajustar-stock-modal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-            <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                <!-- Overlay -->
-                <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true" onclick="closeModal('ajustar-stock-modal')"></div>
-
-                <!-- Center modal -->
-                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-                <div class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+        <div id="ajustar-stock-modal" class="fixed inset-0 z-[9999] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <!-- Overlay -->
+            <div class="fixed inset-0 bg-gray-900 bg-opacity-50 transition-opacity backdrop-blur-sm" aria-hidden="true" onclick="closeModal('ajustar-stock-modal')"></div>
+            
+            <!-- Container centrado -->
+            <div class="fixed inset-0 z-[10000] overflow-y-auto">
+                <div class="flex min-h-full items-center justify-center p-4 sm:p-6">
+                    <!-- Modal centrado con tamaño ajustado -->
+                    <div class="relative w-full max-w-md sm:max-w-xl transform overflow-hidden rounded-xl bg-white text-left shadow-2xl transition-all">
                     <form action="{{ route('productos.ajustar-stock', $producto->id) }}" method="POST">
                         @csrf
-                        <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
-                            <div class="sm:flex sm:items-start">
-                                <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 mx-auto bg-blue-100 rounded-full sm:mx-0 sm:h-10 sm:w-10">
-                                    <i class="fas fa-boxes text-blue-600"></i>
+                        <!-- Header del modal -->
+                        <div class="bg-gradient-to-r from-blue-600 to-cyan-500 px-6 py-4">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="flex items-center justify-center w-12 h-12 bg-white bg-opacity-20 rounded-lg">
+                                        <i class="fas fa-boxes text-white text-xl"></i>
+                                    </div>
                                 </div>
-                                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left flex-1">
-                                    <h3 class="text-lg font-semibold leading-6 text-gray-900" id="modal-title">
+                                <div class="ml-4 flex-1">
+                                    <h3 class="text-xl font-bold text-white" id="modal-title">
                                         Ajustar Stock
                                     </h3>
-                                    <p class="text-sm text-gray-500 mt-1">{{ $producto->nombre }}</p>
-                                    <p class="text-xs text-gray-400">Stock actual: {{ number_format($producto->stock_actual) }}</p>
-                                    
-                                    <div class="mt-4 space-y-4">
-                                        <!-- Tipo de Movimiento -->
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                                Tipo de Movimiento <span class="text-red-500">*</span>
-                                            </label>
-                                            <div class="grid grid-cols-3 gap-2">
-                                                <label class="relative flex items-center justify-center p-3 border rounded-lg cursor-pointer hover:bg-green-50 hover:border-green-300 transition-colors">
-                                                    <input type="radio" name="tipo_movimiento" value="entrada" required class="sr-only peer">
-                                                    <div class="text-center peer-checked:text-green-700">
-                                                        <i class="fas fa-arrow-down text-lg peer-checked:text-green-600"></i>
-                                                        <p class="text-xs font-medium mt-1">Entrada</p>
-                                                    </div>
-                                                    <div class="absolute inset-0 border-2 border-green-600 rounded-lg opacity-0 peer-checked:opacity-100"></div>
-                                                </label>
-                                                
-                                                <label class="relative flex items-center justify-center p-3 border rounded-lg cursor-pointer hover:bg-red-50 hover:border-red-300 transition-colors">
-                                                    <input type="radio" name="tipo_movimiento" value="salida" required class="sr-only peer">
-                                                    <div class="text-center peer-checked:text-red-700">
-                                                        <i class="fas fa-arrow-up text-lg peer-checked:text-red-600"></i>
-                                                        <p class="text-xs font-medium mt-1">Salida</p>
-                                                    </div>
-                                                    <div class="absolute inset-0 border-2 border-red-600 rounded-lg opacity-0 peer-checked:opacity-100"></div>
-                                                </label>
-                                                
-                                                <label class="relative flex items-center justify-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-colors">
-                                                    <input type="radio" name="tipo_movimiento" value="ajuste" required class="sr-only peer">
-                                                    <div class="text-center peer-checked:text-blue-700">
-                                                        <i class="fas fa-sync text-lg peer-checked:text-blue-600"></i>
-                                                        <p class="text-xs font-medium mt-1">Ajuste</p>
-                                                    </div>
-                                                    <div class="absolute inset-0 border-2 border-blue-600 rounded-lg opacity-0 peer-checked:opacity-100"></div>
-                                                </label>
-                                            </div>
-                                        </div>
-
-                                        <!-- Cantidad -->
-                                        <div>
-                                            <label for="cantidad" class="block text-sm font-medium text-gray-700 mb-1">
-                                                Cantidad <span class="text-red-500">*</span>
-                                            </label>
-                                            <input type="number" id="cantidad" name="cantidad" min="1" required
-                                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                placeholder="Ingrese la cantidad">
-                                        </div>
-
-                                        <!-- Descripción -->
-                                        <div>
-                                            <label for="descripcion" class="block text-sm font-medium text-gray-700 mb-1">
-                                                Descripción / Motivo <span class="text-red-500">*</span>
-                                            </label>
-                                            <textarea id="descripcion" name="descripcion" rows="3" required
-                                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                placeholder="Ej: Reabastecimiento de proveedor, Venta directa, Corrección de inventario..."></textarea>
-                                        </div>
-                                    </div>
+                                    <p class="text-sm text-blue-100 mt-1">{{ $producto->nombre }}</p>
+                                    <p class="text-xs text-blue-200 font-semibold">Stock actual: {{ number_format($producto->stock_actual) }} unidades</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="px-4 py-3 bg-gray-50 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
-                            <button type="submit"
-                                class="inline-flex justify-center w-full px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-cyan-400 border border-transparent rounded-lg shadow-sm hover:from-blue-700 hover:to-cyan-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:w-auto">
-                                <i class="fas fa-check mr-2"></i>
-                                Confirmar Ajuste
-                            </button>
+                        
+                        <!-- Body del modal -->
+                        <div class="px-6 py-5 bg-white">
+                            <div class="space-y-5">
+                                <!-- Tipo de Movimiento -->
+                                <div>
+                                    <label class="block text-base font-semibold text-gray-800 mb-3">
+                                        <i class="fas fa-exchange-alt mr-2 text-blue-600"></i>Tipo de Movimiento <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="grid grid-cols-3 gap-3">
+                                        <label class="relative flex flex-col items-center justify-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-green-400 hover:bg-green-50 transition-all duration-200">
+                                            <input type="radio" name="tipo_movimiento" value="entrada" required class="sr-only peer">
+                                            <i class="fas fa-arrow-down text-2xl text-gray-400 peer-checked:text-green-600 mb-2"></i>
+                                            <p class="text-sm font-medium text-gray-600 peer-checked:text-green-700">Entrada</p>
+                                            <div class="absolute inset-0 border-2 border-green-600 rounded-xl opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"></div>
+                                        </label>
+                                        
+                                        <label class="relative flex flex-col items-center justify-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-red-400 hover:bg-red-50 transition-all duration-200">
+                                            <input type="radio" name="tipo_movimiento" value="salida" required class="sr-only peer">
+                                            <i class="fas fa-arrow-up text-2xl text-gray-400 peer-checked:text-red-600 mb-2"></i>
+                                            <p class="text-sm font-medium text-gray-600 peer-checked:text-red-700">Salida</p>
+                                            <div class="absolute inset-0 border-2 border-red-600 rounded-xl opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"></div>
+                                        </label>
+                                        
+                                        <label class="relative flex flex-col items-center justify-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all duration-200">
+                                            <input type="radio" name="tipo_movimiento" value="ajuste" required class="sr-only peer">
+                                            <i class="fas fa-sync text-2xl text-gray-400 peer-checked:text-blue-600 mb-2"></i>
+                                            <p class="text-sm font-medium text-gray-600 peer-checked:text-blue-700">Ajuste</p>
+                                            <div class="absolute inset-0 border-2 border-blue-600 rounded-xl opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"></div>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Cantidad -->
+                                <div>
+                                    <label for="cantidad" class="block text-base font-semibold text-gray-800 mb-2">
+                                        <i class="fas fa-hashtag mr-2 text-blue-600"></i>Cantidad <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="number" id="cantidad" name="cantidad" min="1" required
+                                        class="w-full px-4 py-3 text-base border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                        placeholder="Ej: 100">
+                                </div>
+
+                                <!-- Descripción -->
+                                <div>
+                                    <label for="descripcion" class="block text-base font-semibold text-gray-800 mb-2">
+                                        <i class="fas fa-comment-alt mr-2 text-blue-600"></i>Descripción / Motivo <span class="text-red-500">*</span>
+                                    </label>
+                                    <textarea id="descripcion" name="descripcion" rows="4" required
+                                        class="w-full px-4 py-3 text-base border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"
+                                        placeholder="Ej: Reabastecimiento de proveedor, Venta directa, Corrección de inventario..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Footer del modal -->
+                        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
                             <button type="button" onclick="closeModal('ajustar-stock-modal')"
-                                class="inline-flex justify-center w-full px-4 py-2 mt-3 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:mt-0 sm:w-auto">
+                                class="inline-flex items-center justify-center px-6 py-3 text-base font-semibold text-gray-700 bg-white border-2 border-gray-300 rounded-lg shadow-sm hover:bg-gray-100 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all">
                                 <i class="fas fa-times mr-2"></i>
                                 Cancelar
                             </button>
+                            <button type="submit"
+                                class="inline-flex items-center justify-center px-6 py-3 text-base font-bold text-white bg-gradient-to-r from-blue-600 to-cyan-500 border border-transparent rounded-lg shadow-lg hover:from-blue-700 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform hover:scale-105 transition-all">
+                                <i class="fas fa-check-circle mr-2"></i>
+                                Confirmar Ajuste
+                            </button>
                         </div>
                     </form>
+                    </div>
                 </div>
             </div>
         </div>
     @endcan
+
+<script>
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+    }
+}
+
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+    }
+}
+
+// Cerrar modal con ESC
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const modals = document.querySelectorAll('.fixed.inset-0:not(.hidden)');
+        modals.forEach(modal => {
+            if (modal.id) closeModal(modal.id);
+        });
+    }
+});
+</script>
 @endsection

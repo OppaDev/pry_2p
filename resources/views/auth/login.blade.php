@@ -4,8 +4,10 @@
 
     <!-- Header del formulario -->
     <div class="text-center mb-8">
-        <h2 class="text-2xl font-bold text-slate-800 mb-2">Bienvenido de nuevo</h2>
-        <p class="text-slate-500">Ingresa tus credenciales para acceder</p>
+        <h2 class="text-3xl font-black mb-2" style="background: linear-gradient(135deg, #ffffff 0%, #dc2626 50%, #ffffff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+            BIENVENIDO DE NUEVO
+        </h2>
+        <p class="text-gray-400 text-sm">Ingresa tus credenciales para acceder a Inferno Club</p>
     </div>
 
     <form method="POST" action="{{ route('login') }}" class="space-y-6">
@@ -13,41 +15,45 @@
 
         <!-- Email Address -->
         <div>
-            <x-input-label for="email" :value="__('Correo Electrónico')" />
+            <label for="email" class="inferno-label block mb-2">
+                <i class="fas fa-envelope mr-2"></i>Correo Electrónico
+            </label>
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <i class="fas fa-envelope text-slate-400"></i>
+                    <i class="fas fa-user text-red-600"></i>
                 </div>
-                <x-text-input id="email" 
-                              class="pl-12" 
-                              type="email" 
-                              name="email" 
-                              :value="old('email')" 
-                              required 
-                              autofocus 
-                              autocomplete="username"
-                              placeholder="tu@ejemplo.com" />
+                <input id="email" 
+                       class="inferno-input block w-full pl-12 pr-4 py-3 rounded-lg" 
+                       type="email" 
+                       name="email" 
+                       value="{{ old('email') }}"
+                       required 
+                       autofocus 
+                       autocomplete="username"
+                       placeholder="tu@ejemplo.com" />
             </div>
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
         <!-- Password -->
         <div>
-            <x-input-label for="password" :value="__('Contraseña')" />
+            <label for="password" class="inferno-label block mb-2">
+                <i class="fas fa-lock mr-2"></i>Contraseña
+            </label>
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <i class="fas fa-lock text-slate-400"></i>
+                    <i class="fas fa-key text-red-600"></i>
                 </div>
-                <x-text-input id="password" 
-                              class="pl-12 pr-12"
-                              type="password"
-                              name="password"
-                              required 
-                              autocomplete="current-password"
-                              placeholder="••••••••" />
+                <input id="password" 
+                       class="inferno-input block w-full pl-12 pr-12 py-3 rounded-lg"
+                       type="password"
+                       name="password"
+                       required 
+                       autocomplete="current-password"
+                       placeholder="••••••••" />
                 <button type="button" 
                         onclick="togglePassword()" 
-                        class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors duration-200">
+                        class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-red-600 transition-colors duration-200">
                     <i id="password-icon" class="fas fa-eye"></i>
                 </button>
             </div>
@@ -59,15 +65,15 @@
             <label for="remember_me" class="inline-flex items-center cursor-pointer group">
                 <input id="remember_me" 
                        type="checkbox" 
-                       class="rounded border-slate-300 text-blue-600 shadow-sm focus:ring-blue-200 focus:ring-2 transition-all duration-200" 
+                       class="rounded border-red-900 shadow-sm focus:ring-red-600 focus:ring-2 transition-all duration-200" 
                        name="remember">
-                <span class="ml-3 text-sm text-slate-600 group-hover:text-slate-800 transition-colors duration-200">
+                <span class="ml-3 text-sm text-gray-300 group-hover:text-white transition-colors duration-200">
                     {{ __('Recuérdame') }}
                 </span>
             </label>
 
             @if (Route::has('password.request'))
-                <a class="text-sm text-blue-600 hover:text-blue-800 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200 focus:ring-offset-2 transition-all duration-200 font-medium" 
+                <a class="inferno-link text-sm font-medium" 
                    href="{{ route('password.request') }}">
                     {{ __('¿Olvidaste tu contraseña?') }}
                 </a>
@@ -76,11 +82,23 @@
 
         <!-- Submit Button -->
         <div class="pt-4">
-            <x-primary-button class="w-full justify-center">
-                <i class="fas fa-sign-in-alt mr-2"></i>
+            <button type="submit" class="inferno-button w-full py-3 rounded-lg flex items-center justify-center gap-2">
+                <i class="fas fa-fire"></i>
                 {{ __('Iniciar sesión') }}
-            </x-primary-button>
+            </button>
         </div>
+        
+        <!-- Register Link -->
+        @if (Route::has('register'))
+        <div class="text-center pt-4 border-t border-red-900/30">
+            <p class="text-gray-400 text-sm">
+                ¿No tienes cuenta? 
+                <a href="{{ route('register') }}" class="inferno-link font-semibold">
+                    Regístrate aquí
+                </a>
+            </p>
+        </div>
+        @endif
     </form>
 
     <script>

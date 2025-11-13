@@ -72,13 +72,20 @@ class MovimientoInventario extends Model implements Auditable
         User $responsable, 
         ?string $descripcion = null
     ): self {
+        $stockAnterior = $producto->stock_actual;
+        $stockNuevo = $stockAnterior + $cantidad;
+        
+        // Actualizar el stock del producto
+        $producto->stock_actual = $stockNuevo;
+        $producto->save();
+        
         return self::create([
             'producto_id' => $producto->id,
             'tipo' => 'ingreso',
             'fecha' => now(),
             'cantidad' => $cantidad,
-            'stock_anterior' => $producto->stock_actual,
-            'stock_nuevo' => $producto->stock_actual + $cantidad,
+            'stock_anterior' => $stockAnterior,
+            'stock_nuevo' => $stockNuevo,
             'descripcion' => $descripcion ?? 'Ingreso de mercadería',
             'responsable_id' => $responsable->id,
         ]);
@@ -95,13 +102,20 @@ class MovimientoInventario extends Model implements Auditable
         ?string $refTipo = null,
         ?int $refId = null
     ): self {
+        $stockAnterior = $producto->stock_actual;
+        $stockNuevo = $stockAnterior - $cantidad;
+        
+        // Actualizar el stock del producto
+        $producto->stock_actual = $stockNuevo;
+        $producto->save();
+        
         return self::create([
             'producto_id' => $producto->id,
             'tipo' => 'salida',
             'fecha' => now(),
             'cantidad' => -$cantidad,
-            'stock_anterior' => $producto->stock_actual,
-            'stock_nuevo' => $producto->stock_actual - $cantidad,
+            'stock_anterior' => $stockAnterior,
+            'stock_nuevo' => $stockNuevo,
             'descripcion' => $descripcion ?? 'Salida de mercadería',
             'responsable_id' => $responsable->id,
             'referencia_tipo' => $refTipo,
@@ -118,14 +132,19 @@ class MovimientoInventario extends Model implements Auditable
         User $responsable, 
         string $descripcion
     ): self {
-        $diferencia = $nuevoStock - $producto->stock_actual;
+        $stockAnterior = $producto->stock_actual;
+        $diferencia = $nuevoStock - $stockAnterior;
+        
+        // Actualizar el stock del producto
+        $producto->stock_actual = $nuevoStock;
+        $producto->save();
         
         return self::create([
             'producto_id' => $producto->id,
             'tipo' => 'ajuste',
             'fecha' => now(),
             'cantidad' => $diferencia,
-            'stock_anterior' => $producto->stock_actual,
+            'stock_anterior' => $stockAnterior,
             'stock_nuevo' => $nuevoStock,
             'descripcion' => $descripcion,
             'responsable_id' => $responsable->id,

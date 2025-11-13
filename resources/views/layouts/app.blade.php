@@ -146,8 +146,9 @@
           </li>
 
           <!-- Papelera con dropdown nativo -->
+          @if(Auth::user()->can('clientes.restaurar') || Auth::user()->can('usuarios.restaurar') || Auth::user()->can('productos.restaurar'))
           <li class="mt-0.5 w-full">
-            <a class="py-2.7 text-lg ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 cursor-pointer transition-colors {{ request()->routeIs('productos.deleted') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-700' }}" 
+            <a class="py-2.7 text-lg ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 cursor-pointer transition-colors {{ request()->routeIs('productos.deleted') || request()->routeIs('clientes.deleted') || request()->routeIs('users.deleted') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-700' }}" 
                onclick="togglePapeleraDropdown()" id="papelera-trigger">
               <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
                 <i class="fas fa-trash text-slate-700"></i>
@@ -158,6 +159,7 @@
             
             <!-- Submenu estilo sidebar -->
             <ul class="pl-0 ml-6 mt-1 list-none h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out" id="papelera-submenu">
+              @can('clientes.restaurar')
               <li class="mt-0.5 w-full">
                 <a class="py-2.7 text-base ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('clientes.deleted') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-600 hover:text-slate-700' }}" 
                    href="{{ route('clientes.deleted') }}">
@@ -167,6 +169,9 @@
                   <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Papelera Clientes</span>
                 </a>
               </li>
+              @endcan
+
+              @can('usuarios.restaurar')
               <li class="mt-0.5 w-full">
                 <a class="py-2.7 text-base ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('users.deleted') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-600 hover:text-slate-700' }}" 
                    href="{{ route('users.deleted') }}">
@@ -176,6 +181,9 @@
                   <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Papelera Usuarios</span>
                 </a>
               </li>
+              @endcan
+
+              @can('productos.restaurar')
               <li class="mt-0.5 w-full">
                 <a class="py-2.7 text-base ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('productos.deleted') ? 'rounded-lg bg-blue-500/13 font-semibold text-slate-700' : 'text-slate-600 hover:text-slate-700' }}" 
                    href="{{ route('productos.deleted') }}">
@@ -185,8 +193,10 @@
                   <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Papelera Productos</span>
                 </a>
               </li>
+              @endcan
             </ul>
           </li>
+          @endif
 
           <li class="w-full mt-4">
             <h6 class="pl-6 ml-2 text-xs font-bold leading-tight uppercase opacity-60">Cuenta</h6>

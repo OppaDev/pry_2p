@@ -323,7 +323,13 @@ class ProductoController extends Controller
      */
     public function edit(Producto $producto)
     {
-        return view('productos.edit', compact('producto'));
+        $this->authorize('update', $producto);
+        
+        $categorias = \App\Models\Categoria::where('estado', 'activo')
+            ->orderBy('nombre')
+            ->get();
+        
+        return view('productos.edit', compact('producto', 'categorias'));
     }
 
     /**
@@ -452,10 +458,10 @@ class ProductoController extends Controller
             switch ($request->tipo_movimiento) {
                 case 'entrada':
                     MovimientoInventario::registrarIngreso(
-                        $producto->id,
+                        $producto,
                         $cantidad,
-                        $request->descripcion,
-                        Auth::id()
+                        Auth::user(),
+                        $request->descripcion
                     );
                     break;
                     
@@ -467,19 +473,19 @@ class ProductoController extends Controller
                     }
                     
                     MovimientoInventario::registrarSalida(
-                        $producto->id,
+                        $producto,
                         $cantidad,
-                        $request->descripcion,
-                        Auth::id()
+                        Auth::user(),
+                        $request->descripcion
                     );
                     break;
                     
                 case 'ajuste':
                     MovimientoInventario::registrarAjuste(
-                        $producto->id,
+                        $producto,
                         $cantidad,
-                        $request->descripcion,
-                        Auth::id()
+                        Auth::user(),
+                        $request->descripcion
                     );
                     break;
             }
@@ -601,7 +607,7 @@ class ProductoController extends Controller
                     $producto->volumen_ml,
                     $producto->stock_actual,
                     $producto->stock_minimo,
-                    number_format($producto->precio, 2),
+                    number_format((float)$producto->precio, 2),
                     $producto->estado,
                 ]);
             }

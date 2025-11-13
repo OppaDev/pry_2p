@@ -172,7 +172,7 @@
                                 <span class="font-semibold">${{ number_format($factura->subtotal, 2) }}</span>
                             </div>
                             <div class="flex justify-between items-center pb-2 border-b border-blue-400">
-                                <span>IVA (12%):</span>
+                                <span>IVA (15%):</span>
                                 <span class="font-semibold">${{ number_format($factura->impuestos, 2) }}</span>
                             </div>
                             <div class="flex justify-between items-center text-xl">

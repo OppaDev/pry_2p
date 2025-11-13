@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use App\Services\ValidacionService;
 
 class ValidarEditUser extends FormRequest
 {
@@ -38,6 +39,18 @@ class ValidarEditUser extends FormRequest
                 'max:255',
                 Rule::unique('users', 'email')->ignore($userId)
             ],
+            'cedula' => [
+                'required',
+                'string',
+                'digits:10',
+                Rule::unique('users', 'cedula')->ignore($userId),
+                function ($attribute, $value, $fail) {
+                    // Validación de cédula ecuatoriana
+                    if (!ValidacionService::validarCedulaEcuatoriana($value)) {
+                        $fail('La cédula ingresada no es válida.');
+                    }
+                },
+            ],
             'password' => 'nullable|string|min:8|confirmed'
         ];
     }
@@ -53,6 +66,9 @@ class ValidarEditUser extends FormRequest
             'email.email' => 'El email debe tener un formato válido.',
             'email.max' => 'El email no puede exceder los 255 caracteres.',
             'email.unique' => 'Ya existe otro usuario con este email.',
+            'cedula.required' => 'La cédula es obligatoria.',
+            'cedula.digits' => 'La cédula debe tener exactamente 10 dígitos.',
+            'cedula.unique' => 'Ya existe otro usuario con esta cédula.',
             'password.string' => 'La contraseña debe ser una cadena de texto.',
             'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
             'password.confirmed' => 'La confirmación de contraseña no coincide.'
@@ -62,9 +78,10 @@ class ValidarEditUser extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => 'Nombre del usuario',
-            'email' => 'Email del usuario',
-            'password' => 'Contraseña'
+            'name' => 'nombre del usuario',
+            'email' => 'email del usuario',
+            'cedula' => 'cédula',
+            'password' => 'contraseña'
         ];
     }
 
@@ -79,6 +96,11 @@ class ValidarEditUser extends FormRequest
         
         if ($this->has('email')) {
             $data['email'] = strtolower(trim($this->email));
+        }
+        
+        if ($this->has('cedula')) {
+            // Limpiar cédula: solo números
+            $data['cedula'] = preg_replace('/[^0-9]/', '', $this->cedula);
         }
         
         $this->merge($data);

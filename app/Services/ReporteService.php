@@ -467,9 +467,10 @@ class ReporteService
                 ->where('ventas.estado', 'completada')
                 ->select(
                     'productos.nombre',
+                    'productos.marca',
                     DB::raw('SUM(detalle_ventas.cantidad) as total_vendido')
                 )
-                ->groupBy('productos.id', 'productos.nombre')
+                ->groupBy('productos.id', 'productos.nombre', 'productos.marca')
                 ->orderBy('total_vendido', 'desc')
                 ->limit(5)
                 ->get(),

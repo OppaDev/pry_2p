@@ -58,13 +58,13 @@ class ValidarStoreCliente extends FormRequest
                     }
                 },
             ],
-            'direccion' => 'nullable|string|max:500',
+            'direccion' => 'required|string|max:500',
             'telefono' => [
-                'nullable',
+                'required',
                 'string',
                 'max:15',
                 function ($attribute, $value, $fail) {
-                    if ($value && !ValidacionService::validarTelefonoEcuatoriano($value)) {
+                    if (!ValidacionService::validarTelefonoEcuatoriano($value)) {
                         $fail('El número de teléfono no tiene un formato válido ecuatoriano.');
                     }
                 },
@@ -79,12 +79,33 @@ class ValidarStoreCliente extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        $this->merge([
-            'nombres' => trim($this->nombres ?? ''),
-            'apellidos' => trim($this->apellidos ?? ''),
-            'identificacion' => preg_replace('/[^0-9]/', '', $this->identificacion ?? ''),
-            'correo' => $this->correo ? strtolower(trim($this->correo)) : null,
-        ]);
+        $data = [];
+        
+        if ($this->has('nombres')) {
+            $data['nombres'] = trim($this->nombres);
+        }
+        
+        if ($this->has('apellidos')) {
+            $data['apellidos'] = trim($this->apellidos);
+        }
+        
+        if ($this->has('identificacion')) {
+            $data['identificacion'] = preg_replace('/[^0-9A-Za-z]/', '', $this->identificacion);
+        }
+        
+        if ($this->has('telefono')) {
+            $data['telefono'] = preg_replace('/[^0-9]/', '', $this->telefono);
+        }
+        
+        if ($this->has('correo')) {
+            $data['correo'] = $this->correo ? strtolower(trim($this->correo)) : null;
+        }
+        
+        if ($this->has('direccion')) {
+            $data['direccion'] = trim($this->direccion);
+        }
+        
+        $this->merge($data);
     }
 
     /**

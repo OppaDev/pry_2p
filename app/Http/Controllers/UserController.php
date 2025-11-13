@@ -90,15 +90,23 @@ class UserController extends Controller
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
+                'cedula' => $request->cedula,
                 'password' => Hash::make($request->password),
             ]);
 
             DB::commit();
             
+            Log::info('Usuario creado exitosamente', [
+                'user_id' => $user->id,
+                'created_by' => Auth::id()
+            ]);
+            
             return redirect()->route('users.index')->with('success', 'Usuario creado exitosamente.');
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error al crear usuario: ' . $e->getMessage());
+            Log::error('Error al crear usuario: ' . $e->getMessage(), [
+                'created_by' => Auth::id()
+            ]);
             return redirect()->route('users.create')->with('error', 'Error al crear el usuario. Por favor, inténtalo de nuevo.');
         }
     }
@@ -134,7 +142,7 @@ class UserController extends Controller
             DB::beginTransaction();
             
             // Preparar datos para actualizar
-            $data = $request->only(['name', 'email']);
+            $data = $request->only(['name', 'email', 'cedula']);
             
             // Si se proporciona una nueva contraseña, la hasheamos
             if ($request->filled('password')) {
@@ -146,10 +154,18 @@ class UserController extends Controller
 
             DB::commit();
             
+            Log::info('Usuario actualizado exitosamente', [
+                'user_id' => $user->id,
+                'updated_by' => Auth::id()
+            ]);
+            
             return redirect()->route('users.index')->with('success', 'Usuario actualizado exitosamente.');
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error al actualizar usuario: ' . $e->getMessage());
+            Log::error('Error al actualizar usuario: ' . $e->getMessage(), [
+                'user_id' => $user->id,
+                'updated_by' => Auth::id()
+            ]);
             return redirect()->route('users.edit', $user)->with('error', 'Error al actualizar el usuario. Por favor, inténtalo de nuevo.');
         }
     }

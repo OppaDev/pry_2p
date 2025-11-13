@@ -74,11 +74,15 @@ class VentaController extends Controller
      */
     public function create()
     {
-        $productos = Producto::where('capacidad', '>', 0)
+        $productos = Producto::where('stock_actual', '>', 0)
+            ->with('categoria')
             ->orderBy('nombre')
             ->get();
         
-        $clientes = Cliente::activos()->get();
+        $clientes = Cliente::activos()
+            ->orderBy('nombres')
+            ->orderBy('apellidos')
+            ->get();
         
         return view('ventas.create', compact('productos', 'clientes'));
     }
@@ -174,7 +178,7 @@ class VentaController extends Controller
     /**
      * Generar factura desde venta
      */
-    public function generarFactura(Venta $venta)
+    public function generarFactura(Request $request, Venta $venta)
     {
         try {
             if ($venta->factura) {
@@ -189,10 +193,11 @@ class VentaController extends Controller
                     ->with('error', '❌ Solo se pueden facturar ventas completadas.');
             }
             
-            // Redirigir al controlador de facturas
-            return redirect()
-                ->route('facturas.crear')
-                ->with(['venta_id' => $venta->id]);
+            // Llamar directamente al FacturaController para crear la factura
+            $facturaRequest = new Request(['venta_id' => $venta->id]);
+            $facturaController = app(FacturaController::class);
+            
+            return $facturaController->crear($facturaRequest);
                 
         } catch (Exception $e) {
             return redirect()

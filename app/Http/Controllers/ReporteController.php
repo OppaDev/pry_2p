@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\ReporteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReporteController extends Controller
 {
@@ -13,6 +14,22 @@ class ReporteController extends Controller
     public function __construct(ReporteService $reporteService)
     {
         $this->reporteService = $reporteService;
+        
+        // Middleware para cada tipo de reporte según rol
+        // Reportes de Ventas: Administrador y Vendedor
+        $this->middleware('can:verReportesVentas')->only([
+            'ventas', 'ventasPorVendedor', 'clientes'
+        ]);
+        
+        // Reportes de Inventario: Administrador y Jefe de Bodega
+        $this->middleware('can:verReportesInventario')->only([
+            'inventario', 'productosMasVendidos', 'movimientosInventario', 'bajoStock'
+        ]);
+        
+        // Reportes de Auditoría: Solo Administrador
+        $this->middleware('can:verReportesAuditoria')->only([
+            'auditoria'
+        ]);
     }
     
     /**
@@ -41,7 +58,7 @@ class ReporteController extends Controller
         
         // Obtener listas para filtros
         $vendedores = \App\Models\User::select('id', 'name', 'email')->get();
-        $clientes = \App\Models\Cliente::select('id', 'nombre_completo', 'identificacion')->get();
+        $clientes = \App\Models\Cliente::select('id', 'nombres', 'apellidos', 'identificacion')->get();
         
         return view('reportes.ventas', compact('datos', 'vendedores', 'clientes'));
     }
@@ -402,41 +419,67 @@ class ReporteController extends Controller
         return $csv;
     }
     
-    // ==================== MÉTODOS PDF (PLACEHOLDER) ====================
+    // ==================== MÉTODOS PDF ====================
     
     private function exportarVentasPdf(array $datos)
     {
-        return view('reportes.pdf.ventas', $datos);
+        $pdf = Pdf::loadView('reportes.pdf.ventas', ['datos' => $datos])
+            ->setPaper('a4', 'landscape')
+            ->setOptions([
+                'isHtml5ParserEnabled' => true,
+                'isRemoteEnabled' => true,
+                'defaultFont' => 'DejaVu Sans',
+                'enable_php' => true
+            ]);
+        return $pdf->download('reporte-ventas-' . date('Y-m-d') . '.pdf');
     }
     
     private function exportarInventarioPdf(array $datos)
     {
-        return view('reportes.pdf.inventario', $datos);
+        $pdf = Pdf::loadView('reportes.pdf.inventario', ['datos' => $datos])
+            ->setPaper('a4', 'landscape')
+            ->setOptions(['defaultFont' => 'DejaVu Sans']);
+        return $pdf->download('reporte-inventario-' . date('Y-m-d') . '.pdf');
     }
     
     private function exportarProductosMasVendidosPdf(array $datos)
     {
-        return view('reportes.pdf.productos-mas-vendidos', $datos);
+        $pdf = Pdf::loadView('reportes.pdf.productos-mas-vendidos', ['datos' => $datos])
+            ->setPaper('a4', 'portrait')
+            ->setOptions(['defaultFont' => 'DejaVu Sans']);
+        return $pdf->download('productos-mas-vendidos-' . date('Y-m-d') . '.pdf');
     }
     
     private function exportarMovimientosPdf(array $datos)
     {
-        return view('reportes.pdf.movimientos', $datos);
+        $pdf = Pdf::loadView('reportes.pdf.movimientos', ['datos' => $datos])
+            ->setPaper('a4', 'landscape')
+            ->setOptions(['defaultFont' => 'DejaVu Sans']);
+        return $pdf->download('movimientos-inventario-' . date('Y-m-d') . '.pdf');
     }
     
     private function exportarClientesPdf(array $datos)
     {
-        return view('reportes.pdf.clientes', $datos);
+        $pdf = Pdf::loadView('reportes.pdf.clientes', ['datos' => $datos])
+            ->setPaper('a4', 'landscape')
+            ->setOptions(['defaultFont' => 'DejaVu Sans']);
+        return $pdf->download('reporte-clientes-' . date('Y-m-d') . '.pdf');
     }
     
     private function exportarVentasPorVendedorPdf(array $datos)
     {
-        return view('reportes.pdf.ventas-por-vendedor', $datos);
+        $pdf = Pdf::loadView('reportes.pdf.ventas-por-vendedor', ['datos' => $datos])
+            ->setPaper('a4', 'portrait')
+            ->setOptions(['defaultFont' => 'DejaVu Sans']);
+        return $pdf->download('ventas-por-vendedor-' . date('Y-m-d') . '.pdf');
     }
     
     private function exportarBajoStockPdf(array $datos)
     {
-        return view('reportes.pdf.bajo-stock', $datos);
+        $pdf = Pdf::loadView('reportes.pdf.bajo-stock', ['datos' => $datos])
+            ->setPaper('a4', 'portrait')
+            ->setOptions(['defaultFont' => 'DejaVu Sans']);
+        return $pdf->download('productos-bajo-stock-' . date('Y-m-d') . '.pdf');
     }
     
     // ==================== HELPER ====================

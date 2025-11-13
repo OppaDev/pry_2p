@@ -37,6 +37,7 @@ class User extends Authenticatable implements Auditable
     protected $auditInclude = [
         'name',
         'email',
+        'cedula',
         'email_verified_at',
     ];
 
