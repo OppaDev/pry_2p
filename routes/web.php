@@ -9,6 +9,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\FacturaController;
+use App\Http\Controllers\VentaController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -73,6 +74,13 @@ Route::middleware('auth')->group(function () {
     
     // Rutas adicionales para categorías
     Route::patch('categorias/{id}/restore', [CategoriaController::class, 'restore'])->name('categorias.restore');
+    
+    // Rutas para ventas (Punto de Venta)
+    Route::resource('ventas', VentaController::class)->except(['edit', 'update', 'destroy']);
+    Route::post('ventas/{venta}/anular', [VentaController::class, 'anular'])->name('ventas.anular');
+    Route::post('ventas/{venta}/generar-factura', [VentaController::class, 'generarFactura'])->name('ventas.generar-factura');
+    Route::get('api/productos/buscar', [VentaController::class, 'buscarProductos'])->name('api.productos.buscar');
+    Route::post('api/productos/verificar-stock', [VentaController::class, 'verificarStock'])->name('api.productos.verificar-stock');
     
     // Rutas para reportes
     Route::prefix('reportes')->name('reportes.')->group(function () {
