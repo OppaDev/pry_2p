@@ -64,7 +64,15 @@ class RolesAndPermissionsSeeder extends Seeder
             'ventas.crear',
             'ventas.anular',
             'ventas.editar',
-            'ventas.emitir_factura',
+        ];
+        
+        // Permisos de Facturas
+        $facturasPermisos = [
+            'facturas.ver',
+            'facturas.crear',
+            'facturas.anular',
+            'facturas.descargar',
+            'facturas.enviar_email',
         ];
         
         // Permisos de Reportes
@@ -82,6 +90,7 @@ class RolesAndPermissionsSeeder extends Seeder
             $productosPermisos,
             $inventarioPermisos,
             $ventasPermisos,
+            $facturasPermisos,
             $reportesPermisos
         );
         
@@ -106,12 +115,16 @@ class RolesAndPermissionsSeeder extends Seeder
             // Ventas
             'ventas.ver',
             'ventas.crear',
-            'ventas.emitir_factura',
+            // Facturas
+            'facturas.ver',
+            'facturas.crear',
+            'facturas.descargar',
+            'facturas.enviar_email',
             // Productos (solo ver y stock)
             'productos.ver',
             'productos.ver_stock',
-            // Inventario (solo ver)
-            'inventario.ver',
+            // Reportes ventas
+            'reportes.ventas',
         ]);
         
         // Rol: Jefe de Bodega
@@ -131,10 +144,6 @@ class RolesAndPermissionsSeeder extends Seeder
             'inventario.salida',
             'inventario.ajuste',
             'inventario.reportes',
-            // Ventas (solo ver)
-            'ventas.ver',
-            // Clientes (solo ver)
-            'clientes.ver',
             // Reportes
             'reportes.inventario',
         ]);
