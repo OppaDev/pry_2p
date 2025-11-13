@@ -2,20 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Producto;
+use App\Services\ReporteService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
+    protected ReporteService $reporteService;
+    
+    public function __construct(ReporteService $reporteService)
+    {
+        $this->reporteService = $reporteService;
+    }
+    
     public function index()
     {
-        $totalUsers = User::count();
-        $totalProductos = Producto::count();
-        $totalStock = Producto::sum('cantidad');
-        $valorInventario = Producto::sum(DB::raw('precio * cantidad'));
-
-        return view('dashboard', compact('totalUsers', 'totalProductos', 'totalStock', 'valorInventario'));
+        // Obtener datos del dashboard usando ReporteService
+        $dashboard = $this->reporteService->datosDashboard();
+        
+        return view('dashboard', compact('dashboard'));
     }
 }
