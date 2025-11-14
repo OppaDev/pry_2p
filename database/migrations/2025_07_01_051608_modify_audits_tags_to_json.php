@@ -14,9 +14,20 @@ return new class extends Migration
     {
         $connection = config('audit.drivers.database.connection', config('database.default'));
         $table = config('audit.drivers.database.table', 'audits');
+        $driver = DB::connection($connection)->getDriverName();
 
         // Para PostgreSQL, necesitamos usar SQL raw para especificar USING
-        DB::connection($connection)->statement("ALTER TABLE {$table} ALTER COLUMN tags TYPE json USING tags::json");
+        if ($driver === 'pgsql') {
+            DB::connection($connection)->statement("ALTER TABLE {$table} ALTER COLUMN tags TYPE json USING tags::json");
+        } elseif ($driver === 'sqlite') {
+            // SQLite ya maneja tags como text, no necesita conversión
+            // Los datos JSON se pueden almacenar en columnas text en SQLite
+        } else {
+            // Para MySQL y otros
+            Schema::connection($connection)->table($table, function (Blueprint $table) {
+                $table->json('tags')->nullable()->change();
+            });
+        }
     }
 
     /**
