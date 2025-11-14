@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use App\Models\Cliente;
 use App\Models\Categoria;
 use App\Models\Producto;
@@ -30,6 +31,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Forzar HTTPS en producción
+        if (config('app.env') === 'production') {
+            URL::forceScheme('https');
+        }
+        
         // Registrar políticas
         Gate::policy(Cliente::class, ClientePolicy::class);
         Gate::policy(Categoria::class, CategoriaPolicy::class);
